@@ -27,23 +27,16 @@ include_once("PageBase.php");
 
 class IndexPageCode extends PageBase
 {
-    // protected overridden methods
-    function _Initialise()
+    function IndexPageCode()
     {
-        parent::_Initialise();
+        $this->PageBase();
         $pageTemplate =& new TestPageTemplate();
         $pageTemplate->set_Page($this);
-        $pageTemplate->set_Title("Page Template Test");        
-        $pageTemplate->set_Heading("A Page Template Test");
+        $this->set_Title("PHP Page Template - Simple Template Example");        
+        $pageTemplate->set_Heading("PHP Page Template - Simple Template Example");
         $this->_set_PageTemplate($pageTemplate);
-        $this->_RegisterPlaceHolder("ph1", "PlaceHolder_ph1");
-        $this->_RegisterPlaceHolder("ph2", "PlaceHolder_ph2");        
-    }
-     
-    // protected methods
-    function _DoPlaceHolderTest()
-    {
-        echo "This is a test.";
+        $this->_RegisterPlaceHolder("content1", "PlaceHolder_content1");
+        $this->_RegisterPlaceHolder("content2", "PlaceHolder_content2");        
     }
 }
 ?>

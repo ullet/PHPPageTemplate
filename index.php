@@ -26,26 +26,35 @@ include_once("index_code.php");
 
 class IndexPage extends IndexPageCode
 {
-    function PlaceHolder_ph1() 
+    function IndexPage()
     {
-        $this->_DoPlaceHolderTest();
+        $this->IndexPageCode();
+    }
+    
+    function PlaceHolder_content1() 
+    {
+?>
+<p>
+Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Nulla gravida tincidunt dolor. Maecenas vestibulum. In hac habitasse platea dictumst. Suspendisse sapien mauris, ullamcorper et, bibendum quis, imperdiet non, leo. Cras gravida, urna in venenatis cursus, eros felis nonummy libero, eget ultricies erat metus et sapien. Nulla quam mauris, condimentum in, pharetra eu, faucibus eu, est. Aliquam felis. Phasellus arcu. In volutpat dapibus ipsum. Donec arcu tortor, porttitor in, iaculis eget, ullamcorper in, felis. Nullam et arcu. In sit amet purus.
+</p>
+<p>
+Etiam sodales dapibus purus. Sed eleifend lectus eget nisl. Nullam lacus. Etiam a elit. Aenean ultricies mollis sem. Nam vehicula ultrices tellus. Nulla malesuada, justo vel convallis nonummy, nulla quam hendrerit pede, tincidunt interdum enim nulla id ante. Etiam sed mi. Maecenas sed justo. Vestibulum congue porta erat. Quisque id turpis. Praesent sagittis dapibus augue. Curabitur laoreet turpis. Mauris magna nisl, fermentum nec, interdum ut, dignissim at, erat. Vivamus eu nisl nec nunc elementum pulvinar. Curabitur vestibulum, mauris vel eleifend ornare, lectus odio iaculis risus, egestas ullamcorper massa sapien sed risus. Maecenas blandit.
+</p>
+<p>
+Donec vel magna ac lorem euismod consequat. Vestibulum dictum tortor sed mauris cursus fringilla. Donec malesuada ultrices pede. Sed eu lorem sed nisl egestas congue. Nam vestibulum. Sed sed erat. Duis sagittis. Etiam cursus magna id felis. Nullam vitae augue in lectus sagittis sollicitudin. In vulputate orci vitae dui. Nulla auctor libero non turpis consectetuer suscipit. Vivamus metus. Sed fringilla, est a lacinia rutrum, orci pede porttitor tellus, sed molestie erat nisl non turpis. Curabitur hendrerit massa.
+</p>
+<?php
     }
 
-    function PlaceHolder_ph2()
+    function PlaceHolder_content2()
     { 
 ?>
-  <p>
-    This is the content to go in Place Holder 2.
-    <br />
-    Here is a list of stuff:
-    <ul>
-      <li>Rabbit</li>
-      <li>Aeroplane</li>
-      <li>Windows XP</li>
-      <li>Madriva Linux</li>
-      <li>Anti-static Cleaning Solution</li>
-    </ul>
-  </p>
+<p>
+Morbi quis lorem sit amet ligula auctor tristique. Proin ut mi sit amet mi posuere tincidunt. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Nam rhoncus. Integer a turpis. Ut interdum odio. Pellentesque interdum urna sed nunc. Etiam euismod tempus metus. Donec eget leo. Donec gravida posuere turpis. Donec euismod magna vitae sem. Aenean placerat sem eget purus. Aenean tristique, sem ac eleifend porttitor, nisl diam scelerisque est, a varius lectus lacus et augue. Mauris fringilla, mauris eget nonummy elementum, magna metus faucibus erat, malesuada facilisis felis quam lacinia lectus. Vestibulum vitae metus. Duis volutpat. Integer a arcu. Morbi augue. Suspendisse elit dolor, gravida nec, pulvinar sit amet, dictum non, quam.
+</p>
+<p>
+Pellentesque tincidunt, tellus eleifend tempus nonummy, odio felis malesuada tortor, vitae pretium tellus neque egestas pede. Cras vel elit. Nunc lectus sapien, posuere vel, malesuada eu, pharetra nec, purus. Phasellus in arcu. Pellentesque habitant.
+</p>
 <?php 
     }
 }

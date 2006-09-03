@@ -22,29 +22,31 @@
  *************************************************************************
  */
  
-include_once("TestPageTemplate_code.php");
-class TestPageTemplate extends TestPageTemplateCode
-{    
-    function RenderContent()
-    { 
-?>
-<html>
-  <head>
-    <title><?= $this->get_EncodedTitle() ?></title>
-  </head>
-  <body>
-    <h1><?= $this->get_EncodedHeading() ?></h1>
-    <fieldset>
-      <legend>Content 1</legend>
-      <?php $this->_RenderPlaceHolder("content1") ?>
-    </fieldset>
-    <fieldset>
-      <legend>Content 2</legend>
-      <?php $this->_RenderPlaceHolder("content2") ?>
-    </fieldset>
-  </body>
-</html>
-<?php
-    }        
+include_once("ChildPageTemplate.php");
+include_once("PageBase.php");
+
+class IndexPage2Code extends PageBase
+{
+    // protected overridden methods
+    function IndexPage2Code()
+    {
+        $pageTemplate =& new ChildPageTemplate();
+        $this->_set_PageTemplate($pageTemplate);        
+        $pageTemplate->set_Page($this);
+        $this->_RegisterPlaceHolder("top", "PlaceHolder_top");
+        $this->_RegisterPlaceHolder("bottom", "PlaceHolder_bottom");
+        $this->set_Title("PHP Page Template - Nested Template Example");        
+        $pageTemplate->set_Heading("PHP Page Template - Nested Template Example");  
+    }
+    
+    function Render()
+    {
+        parent::Render();                              
+    }
+    
+    function _set_PageTemplate($pageTemplate)
+    {
+        parent::_set_PageTemplate($pageTemplate);
+    }
 }
 ?>

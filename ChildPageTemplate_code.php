@@ -22,29 +22,53 @@
  *************************************************************************
  */
  
-include_once("TestPageTemplate_code.php");
-class TestPageTemplate extends TestPageTemplateCode
+include_once("PageBase.php");
+include_once("ParentPageTemplate.php");
+class ChildPageTemplateCode extends PageBase
 {    
-    function RenderContent()
-    { 
-?>
-<html>
-  <head>
-    <title><?= $this->get_EncodedTitle() ?></title>
-  </head>
-  <body>
-    <h1><?= $this->get_EncodedHeading() ?></h1>
-    <fieldset>
-      <legend>Content 1</legend>
-      <?php $this->_RenderPlaceHolder("content1") ?>
-    </fieldset>
-    <fieldset>
-      <legend>Content 2</legend>
-      <?php $this->_RenderPlaceHolder("content2") ?>
-    </fieldset>
-  </body>
-</html>
-<?php
-    }        
+    function ChildPageTemplateCode()
+    {
+        $this->PageBase();
+        $pageTemplate =& new ParentPageTemplate();
+        $pageTemplate->set_Page($this);
+        $this->_set_PageTemplate($pageTemplate);
+        $this->_RegisterPlaceHolder("leftcol", "PlaceHolder_leftcol");
+        $this->_RegisterPlaceHolder("rightcol", "PlaceHolder_rightcol");
+        $this->_RegisterPlaceHolder("maincol", "PlaceHolder_maincol");
+        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate 
+        $pageTemplate->set_Heading($this->get_Heading());     
+    }
+    
+    // public accessors
+    function get_Heading()
+    {
+        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
+        return !$pageTemplate ? "" : $pageTemplate->get_Heading();
+    }
+    
+    function get_EncodedHeading()
+    {
+        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
+        return !$pageTemplate ? "" : $pageTemplate->get_EncodedHeading();        
+    }
+    
+    function set_Heading($heading)
+    {
+        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
+        if ($pageTemplate)
+        {
+            $pageTemplate->set_Heading($heading);
+        }
+    }     
+    
+    function Render()
+    {
+        parent::Render();
+    }
+    
+    function _set_PageTemplate($pageTemplate)
+    {
+        parent::_set_PageTemplate($pageTemplate);
+    }
 }
 ?>

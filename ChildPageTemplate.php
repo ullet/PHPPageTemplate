@@ -22,29 +22,67 @@
  *************************************************************************
  */
  
-include_once("TestPageTemplate_code.php");
-class TestPageTemplate extends TestPageTemplateCode
+include_once("ChildPageTemplate_code.php");
+class ChildPageTemplate extends ChildPageTemplateCode
 {    
-    function RenderContent()
+    function ChildPageTemplate()
+    {
+        $this->ChildPageTemplateCode();
+    }
+        
+    function PlaceHolder_leftcol()
     { 
 ?>
-<html>
-  <head>
-    <title><?= $this->get_EncodedTitle() ?></title>
-  </head>
-  <body>
-    <h1><?= $this->get_EncodedHeading() ?></h1>
-    <fieldset>
-      <legend>Content 1</legend>
-      <?php $this->_RenderPlaceHolder("content1") ?>
-    </fieldset>
-    <fieldset>
-      <legend>Content 2</legend>
-      <?php $this->_RenderPlaceHolder("content2") ?>
-    </fieldset>
-  </body>
-</html>
+<fieldset>
+  <legend>Main Menu</legend>
+  <ul id="mainmenu">
+    <li><a href="#">Duis quis leo quis</a></li>
+    <li><a href="#">Ut in magna eu lorem</a></li>
+    <li><a href="#">Nullam faucibus odio</a></li>
+    <li><a href="#">Vivamus sed eros quis</a></li>
+    <li><a href="#">Curabitur bibendum</a></li>
+    <li><a href="#">Cras blandit elit</a></li>
+    <li><a href="#">Quisque accumsan</a></li>
+  </ul>
+</fieldset>
 <?php
     }        
+    
+    function PlaceHolder_rightcol()
+    { 
+?>
+<fieldset>
+  <legend>Sub Menu</legend>
+  <ul id="submenu">
+    <li><a href="#">Praesent ut turpis</a></li>
+    <li><a href="#">Pellentesque quis</a></li>
+    <li><a href="#">Integer in nisi</a></li>
+    <li><a href="#">Etiam bibendum</a></li>
+    <li><a href="#">Aliquam volutpat</a></li>
+    <li><a href="#">Donec scelerisque</a></li>
+    <li><a href="#">In vel orci non</a></li>
+    <li><a href="#">Suspendisse id</a></li>
+  </ul>
+</fieldset>
+<?php
+    } 
+    
+    function PlaceHolder_maincol()
+    {
+?>
+<fieldset>
+  <legend>Top</legend>
+  <?php $this->_RenderPlaceHolder("top") ?>
+</fieldset>
+<div>
+  <hr />
+  <hr />
+</div>
+<fieldset>
+  <legend>Bottom</legend>
+  <?php $this->_RenderPlaceHolder("bottom") ?>
+</fieldset>
+<?php
+    }
 }
 ?>

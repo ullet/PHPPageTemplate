@@ -22,8 +22,8 @@
  *************************************************************************
  */
  
-include_once("PageTemplateBase.php");
-class TestPageTemplateCode extends PageTemplateBase
+include_once("PageBase.php");
+class TestPageTemplateCode extends PageBase
 {    
     // private member variables
     var $_heading = "";
@@ -56,11 +56,6 @@ class TestPageTemplateCode extends PageTemplateBase
     function set_Heading($heading)
     {
         $this->_heading = trim($heading);
-    }     
-    
-    // public overridden methods
-    function Initialise()
-    {
-        parent::Initialise();
     }   
 }
+?>

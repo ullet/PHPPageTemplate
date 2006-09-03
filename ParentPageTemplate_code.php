@@ -22,29 +22,50 @@
  *************************************************************************
  */
  
-include_once("TestPageTemplate_code.php");
-class TestPageTemplate extends TestPageTemplateCode
+include_once("PageBase.php");
+class ParentPageTemplateCode extends PageBase
 {    
-    function RenderContent()
-    { 
-?>
-<html>
-  <head>
-    <title><?= $this->get_EncodedTitle() ?></title>
-  </head>
-  <body>
-    <h1><?= $this->get_EncodedHeading() ?></h1>
-    <fieldset>
-      <legend>Content 1</legend>
-      <?php $this->_RenderPlaceHolder("content1") ?>
-    </fieldset>
-    <fieldset>
-      <legend>Content 2</legend>
-      <?php $this->_RenderPlaceHolder("content2") ?>
-    </fieldset>
-  </body>
-</html>
-<?php
-    }        
+    // private member variables
+    var $_heading = "";
+    
+    // public accessors
+    function get_Heading()
+    {
+        if ($this->_heading == "")
+        {
+            return $this->_title;
+        }
+        else
+        {
+            return $this->_heading;
+        }
+    }
+    
+    function get_EncodedHeading()
+    {
+        if ($this->_heading == "")
+        {
+            return $this->get_EncodedTitle();
+        }
+        else
+        {
+            return htmlentities($this->_heading);
+        }
+    }
+    
+    function set_Heading($heading)
+    {
+        $this->_heading = trim($heading);
+    }     
+    
+    function Render()
+    {
+        parent::Render();
+    }
+    
+    function _set_PageTemplate($pageTemplate)
+    {
+        parent::_set_PageTemplate($pageTemplate);
+    }
 }
 ?>

@@ -22,16 +22,15 @@
  *************************************************************************
  */
 
-include_once("PageTemplateBase.php");
-
 //* <class name="PageBase" modifiers="public, abstract">
-//* Base class for a web page based on a template
+//* Base class for a web page based on a template and a template page
 //* </class>
-class PageBase // abstract
+// NB. A template page is just a page width place holders.
+class PageBase
 {
     //// private member variables
     //* <property name="_pageTemplate" modifiers="private" 
-    //* type="&PageTemplateBase">
+    //* type="&PageBase">
     //* Template for Page
     //* </property>
     var $_pageTemplate;   
@@ -40,13 +39,28 @@ class PageBase // abstract
     //* Array of functions for place holders
     //* </property>
     var $_placeHolderfunctions;
-    //** end
+    //* <property name="_page" modifiers="private" 
+    //* type="&PageBase">
+    //* Reference to page using template
+    //* </property>
+    var $_page;
+    //* <property name="_title" modifiers="private" 
+    //* type="string">
+    //* Title of page for display in browser title bar
+    //* </property>
+    var $_title = "Untitled page";    
+    //// end private member variables
+    
+    function PageBase()
+    {
+        $this->_placeHolderfunctions = array();
+    }
     
     //// protected accessors
     //* <method name="_set_PageTemplate" modifiers="protected"
     //* returnType="void">
     //* Sets page template
-    //* <parameter name="$pageTemplate" type="&PageTemplateBase">
+    //* <parameter name="$pageTemplate" type="&PageBase">
     //* Template for page
     //* </parameter>
     //* </method>
@@ -54,7 +68,69 @@ class PageBase // abstract
     {
         $this->_pageTemplate =& $pageTemplate;
     }
-    //// end
+    
+    //* <method name="_get_PageTemplate" modifiers="protected"
+    //* returnType="&PageBase">
+    //* Gets page template
+    //* </method>
+    function &_get_PageTemplate()
+    {
+        return $this->_pageTemplate;
+    }
+    //// end protected accessors
+    
+    //// public accessors
+    //* <method name="get_EncodedTitle" modifiers="public"
+    //* returnType="string">
+    //* Gets HTML encoded page title 
+    //* </method>
+    function get_EncodedTitle()
+    {
+       return htmlentities($this->_title);
+    }
+    
+    //* <method name="get_Title" modifiers="public"
+    //* returnType="string">
+    //* Gets page title 
+    //* </method>
+    function get_Title()
+    {
+       return $this->_title;
+    }
+    
+    //* <method name="set_Title" modifiers="public"
+    //* returnType="void">
+    //* Sets page title
+    //* <parameter name="$title" type="string">
+    //* Title of page
+    //* </parameter>
+    //* </method>
+    function set_Title($title)
+    {
+        $this->_title = trim($title);
+    }
+    
+    //* <method name="get_Page" modifiers="public"
+    //* returnType="&PageBase">
+    //* Gets page using template 
+    //* </method>
+    function &get_Page()
+    {
+        return $this->_page;
+    }
+    
+    //* <method name="set_Page" modifiers="public"
+    //* returnType="void">
+    //* Sets page using template
+    //* <parameter name="$page" type="&PageBase">
+    //* Page using template
+    //* </parameter>
+    //* </method>
+    function set_Page(&$page)
+    {
+        $this->_page =& $page;
+    }
+    //// end public accessors
     
     //// protected methods
     //* <method name="_RegisterPlaceHolder" modfiers="protected" 
@@ -72,15 +148,21 @@ class PageBase // abstract
         $this->_placeHolderfunctions[$placeHolderName] = $functionName;
     }
     
-    //* <method name="_Initialise" modfiers="protected" 
+    //* <method name="_RenderPlaceHolder" modifiers="protected"
     //* returnType="void">
-    //* Initialise page
+    //* Render the content for the specified placeholder
+    //* <parameter name="$name" type="string">
+    //* Name of place holder
+    //* </parameter>
     //* </method>
-    function _Initialise()
+    function _RenderPlaceHolder($name)
     {
-        $this->_placeHolderfunctions = array();
+        if ($this->_page)
+        {
+            $this->_page->CallFunctionForPlaceHolder($name);
+        }
     }
-    //// end
+    //// end protected methods
     
     //// public methods
     //* <method name="Render" modfiers="public" 
@@ -89,26 +171,46 @@ class PageBase // abstract
     //* </method>
     function Render()
     {
-        $this->_Initialise();
-        $this->_pageTemplate->Render();       
+        if ($this->_pageTemplate)
+        {
+            $this->_pageTemplate->set_Title($this->get_Title());
+            $this->_pageTemplate->Render();       
+        }
+        $this->RenderContent();
     }
     
-    //* <method name="GetFunctionForPlaceHolder" modfiers="public" 
-    //* returnType="string">
-    //* Gets function to be called to fill the specified placeholder
+    //* <method name="CallFunctionForPlaceHolder" modfiers="public" 
+    //* returnType="void">
+    //* Calls function to fill the specified placeholder
     //* <parameter name="$placeHolderName" type="string">
     //* Name of placeholder
     //* </parameter>
     //* </method>
-    function GetFunctionForPlaceHolder($placeHolderName)
+    function CallFunctionForPlaceHolder($placeHolderName)
     {
         if (!in_array($placeHolderName, 
             array_keys($this->_placeHolderfunctions)))
         {
-            return "";
+            // recurse down to child
+            $this->_RenderPlaceHolder($placeHolderName);
+            return;
         }
-        return $this->_placeHolderfunctions[$placeHolderName];
+        $functionName = $this->_placeHolderfunctions[$placeHolderName];
+        if ($functionName != "")
+        {
+            $this->$functionName();
+        }
     }
-    //// end
+    
+    //// abstract public methods
+    //* <method name="RenderContent" modifiers="public, abstract"
+    //* returnType="void">
+    //* Render templated content
+    //* </method>
+    function RenderContent() // abstract
+    {
+    }
+    //// end abstract public methods
+    //// end public methods
 }
 ?>
