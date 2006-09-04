@@ -22,8 +22,8 @@
  *************************************************************************
  */
  
-include_once("TestPageTemplate.php");
-include_once("PageBase.php");
+require_once("TestPageTemplate.php");
+require_once("PageBase.php");
 
 class IndexPageCode extends PageBase
 {

@@ -22,7 +22,8 @@
  *************************************************************************
  */
  
-include_once("ParentPageTemplate_code.php");
+require_once("ParentPageTemplate_code.php");
+
 class ParentPageTemplate extends ParentPageTemplateCode
 {    
     function RenderContent()

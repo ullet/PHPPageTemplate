@@ -22,7 +22,8 @@
  *************************************************************************
  */
  
-include_once("PageBase.php");
+require_once("PageBase.php");
+
 class TestPageTemplateCode extends PageBase
 {    
     // private member variables

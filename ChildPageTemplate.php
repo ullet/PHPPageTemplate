@@ -22,7 +22,8 @@
  *************************************************************************
  */
  
-include_once("ChildPageTemplate_code.php");
+require_once("ChildPageTemplate_code.php");
+
 class ChildPageTemplate extends ChildPageTemplateCode
 {    
     function ChildPageTemplate()

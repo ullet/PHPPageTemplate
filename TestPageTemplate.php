@@ -22,7 +22,8 @@
  *************************************************************************
  */
  
-include_once("TestPageTemplate_code.php");
+require_once("TestPageTemplate_code.php");
+
 class TestPageTemplate extends TestPageTemplateCode
 {    
     function RenderContent()

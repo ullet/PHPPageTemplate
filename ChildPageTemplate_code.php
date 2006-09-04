@@ -22,8 +22,9 @@
  *************************************************************************
  */
  
-include_once("PageBase.php");
-include_once("ParentPageTemplate.php");
+require_once("PageBase.php");
+require_once("ParentPageTemplate.php");
+
 class ChildPageTemplateCode extends PageBase
 {    
     function ChildPageTemplateCode()

@@ -22,31 +22,39 @@
  *************************************************************************
  */
  
-require_once("ChildPageTemplate.php");
-require_once("PageBase.php");
+require_once "PageBase.php";
 
-class IndexPage2Code extends PageBase
-{
-    // protected overridden methods
-    function IndexPage2Code()
+class MockPage extends PageBase
+{   
+    var $_placeHolderCalled = false;
+    function ResetPlaceHolderState()
     {
-        $pageTemplate =& new ChildPageTemplate();
-        $this->_set_PageTemplate($pageTemplate);        
-        $pageTemplate->set_Page($this);
-        $this->_RegisterPlaceHolder("top", "PlaceHolder_top");
-        $this->_RegisterPlaceHolder("bottom", "PlaceHolder_bottom");
-        $this->set_Title("PHP Page Template - Nested Template Example");        
-        $pageTemplate->set_Heading("PHP Page Template - Nested Template Example");  
+        $this->_placeHolderCalled = false;
     }
     
-    function Render()
+    function WasPlaceHolderCalled()
     {
-        parent::Render();                              
+        return $this->_placeHolderCalled;
+    }
+        
+    function PlaceHolderFunction()
+    {
+        $this->_placeHolderCalled = true;
     }
     
-    function _set_PageTemplate($pageTemplate)
+    function RegisterPlaceHolderFunction($name)
     {
-        parent::_set_PageTemplate($pageTemplate);
+        $this->_RegisterPlaceHolder($name, "PlaceHolderFunction");
+    }
+    
+    function set_PageTemplate(&$template)
+    {
+        $this->_set_PageTemplate($template);
+    }
+    
+    function &get_PageTemplate()
+    {
+        return $this->_get_PageTemplate();
     }
 }
 ?>

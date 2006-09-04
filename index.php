@@ -22,7 +22,7 @@
  *************************************************************************
  */
  
-include_once("index_code.php");
+require_once("index_code.php");
 
 class IndexPage extends IndexPageCode
 {

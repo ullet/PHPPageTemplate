@@ -22,31 +22,13 @@
  *************************************************************************
  */
  
-require_once("ChildPageTemplate.php");
-require_once("PageBase.php");
+require_once "PageBase.php";
 
-class IndexPage2Code extends PageBase
+class MockTemplate extends PageBase
 {
-    // protected overridden methods
-    function IndexPage2Code()
+    function RenderPlaceHolder($name)
     {
-        $pageTemplate =& new ChildPageTemplate();
-        $this->_set_PageTemplate($pageTemplate);        
-        $pageTemplate->set_Page($this);
-        $this->_RegisterPlaceHolder("top", "PlaceHolder_top");
-        $this->_RegisterPlaceHolder("bottom", "PlaceHolder_bottom");
-        $this->set_Title("PHP Page Template - Nested Template Example");        
-        $pageTemplate->set_Heading("PHP Page Template - Nested Template Example");  
-    }
-    
-    function Render()
-    {
-        parent::Render();                              
-    }
-    
-    function _set_PageTemplate($pageTemplate)
-    {
-        parent::_set_PageTemplate($pageTemplate);
+        $this->_RenderPlaceHolder($name);
     }
 }
 ?>
