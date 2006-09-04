@@ -86,7 +86,7 @@ class PageBase
     //* </method>
     function get_EncodedTitle()
     {
-       return htmlentities($this->_title);
+       return htmlentities($this->get_Title());
     }
     
     //* <method name="get_Title" modifiers="public"
@@ -95,7 +95,11 @@ class PageBase
     //* </method>
     function get_Title()
     {
-       return $this->_title;
+        if ($this->_page)
+        {
+            return $this->_page->get_Title();
+        }        
+        return $this->_title;
     }
     
     //* <method name="set_Title" modifiers="public"
@@ -107,7 +111,14 @@ class PageBase
     //* </method>
     function set_Title($title)
     {
-        $this->_title = trim($title);
+        if ($this->_page)
+        {
+            $this->_page->set_Title($title);
+        }
+        else
+        {
+            $this->_title = trim($title);
+        }
     }
     
     //* <method name="get_Page" modifiers="public"
@@ -173,7 +184,6 @@ class PageBase
     {
         if ($this->_pageTemplate)
         {
-            $this->_pageTemplate->set_Title($this->get_Title());
             $this->_pageTemplate->Render();       
         }
         $this->RenderContent();
