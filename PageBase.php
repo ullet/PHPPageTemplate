@@ -30,7 +30,7 @@ class PageBase
 {
     //// private member variables
     //* <property name="_pageTemplate" modifiers="private" 
-    //* type="&PageBase">
+    //* type="&amp;PageBase">
     //* Template for Page
     //* </property>
     var $_pageTemplate;   
@@ -40,7 +40,7 @@ class PageBase
     //* </property>
     var $_placeHolderfunctions;
     //* <property name="_page" modifiers="private" 
-    //* type="&PageBase">
+    //* type="&amp;PageBase">
     //* Reference to page using template
     //* </property>
     var $_page;
@@ -60,7 +60,7 @@ class PageBase
     //* <method name="_set_PageTemplate" modifiers="protected"
     //* returnType="void">
     //* Sets page template
-    //* <parameter name="$pageTemplate" type="&PageBase">
+    //* <parameter name="$pageTemplate" type="&amp;PageBase">
     //* Template for page
     //* </parameter>
     //* </method>
@@ -70,7 +70,7 @@ class PageBase
     }
     
     //* <method name="_get_PageTemplate" modifiers="protected"
-    //* returnType="&PageBase">
+    //* returntype="&amp;PageBase">
     //* Gets page template
     //* </method>
     function &_get_PageTemplate()
@@ -122,7 +122,7 @@ class PageBase
     }
     
     //* <method name="get_Page" modifiers="public"
-    //* returnType="&PageBase">
+    //* returntype="&amp;PageBase">
     //* Gets page using template 
     //* </method>
     function &get_Page()
@@ -133,7 +133,7 @@ class PageBase
     //* <method name="set_Page" modifiers="public"
     //* returnType="void">
     //* Sets page using template
-    //* <parameter name="$page" type="&PageBase">
+    //* <parameter name="$page" type="&amp;PageBase">
     //* Page using template
     //* </parameter>
     //* </method>

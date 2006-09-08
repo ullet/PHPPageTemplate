@@ -1,0 +1,108 @@
+<!--
+ *************************************************************************
+ * PHPPageTemplate: A PHP4 page templating system.                       *
+ * Version 0.0.1 (08 September 2006)                                     *
+ * Copyright (C) 2006 Trevor Barnett                                     *
+ *                                                                       *
+ * This program is free software; you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation; either version 2 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program; if not, write to the Free Software           *
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  *
+ * USA                                                                   *
+ *************************************************************************
+-->
+<document>
+  <class name="PageBase" modifiers="public, abstract">
+    Base class for a web page based on a template and a template page
+    <property name="_pageTemplate" modifiers="private" type="&amp;PageBase">
+      Template for Page
+    </property>
+    <property name="_placeHolderfunctions" modifiers="private" type="[Associative Array]">
+      Array of functions for place holders
+    </property>
+    <property name="_page" modifiers="private" type="&amp;PageBase">
+      Reference to page using template
+    </property>
+    <property name="_title" modifiers="private" type="string">
+      Title of page for display in browser title bar
+    </property>
+    <method name="_set_PageTemplate" modifiers="protected" returnType="void">
+      Sets page template
+      <parameter name="$pageTemplate" type="&amp;PageBase">
+        Template for page
+      </parameter>
+    </method>
+    <method name="_get_PageTemplate" modifiers="protected" returntype="&amp;PageBase">
+      Gets page template
+    </method>
+    <method name="get_EncodedTitle" modifiers="public" returnType="string">
+      Gets HTML encoded page title 
+    </method>
+    <method name="get_Title" modifiers="public" returnType="string">
+      Gets page title 
+    </method>
+    <method name="set_Title" modifiers="public" returnType="void">
+      Sets page title
+      <parameter name="$title" type="string">
+        Title of page
+      </parameter>
+    </method>
+    <method name="get_Page" modifiers="public" returntype="&amp;PageBase">
+      Gets page using template 
+    </method>
+    <method name="set_Page" modifiers="public" returnType="void">
+      Sets page using template
+      <parameter name="$page" type="&amp;PageBase">
+        Page using template
+      </parameter>
+    </method>
+    <method name="get_PageUrl" modifiers="public" returnType="string">
+      Gets the URL of the currently executing page.
+    </method>
+    <method name="_RegisterPlaceHolder" modfiers="protected" returnType="void">
+      Add function to list of placeholder functions
+      <parameter name="$placeHolderName" type="string">
+        Name of placeholder
+      </parameter>
+      <parameter name="$placeHolderName" type="string">
+        Name of function to be called to fill place holder
+      </parameter>
+    </method>
+    <method name="_RenderPlaceHolder" modifiers="protected" returnType="void">
+      Render the content for the specified placeholder
+      <parameter name="$name" type="string">
+        Name of place holder
+      </parameter>
+    </method>
+    <method name="_ConditionalRenderPlaceHolder" modifiers="protected" returnType="void">
+      Render the content for the specified placeholder if condition is true
+      <parameter name="$name" type="string">
+        Name of place holder
+      </parameter>
+      <parameter name="$condition" type="boolean">
+        Boolean conditional, only render if true
+      </parameter>    
+    </method>
+    <method name="Render" modfiers="public" returnType="void">
+      Render page
+    </method>
+    <method name="CallFunctionForPlaceHolder" modfiers="public" returnType="void">
+      Calls function to fill the specified placeholder
+      <parameter name="$placeHolderName" type="string">
+        Name of placeholder
+      </parameter>
+    </method>
+    <method name="RenderContent" modifiers="public, abstract" returnType="void">
+      Render templated content
+    </method>
+  </class>
+</document>
