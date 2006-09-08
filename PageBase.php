@@ -2,7 +2,7 @@
 /*
  *************************************************************************
  * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.0.0 (03 September 2006)                                     *
+ * Version 0.0.1 (08 September 2006)                                     *
  * Copyright (C) 2006 Trevor Barnett                                     *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
@@ -25,7 +25,7 @@
 //* <class name="PageBase" modifiers="public, abstract">
 //* Base class for a web page based on a template and a template page
 //* </class>
-// NB. A template page is just a page width place holders.
+// NB. A template page is just a page with place holders.
 class PageBase
 {
     //// private member variables
@@ -141,6 +141,19 @@ class PageBase
     {
         $this->_page =& $page;
     }
+    
+    //* <method name="get_PageUrl" modifiers="public"
+    //* returnType="string">
+    //* Gets the URL of the currently executing page.
+    //* </method>
+    function get_PageUrl()
+    {
+        $host = $_SERVER['HTTP_HOST'];
+        $page = $_SERVER['PHP_SELF']; 
+        // for some reason $_SERVER['SCRIPT_NAME'] doesn't work right
+        
+        return "http://".$host.$page;
+    }
     //// end public accessors
     
     //// protected methods
@@ -171,6 +184,24 @@ class PageBase
         if ($this->_page)
         {
             $this->_page->CallFunctionForPlaceHolder($name);
+        }
+    }
+    
+    //* <method name="_ConditionalRenderPlaceHolder" modifiers="protected"
+    //* returnType="void">
+    //* Render the content for the specified placeholder if condition is true
+    //* <parameter name="$name" type="string">
+    //* Name of place holder
+    //* </parameter>
+    //* <parameter name="$condition" type="boolean">
+    //* Boolean conditional, only render if true
+    //* </parameter>    
+    //* </method>
+    function _ConditionalRenderPlaceHolder($name, $condition)
+    {
+        if ($condition)
+        {
+            $this->_RenderPlaceHolder($name);
         }
     }
     //// end protected methods
