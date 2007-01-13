@@ -180,4 +180,93 @@
       </parameter>    
     </method>
   </class>
+  <class name="PageSectionBase" modifiers="public, abstract">
+    Base class for a web page section
+    <method name="Render" modifiers="public" returnType="void">
+      Render page section
+    </method>
+    <method name="SetProperty" modfiers="public, abstract" returnType="void">
+      Set specified property of page section
+      <parameter name="$key" type="string">
+        Name of property
+      </parameter>
+      <parameter name="$name" type="string">
+        Value of property
+      </parameter>
+    </method>
+    <method name="_ConvertStringToBool" modfiers="protected" returnType="string">
+      Convert a string value to a boolean.
+      <parameter name="$value" type="bool">
+        Value to convert
+      </parameter>
+    </method>
+  </class>
+  <class name="PageCache" modifiers="public">
+    Base class for a web page based on a template and a template page
+    <property name="_cacheDuration" modifiers="private" type="int">
+      Set duration for page to be cached
+    </property>    
+    <property name="_cacheParameters" modifiers="private" type="string">
+      Comma separated list of querystring parameters to vary cache.
+      Output for different values of the parameter will cached.
+      Separately.
+    </property>
+    <property name="_cacheDirectory" modifiers="private" type="string">
+      Directory for storing cache files.
+    </property>
+    <property name="_page" modifiers="private" type="&amp;PageBase">
+      Reference to page to be cached.
+    </property>
+    <constructor modifiers="public">
+      Create page cache object.
+      <parameter name="$cacheDirectory" type="string">
+        Directory for storing cache files.
+      </parameter>
+      <parameter name="$cacheDuration" type="string">
+        Duration for page to cached.
+      </parameter>
+      <parameter name="$cacheParameters" type="string">
+        Comma separated list of querystring parameters to vary cache.
+      </parameter>
+    </constructor>
+    <method name="CachePage" modifiers="public" returnType="void">
+      Saves page output to cache.
+    </method>
+    <method name="GetCachedPage" modifiers="public" returnType="string">
+      Get page output from cache.  Returns false if
+      page not in cache or expired.
+    </method>
+    <method name="ClearCache" modifiers="public" returnType="void">
+      Clears cache for specified page or all pages if no page specified.
+      <parameter name="$pageName" type="string">
+        Optional.  Name of page to clear cache.  
+        If not given clears whole cache.
+      </parameter>
+    </method>
+    <method name="_GetCacheFilePath" modifiers="protected" returnType="string">
+      Get path of cache file for current or given page.
+      <parameter name="$pageName" type="string">
+        Optional.  Name of page.  If not given uses name of current page.
+      </parameter>
+    </method>
+    <method name="_FileSystemSafeName" modifiers="protected" returnType="string">
+      Encode string to be safe to use as a file or directory name.
+      <parameter name="$name" type="string">
+        String to encode.
+      </parameter>
+    </method>
+    <method name="_GetNameFromFileSystemSafeName" modifiers="protected" returnType="string">
+      Decode string previously encoded with _FileSystemSafeName()
+      <parameter name="$safeName" type="string">
+        String to decode.
+      </parameter>
+    </method>
+    <method name="_TidyDirName" modifiers="protected" returnType="string">
+      Clean up directory name to consistently use OS specific directory
+      separator and ensure terminated by directory separator.
+      <parameter name="$safeName" type="string">
+        String to decode.
+      </parameter>
+    </method>
+  </class>
 </document>

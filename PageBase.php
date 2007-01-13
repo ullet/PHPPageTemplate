@@ -2,8 +2,8 @@
 /*
  *************************************************************************
  * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.0.1 (08 September 2006)                                     *
- * Copyright (C) 2006 Trevor Barnett                                     *
+ * Version 0.1.0 (13 January 2007)                                       *
+ * Copyright (C) 2006-2007 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -21,6 +21,8 @@
  * USA                                                                   *
  *************************************************************************
  */
+
+require_once "PageCache.php";
 
 //* <class name="PageBase" modifiers="public, abstract">
 //* Base class for a web page based on a template and a template page
@@ -48,36 +50,34 @@ class PageBase
     //* type="string">
     //* Title of page for display in browser title bar
     //* </property>
-    var $_title = "Untitled page";    
+    var $_title = "Untitled page";
+    //* <property name="_enablePageCaching" modifiers="private"
+    //* type="bool">
+    //* Flag setting page output caching enabled/disabled
+    //* </property>
+    var $_enablePageCaching = false;
+    //* <property name="_enablePageBuffering" modifiers="private"
+    //* type="bool">
+    //* Flag setting page output buffering enabled/disabled.
+    //* Buffering must be enabled to enable page caching.
+    //* </property>    
+    var $_enablePageBuffering = true;
+    //* <property name="_pageCache" modifiers="private"
+    //* type="&amp;PageCache">
+    //* PageCache for caching page.
+    //* </property>
+    var $_pageCache = false;
     //// end private member variables
     
+    //// constructors
+    //* <constructor modifiers="protected">
+    //* Create PageBase object.
+    //* </constructor>
     function PageBase()
     {
         $this->_placeHolderfunctions = array();
     }
-    
-    //// protected accessors
-    //* <method name="_set_PageTemplate" modifiers="protected"
-    //* returnType="void">
-    //* Sets page template
-    //* <parameter name="$pageTemplate" type="&amp;PageBase">
-    //* Template for page
-    //* </parameter>
-    //* </method>
-    function _set_PageTemplate(&$pageTemplate)
-    {
-        $this->_pageTemplate =& $pageTemplate;
-    }
-    
-    //* <method name="_get_PageTemplate" modifiers="protected"
-    //* returntype="&amp;PageBase">
-    //* Gets page template
-    //* </method>
-    function &_get_PageTemplate()
-    {
-        return $this->_pageTemplate;
-    }
-    //// end protected accessors
+    //// end constructors
     
     //// public accessors
     //* <method name="get_EncodedTitle" modifiers="public"
@@ -122,7 +122,7 @@ class PageBase
     }
     
     //* <method name="get_Page" modifiers="public"
-    //* returntype="&amp;PageBase">
+    //* returnType="&amp;PageBase">
     //* Gets page using template 
     //* </method>
     function &get_Page()
@@ -149,12 +149,295 @@ class PageBase
     function get_PageUrl()
     {
         $host = $_SERVER['HTTP_HOST'];
-        $page = $_SERVER['PHP_SELF']; 
-        // for some reason $_SERVER['SCRIPT_NAME'] doesn't work right
+        $page = $this->get_PageName();        
         
         return "http://".$host.$page;
     }
+    
+    //* <method name="get_PageName" modifiers="public"
+    //* returnType="string">
+    //* Gets the name of the currently executing page.
+    //* </method>
+    function get_PageName()
+    {
+        // for some reason $_SERVER['SCRIPT_NAME'] doesn't work right
+        return $_SERVER['PHP_SELF'];
+    }
+    
+    //* <method name="set_EnablePageCaching" modifiers="public"
+    //* returnType="void">
+    //* Set flag indicating if page caching is enabled.    
+    //* <parameter name="$enabled" type="bool">
+    //* Boolean flag
+    //* </parameter>
+    //* </method>
+    function set_EnablePageCaching($enabled)
+    {
+        $this->_enablePageCaching = $enabled;
+    }
+    
+    //* <method name="get_EnablePageCaching" modifiers="public"
+    //* returnType="bool">
+    //* Get flag indicating if page caching is enabled.
+    //* </method>
+    function get_EnablePageCaching()
+    {
+        return $this->_enablePageBuffering && $this->_enablePageCaching;
+    }
+    
+    //* <method name="set_EnablePageBuffering" modifiers="public"
+    //* returnType="void">
+    //* Set flag indicating if page buffering is enabled.    
+    //* <parameter name="$enabled" type="bool">
+    //* Boolean flag
+    //* </parameter>
+    //* </method>
+    function set_EnablePageBuffering($enabled)
+    {
+        $this->_enablePageBuffering = $enabled;
+    }
+    
+    //* <method name="get_EnablePageBuffering" modifiers="public"
+    //* returnType="bool">
+    //* Get flag indicating if page buffering is enabled.
+    //* </method>
+    function get_EnablePageBuffering()
+    {
+        return $this->_enablePageBuffering;
+    }
+    
+    //* <method name="set_CacheDuration" modifiers="public"
+    //* returnType="void">
+    //* Set duration to cache page.    
+    //* <parameter name="$duration" type="int">
+    //* Duration to cache page.
+    //* </parameter>
+    //* </method>
+    function set_CacheDuration($duration)
+    {
+        $pageCache =& $this->_get_PageCache();
+        $pageCache->_cacheDuration = $duration;
+    }
+    
+    //* <method name="get_CacheDuration" modifiers="public"
+    //* returnType="int">
+    //* Get duration to cache page
+    //* </method>
+    function get_CacheDuration()
+    {
+        $pageCache =& $this->_get_PageCache();
+        return $pageCache->_cacheDuration;
+    }
+    
+    //* <method name="set_CacheParameters" modifiers="public"
+    //* returnType="void">
+    //* Set querysting parameters to vary cache.    
+    //* <parameter name="$parameters" type="string">
+    //* Querysting parameters to vary cache.
+    //* </parameter>
+    //* </method>
+    function set_CacheParameters($parameters)
+    {
+        $pageCache =& $this->_get_PageCache();
+        $pageCache->_cacheParameters = $parameters;
+    }
+    
+    //* <method name="get_CacheParameters" modifiers="public"
+    //* returnType="string">
+    //* Get querysting parameters to vary cache
+    //* </method>
+    function get_CacheParameters()
+    {
+        $pageCache =& $this->_get_PageCache();
+        return $pageCache->_cacheParameters;
+    }
     //// end public accessors
+    
+    //// public methods
+    //* <method name="RenderPageSection" modifiers="public" 
+    //* returnType="void">
+    //* Render specified page section
+    //* <parameter name="$pageSectionName" type="string">
+    //* Name of page section to render
+    //* </parameter>
+    //* </method>
+    function RenderPageSection($pageSectionName)
+    {
+        $pageSection =& new $pageSectionName();
+        for ($idx=1; $idx<func_num_args(); $idx++)
+        {
+            $param = func_get_arg($idx);
+            $keyValue = split("=",$param);
+            if (count($keyValue) > 1)
+            {
+                $key = $keyValue[0];
+                if (count($keyValue) > 2)
+                {
+                    // value contained 1 or more "=" so need to join value
+                    // back together
+                    $value = join("=", array_slice($keyValue, 1));
+                }
+                else
+                {
+                    $value = $keyValue[1];
+                }
+                $pageSection->SetProperty(strtolower($key), $value);
+            }
+        }
+        $pageSection->Render();
+    }
+    
+    //* <method name="OutputCacheEnabled" modifiers="public"
+    //* returnType="bool">
+    //* Get boolean flag, true if output caching enabled, false otherwise.
+    //* Should be overridden in derived classes to change defaults.
+    //* </method>
+    function OutputCacheEnabled()
+    {
+        return false;
+    }
+    
+    //* <method name="OutputCacheDuration" modifiers="public"
+    //* returnType="int">
+    //* Get duration in seconds to cache pages.
+    //* Should be overridden in derived classes to change defaults.
+    //* </method>
+    function OutputCacheDuration()
+    {
+        return 0;
+    }
+    
+    //* <method name="Render" modifiers="public" 
+    //* returnType="void">
+    //* Render page
+    //* </method>
+    function Render()
+    {
+        $this->set_EnablePageCaching($this->OutputCacheEnabled());
+        $this->set_CacheDuration($this->OutputCacheDuration());
+        
+        $outputFromCache = false;
+        $pageCache = false;
+        if ($this->get_EnablePageBuffering())
+        {
+            ob_start();
+        }
+        if ($this->get_EnablePageCaching())
+        {
+            $pageCache = $this->_get_PageCache();
+            $contents = $pageCache->GetCachedPage();
+            if ($contents)
+            {
+                echo $contents;
+                $outputFromCache = true;
+            }
+        }
+        if (!$outputFromCache)
+        {
+            $this->DoRender();
+            if ($this->get_EnablePageCaching())
+            {
+                $pageCache = $this->_get_PageCache();
+                $pageCache->CachePage();
+            }
+        }
+        if ($this->get_EnablePageBuffering())
+        {
+            ob_end_flush();
+        }
+    }
+    
+    //* <method name="DoRender" modfiers="public" 
+    //* returnType="void">
+    //* Do rendering of page
+    //* </method>
+    function DoRender()
+    {
+        if ($this->_pageTemplate)
+        {
+            $this->_pageTemplate->DoRender();       
+        }
+        $this->RenderContent();
+    }
+    
+    //* <method name="CallFunctionForPlaceHolder" modfiers="public" 
+    //* returnType="void">
+    //* Calls function to fill the specified placeholder
+    //* <parameter name="$placeHolderName" type="string">
+    //* Name of placeholder
+    //* </parameter>
+    //* </method>
+    function CallFunctionForPlaceHolder($placeHolderName)
+    {
+        if (!in_array($placeHolderName, 
+            array_keys($this->_placeHolderfunctions)))
+        {
+            // recurse down to child
+            $this->_RenderPlaceHolder($placeHolderName);
+            return;
+        }
+        $functionName = $this->_placeHolderfunctions[$placeHolderName];
+        if ($functionName != "")
+        {
+            $this->$functionName();
+        }
+    }
+    
+    //// abstract public methods
+    //* <method name="RenderContent" modifiers="public, abstract"
+    //* returnType="void">
+    //* Render templated content
+    //* </method>
+    function RenderContent() // abstract
+    {
+    }
+    //// end abstract public methods
+    //// end public methods
+    
+    //// protected accessors
+    //* <method name="_set_PageTemplate" modifiers="protected"
+    //* returnType="void">
+    //* Sets page template
+    //* <parameter name="$pageTemplate" type="&amp;PageBase">
+    //* Template for page
+    //* </parameter>
+    //* </method>
+    function _set_PageTemplate(&$pageTemplate)
+    {
+        $this->_pageTemplate =& $pageTemplate;
+    }
+    
+    //* <method name="_get_PageTemplate" modifiers="protected"
+    //* returnType="&amp;PageBase">
+    //* Gets page template
+    //* </method>
+    function &_get_PageTemplate()
+    {
+        return $this->_pageTemplate;
+    }
+    
+    //* <method name="_get_PageCache" modifiers="protected"
+    //* returnType="&amp;PageCache">
+    //* Gets PageCache
+    //* </method>
+    function &_get_PageCache()
+    {
+        if (!$this->_pageCache)
+        {
+            $this->_pageCache =& new PageCache(
+                $this, $this->_get_CacheDirectory());
+        }
+        return $this->_pageCache;
+    }
+    
+    //* <method name="_get_CacheDirectory" modifiers="protected, abstract"
+    //* returnType="string">
+    //* Get cache directory
+    //* </method>
+    function _get_CacheDirectory() // abstract
+    {
+    }
+    //// end protected accessors
     
     //// protected methods
     //* <method name="_RegisterPlaceHolder" modfiers="protected" 
@@ -193,7 +476,7 @@ class PageBase
     //* <parameter name="$name" type="string">
     //* Name of place holder
     //* </parameter>
-    //* <parameter name="$condition" type="boolean">
+    //* <parameter name="$condition" type="bool">
     //* Boolean conditional, only render if true
     //* </parameter>    
     //* </method>
@@ -205,53 +488,5 @@ class PageBase
         }
     }
     //// end protected methods
-    
-    //// public methods
-    //* <method name="Render" modfiers="public" 
-    //* returnType="void">
-    //* Render page
-    //* </method>
-    function Render()
-    {
-        if ($this->_pageTemplate)
-        {
-            $this->_pageTemplate->Render();       
-        }
-        $this->RenderContent();
-    }
-    
-    //* <method name="CallFunctionForPlaceHolder" modfiers="public" 
-    //* returnType="void">
-    //* Calls function to fill the specified placeholder
-    //* <parameter name="$placeHolderName" type="string">
-    //* Name of placeholder
-    //* </parameter>
-    //* </method>
-    function CallFunctionForPlaceHolder($placeHolderName)
-    {
-        if (!in_array($placeHolderName, 
-            array_keys($this->_placeHolderfunctions)))
-        {
-            // recurse down to child
-            $this->_RenderPlaceHolder($placeHolderName);
-            return;
-        }
-        $functionName = $this->_placeHolderfunctions[$placeHolderName];
-        if ($functionName != "")
-        {
-            $this->$functionName();
-        }
-    }
-    
-    //// abstract public methods
-    //* <method name="RenderContent" modifiers="public, abstract"
-    //* returnType="void">
-    //* Render templated content
-    //* </method>
-    function RenderContent() // abstract
-    {
-    }
-    //// end abstract public methods
-    //// end public methods
 }
 ?>
