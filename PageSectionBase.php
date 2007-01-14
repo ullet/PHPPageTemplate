@@ -2,7 +2,7 @@
 /*
  *************************************************************************
  * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.2.0 (14 January 2007)                                       *
+ * Version 0.2.1 (14 January 2007)                                       *
  * Copyright (C) 2006-2007 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
@@ -35,7 +35,7 @@ class PageSectionBase
     {
     }
     
-    //* <method name="SetProperty" modfiers="public, abstract" returnType="void">
+    //* <method name="SetProperty" modifiers="public, abstract" returnType="void">
     //* Set specified property of page section
     //* <parameter name="$key" type="string">
     //* Name of property
@@ -50,7 +50,7 @@ class PageSectionBase
     //// end public methods
     
     //// protected methods
-    //* <method name="_ConvertStringToBool" modfiers="protected" returnType="string">
+    //* <method name="_ConvertStringToBool" modifiers="protected" returnType="string">
     //* Convert a string value to a boolean.
     //* <parameter name="$value" type="bool">
     //* Value to convert

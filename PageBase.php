@@ -2,7 +2,7 @@
 /*
  *************************************************************************
  * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.2.0 (14 January 2007)                                       *
+ * Version 0.2.1 (14 January 2007)                                       *
  * Copyright (C) 2006-2007 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
@@ -301,9 +301,11 @@ class PageBase
         {
             ob_end_flush();
         }
+        
+        $this->PostRender();
     }
     
-    //* <method name="DoRender" modfiers="public" returnType="void">
+    //* <method name="DoRender" modifiers="public" returnType="void">
     //* Do rendering of page
     //* </method>
     function DoRender()
@@ -315,7 +317,7 @@ class PageBase
         $this->RenderContent();
     }
     
-    //* <method name="CallFunctionForPlaceHolder" modfiers="public" returnType="void">
+    //* <method name="CallFunctionForPlaceHolder" modifiers="public" returnType="void">
     //* Calls function to fill the specified placeholder
     //* <parameter name="$placeHolderName" type="string">
     //* Name of placeholder
@@ -390,13 +392,20 @@ class PageBase
     
     //// protected methods
     //* <method name="PreRender" modifiers="protected, abstract" returnType="void">
-    //*   Execute code required before Render()
+    //* Execute code required before Render().  Will always be called even if page is cached.
     //* </method>
     function PreRender()
     {
     }
     
-    //* <method name="_RegisterPlaceHolder" modfiers="protected" returnType="void">
+    //* <method name="PostRender" modifiers="protected, abstract" returnType="void">
+    //* Execute code required after Render().  Will always be called even if page is cached.
+    //* </method>
+    function PostRender()
+    {
+    }
+    
+    //* <method name="_RegisterPlaceHolder" modifiers="protected" returnType="void">
     //* Add function to list of placeholder functions
     //* <parameter name="$placeHolderName" type="string">
     //* Name of placeholder
