@@ -1,7 +1,7 @@
 <!--
  *************************************************************************
  * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.1.0 (13 January 2007)                                       *
+ * Version 0.2.0 (14 January 2007)                                       *
  * Copyright (C) 2006-2007 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
@@ -26,10 +26,11 @@
     <property name="_pageTemplate" modifiers="private" type="&amp;PageBase">
       Template for Page
     </property>
-    <property name="_placeHolderfunctions" modifiers="private" type="[Associative Array]">
+    <property name="_placeHolderfunctions" modifiers="private" type="[string,string]">
       Array of functions for place holders
     </property>
-    <property name="_page" modifiers="private" type="&amp;PageBase">
+    <property name="_page" modifiers="private" 
+      type="&amp;PageBase">
       Reference to page using template
     </property>
     <property name="_title" modifiers="private" type="string">
@@ -117,14 +118,6 @@
         Name of page section to render
       </parameter>
     </method>
-    <method name="OutputCacheEnabled" modifiers="public" returnType="bool">
-      Get boolean flag, true if output caching enabled, false otherwise.
-      Should be overridden in derived classes to change defaults.
-    </method>
-    <method name="OutputCacheDuration" modifiers="public" returnType="int">
-      Get duration in seconds to cache pages.
-      Should be overridden in derived classes to change defaults.
-    </method>
     <method name="Render" modifiers="public" returnType="void">
       Render page
     </method>
@@ -154,6 +147,9 @@
     </method>
     <method name="_get_CacheDirectory" modifiers="protected, abstract" returnType="string">
       Get cache directory
+    </method>
+    <method name="PreRender" modifiers="protected, abstract" returnType="void">
+      Execute code required before Render()
     </method>
     <method name="_RegisterPlaceHolder" modfiers="protected" returnType="void">
       Add function to list of placeholder functions
@@ -207,14 +203,18 @@
       Set duration for page to be cached
     </property>    
     <property name="_cacheParameters" modifiers="private" type="string">
-      Comma separated list of querystring parameters to vary cache.
-      Output for different values of the parameter will cached.
-      Separately.
+      Comma separated list of querystring parameter names to vary cache.
+      Output for different values of the parameter will be cached separately.
+    </property>
+    <property name="_cacheParameters" modifiers="private" type="string[]">
+      Array of querystring parameter names to vary cache.
+      Output for different values of the parameter will be cached separately.
     </property>
     <property name="_cacheDirectory" modifiers="private" type="string">
       Directory for storing cache files.
     </property>
-    <property name="_page" modifiers="private" type="&amp;PageBase">
+    <property name="_page" modifiers="private"
+      type="&amp;PageBase">
       Reference to page to be cached.
     </property>
     <constructor modifiers="public">
@@ -229,6 +229,18 @@
         Comma separated list of querystring parameters to vary cache.
       </parameter>
     </constructor>
+    <method name="set_CacheParameters" modifiers="public" returnType="void">
+      Set parameter list for cache to be varied by.
+      <parameter name="$cacheParameters" type="string">
+        Parameter list as comma separated string.
+      </parameter>
+    </method>
+    <method name="set_CacheDuration" modifiers="public" returnType="void">
+      Set duration to cache page.
+      <parameter name="$cacheDuration" type="int">
+        Duration in seconds.
+      </parameter>
+    </method>
     <method name="CachePage" modifiers="public" returnType="void">
       Saves page output to cache.
     </method>
@@ -243,8 +255,35 @@
         If not given clears whole cache.
       </parameter>
     </method>
-    <method name="_GetCacheFilePath" modifiers="protected" returnType="string">
+    <method name="_GetNewCacheFilePath" modifiers="protected" returnType="string">
       Get path of cache file for current or given page.
+      <parameter name="$pageName" type="string">
+        Optional.  Name of page.  If not given uses name of current page.
+      </parameter>
+    </method>
+    <method name="_AddCacheFilePathToList" modifiers="protected" returnType="bool">
+      Added cache file to cache file list for page.
+      <parameter name="$cacheFilePath" type="string">
+        Path of cache file to be added to list.
+      </parameter>
+      <parameter name="$pageName" type="string">
+        Optional.  Name of page.  If not given uses name of current page.
+      </parameter>
+    </method>
+    <method name="_GetCacheFilePathsForPage" modifiers="protected" returnType="string[]">
+      Get list of cache file paths for page.
+      <parameter name="$pageName" type="string">
+        Optional.  Name of page.  If not given uses name of current page.
+      </parameter>
+    </method>
+    <method name="_GetCacheFilePath" modifiers="protected" returnType="string">
+      Get path cache file for previously cached page.
+      <parameter name="$pageName" type="string">
+        Optional.  Name of page.  If not given uses name of current page.
+      </parameter>
+    </method>
+    <method name="_GetCacheListFilePath" modifiers="protected" returnType="string">
+      Get path of cache list file for page
       <parameter name="$pageName" type="string">
         Optional.  Name of page.  If not given uses name of current page.
       </parameter>

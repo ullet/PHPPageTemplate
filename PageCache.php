@@ -2,7 +2,7 @@
 /*
  *************************************************************************
  * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.1.0 (13 January 2007)                                       *
+ * Version 0.2.0 (14 January 2007)                                       *
  * Copyright (C) 2006-2007 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
@@ -28,20 +28,21 @@
 class PageCache
 {    
     //// private member variables
-    //* <property name="_cacheDuration" modifiers="private"
-    //* type="int">
+    //* <property name="_cacheDuration" modifiers="private" type="int">
     //* Set duration for page to be cached
     //* </property>    
     var $_cacheDuration = 0;
-    //* <property name="_cacheParameters" modifiers="private"
-    //* type="string">
-    //* Comma separated list of querystring parameters to vary cache.
-    //* Output for different values of the parameter will cached.
-    //* Separately.
+    //* <property name="_cacheParameters" modifiers="private" type="string">
+    //* Comma separated list of querystring parameter names to vary cache.
+    //* Output for different values of the parameter will be cached separately.
     //* </property>
     var $_cacheParameters = "";
-    //* <property name="_cacheDirectory" modifiers="private"
-    //* type="string">
+    //* <property name="_cacheParameters" modifiers="private" type="string[]">
+    //* Array of querystring parameter names to vary cache.
+    //* Output for different values of the parameter will be cached separately.
+    //* </property>
+    var $_cacheParametersArray = false;
+    //* <property name="_cacheDirectory" modifiers="private" type="string">
     //* Directory for storing cache files.
     //* </property>
     var $_cacheDirectory = "";
@@ -71,27 +72,53 @@ class PageCache
         
         $this->_cacheDirectory = $this->_TidyDirName($cacheDirectory);
         
+        $this->set_CacheDuration($cacheDuration);
+        
+        $this->set_cacheParameters($cacheParameters);
+    }
+    //// end constructors
+    
+    //// public accessor methods
+    //* <method name="set_CacheParameters" modifiers="public" returnType="void">
+    //* Set parameter list for cache to be varied by.
+    //* <parameter name="$cacheParameters" type="string">
+    //* Parameter list as comma separated string.
+    //* </parameter>
+    //* </method>
+    function set_CacheParameters($cacheParameters)
+    {
+        if ($cacheParameters && $cacheParameters != "")
+        {
+            $this->_cacheParametersArray = split(',',$cacheParameters);
+            $this->_cacheParameters = $cacheParameters;
+        }
+        else
+        {
+            $this->_cacheParametersArray = array();
+        }
+    }
+    
+    //* <method name="set_CacheDuration" modifiers="public" returnType="void">
+    //* Set duration to cache page.
+    //* <parameter name="$cacheDuration" type="int">
+    //* Duration in seconds.
+    //* </parameter>
+    //* </method>
+    function set_CacheDuration($cacheDuration)
+    {
         if ($cacheDuration && $cacheDuration > 0)
         {
             $this->_cacheDuration = $cacheDuration;
         }
-        
-        if ($cacheParameters && $cacheParameters != "")
-        {
-            $this->_cacheParameters = $cacheParameters;
-        }
     }
-    //// end constructors
+    //// end public accessor methods
     
     //// public methods
-    //* <method name="CachePage" modifiers="public"
-    //* returnType="void">
+    //* <method name="CachePage" modifiers="public" returnType="void">
     //* Saves page output to cache.
     //* </method>
     function CachePage()
     {
-        $page =& $this->_page;
-        $this->ClearCache($page->get_PageName());
         if ($this->_cacheDuration <= 0)
         {
             // cache will be immediately invalid so don't waste time caching page
@@ -101,10 +128,11 @@ class PageCache
         $contents = ob_get_contents();
         // save contents to cache file
         
-        $cacheFilePath = $this->GetCacheFilePath();
+        $cacheFilePath = $this->_GetNewCacheFilePath();
         
-        $fh = fopen($cacheFilePath, 'w');
-        if ($fh)
+        if ($cacheFilePath != "" && 
+            $cacheFilePath != $this->_cacheDirectory &&
+            $fh = fopen($cacheFilePath, 'w'))
         {
             flock($fh, LOCK_EX);
             fputs($fh, $contents);
@@ -113,16 +141,17 @@ class PageCache
         }
     }
     
-    //* <method name="GetCachedPage" modifiers="public"
-    //* returnType="string">
+    //* <method name="GetCachedPage" modifiers="public" returnType="string">
     //* Get page output from cache.  Returns false if
     //* page not in cache or expired.
     //* </method>
     function GetCachedPage()
     {
-        $cacheFilePath = $this->GetCacheFilePath();
+        $cacheFilePath = $this->_GetCacheFilePath();
         
-        if (!file_exists($cacheFilePath))
+        if ($cacheFilePath == "" ||
+            $cacheFilePath == $this->_cacheDirectory || 
+            !file_exists($cacheFilePath))
         {
             return false;
         }        
@@ -148,8 +177,7 @@ class PageCache
         return $contents;
     }
     
-    //* <method name="ClearCache" modifiers="public"
-    //* returnType="void">
+    //* <method name="ClearCache" modifiers="public" returnType="void">
     //* Clears cache for specified page or all pages if no page specified.
     //* <parameter name="$pageName" type="string">
     //* Optional.  Name of page to clear cache.  
@@ -166,7 +194,7 @@ class PageCache
             {
                 while ($file = readdir($dh))
                 {
-                    if (ereg("\.html$", $file))
+                    if (ereg("\.(html)|(cache)$", $file))
                     {
                         unlink($this->_cacheDirectory.$file);
                     }
@@ -176,20 +204,160 @@ class PageCache
         else
         {            
             // clear just specified page
-            $cacheFilePath = $this->GetCacheFilePath($pageName);
-            
-            if (file_exists($cacheFilePath))
+            // delete all files given in list
+            $cacheFilePaths = $this->_GetCacheFilePathsForPage($pageName);            
+            for($idx=0; $idx<count($cacheFilePaths); $idx++)
             {
-                unlink($cacheFilePath);
+                if ($cacheFilePaths[$idx] != "" && 
+                    $cacheFilePaths[$idx] != $this->_cacheDirectory &&
+                    file_exists($cacheFilePaths[$idx]))
+                {
+                    unlink($cacheFilePaths[$idx]);
+                }
+            }
+            
+            // delete list file
+            $cacheListFilePath = $this->_GetCacheListFilePath($pageName);            
+            if ($cacheListFilePath != "" && 
+                $cacheListFilePath != $this->_cacheDirectory &&
+                file_exists($cacheListFilePath))
+            {
+                unlink($cacheListFilePath);
             }
         }  
     }
     //// end public methods
     
     //// protected methods
-    //* <method name="_GetCacheFilePath" modifiers="protected"
-    //* returnType="string">
+    //* <method name="_GetNewCacheFilePath" modifiers="protected" returnType="string">
     //* Get path of cache file for current or given page.
+    //* <parameter name="$pageName" type="string">
+    //* Optional.  Name of page.  If not given uses name of current page.
+    //* </parameter>
+    //* </method>
+    function _GetNewCacheFilePath($pageName = false)
+    {
+        if (!$pageName)
+        {
+            $page =& $this->_page;
+            $pageName = $page->get_PageName();
+        }
+        
+        $existingCacheFilePath = $this->_GetCacheFilePath($pageName);
+        
+        if ($existingCacheFilePath != "" &&
+            $existingCacheFilePath != $this->_cacheDirectory)
+        {
+            return $existingCacheFilePath;
+        }   
+        
+        // get page name without leading / or \ and .php extension
+        $safePageName = ereg_replace('^[/\](.*)\.php', '\1', $pageName); 
+        $safePageName = $this->_FileSystemSafeName($safePageName);
+        $cacheDirectory = $this->_cacheDirectory;
+        
+        $cacheFilePathBase = $cacheDirectory.$safePageName;
+        $cacheFilePath = $cacheFilePathBase.'.html';
+        $counter = 0;
+        while (file_exists($cacheFilePath))
+        {
+            $counter++;
+            $cacheFilePath = "$cacheFilePathBase.$counter.html";
+        }        
+        
+        $this->_AddCacheFilePathToList($cacheFilePath);
+        
+        return $cacheFilePath;
+    }
+    
+    //* <method name="_AddCacheFilePathToList" modifiers="protected" returnType="bool">
+    //* Added cache file to cache file list for page.
+    //* <parameter name="$cacheFilePath" type="string">
+    //* Path of cache file to be added to list.
+    //* </parameter>
+    //* <parameter name="$pageName" type="string">
+    //* Optional.  Name of page.  If not given uses name of current page.
+    //* </parameter>
+    //* </method>
+    function _AddCacheFilePathToList($cacheFilePath, $pageName = false)
+    {
+        if (!$pageName)
+        {
+            $page =& $this->_page;
+            $pageName = $page->get_PageName();
+        }
+        
+        $cacheListFilePath = $this->_GetCacheListFilePath($pageName);
+                
+        $fh = fopen($cacheListFilePath, 'a');
+        if (!$fh)
+        {
+            return false;
+        }
+        
+        if ($this->_cacheParametersArray)
+        {
+            foreach ($this->_cacheParametersArray as $paramKey)
+            {
+                if (!array_key_exists($paramKey, $_GET))
+                {
+                    fputs($fh, "Parameter:$paramKey=\r\n");
+                }
+                else
+                {
+                    fputs($fh, "Parameter:$paramKey=".$_GET[$paramKey]."\r\n");
+                }
+            }
+        }
+        $shortCacheFilePath = str_replace($this->_cacheDirectory, "", $cacheFilePath);
+        fputs($fh, "CacheFile:$shortCacheFilePath\r\n");
+        fclose($fh);
+        
+        return true;
+    }
+    
+    //* <method name="_GetCacheFilePathsForPage" modifiers="protected" returnType="string[]">
+    //* Get list of cache file paths for page.
+    //* <parameter name="$pageName" type="string">
+    //* Optional.  Name of page.  If not given uses name of current page.
+    //* </parameter>
+    //* </method>
+    function _GetCacheFilePathsForPage($pageName = false)
+    {
+        if (!$pageName)
+        {
+            $page =& $this->_page;
+            $pageName = $page->get_PageName();
+        }
+        $cacheListFilePath = $this->_GetCacheListFilePath($pageName);
+        if (!file_exists($cacheListFilePath))
+        {
+            return false;
+        }
+        
+        $fh = fopen($cacheListFilePath, 'r');
+        if (!$fh)
+        {
+            return "";
+        }
+        $cacheFiles = array();
+        
+        while ($line = fgets($fh))
+        {
+            $line = ltrim(rtrim($line));
+            if (ereg('^CacheFile:(.*)$', $line, $matches))
+            {
+                $cacheFiles[] = $this->_cacheDirectory.$matches[1];
+            }
+        }
+        
+        fclose($fh);
+        
+        return $cacheFiles;
+    }
+    
+    //* <method name="_GetCacheFilePath" modifiers="protected" returnType="string">
+    //* Get path cache file for previously cached page.
     //* <parameter name="$pageName" type="string">
     //* Optional.  Name of page.  If not given uses name of current page.
     //* </parameter>
@@ -201,16 +369,124 @@ class PageCache
             $page =& $this->_page;
             $pageName = $page->get_PageName();
         }
-        // get page name without leading / or \ and .php extension
-        $pageName = ereg_replace('^[/\](.*)\.php', '\1', $pageName); 
-        $safePageName = $this->_FileSystemSafeName($pageName);
-        $cacheDirectory = $this->_cacheDirectory;
+        $cacheListFilePath = $this->_GetCacheListFilePath($pageName);
+        if (!file_exists($cacheListFilePath))
+        {
+            return "";
+        }
         
-        return $cacheDirectory.$safePageName.'.html';
+        $fh = fopen($cacheListFilePath, 'r');
+        if (!$fh)
+        {
+            return "";
+        }
+        $cacheFilePath = "";
+        $parameters = array();
+        while ($line = fgets($fh))
+        {
+            $line = ltrim(rtrim($line));
+            if (ereg('^Parameter:(.*)$', $line, $matches))
+            {
+                $keyValue = split('=', $matches[1]);
+                
+                $key = $keyValue[0];
+                if (count($keyValue) == 1)
+                {
+                    $value = "";
+                }
+                else if (count($keyValue) > 2)
+                {
+                    // value contained 1 or more "=" so need to join value
+                    // back together
+                    $value = join("=", array_slice($keyValue, 1));
+                }
+                else
+                {
+                    $value = $keyValue[1];
+                }
+                $parameters[$key] = $value;
+            }
+            else if (ereg('^CacheFile:(.*)$', $line, $matches))
+            {
+                $paramMatch = true;
+                if (count($parameters) != count($this->_cacheParametersArray))
+                {
+                    $paramMatch = false;
+                }
+                else
+                {
+                    foreach (array_keys($this->_cacheParametersArray) as $exkey)
+                    {
+                        if (!array_key_exists($exKey, $parameters))
+                        {
+                            $paramMatch = false;
+                            break;
+                        }
+                    }
+                    if ($paramMatch)
+                    {
+                        // always match if no parameters
+                        if (count($parameters) > 0)
+                        {
+                            foreach (array_keys($parameters) as $key)
+                            {
+                                if (!array_key_exists($key, $_GET))
+                                {
+                                    // no parameter treated same as blank parameter
+                                    if ($parameters[$key] != "")
+                                    {
+                                        $paramMatch = false;
+                                        break;
+                                    }
+                                }
+                                else if ($_GET[$key] != $parameters[$key])
+                                {
+                                    $paramMatch = false;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if ($paramMatch)
+                {
+                   $cacheFilePath = ltrim($matches[1]);
+                   $cacheFilePath = rtrim($cacheFilePath);
+                   break;
+                }
+                else
+                {
+                    // reset parameter list
+                    $parameters = array();
+                }                        
+            }
+        }
+        fclose($fh);
+        return $this->_cacheDirectory.$cacheFilePath;
     }
     
-    //* <method name="_FileSystemSafeName" modifiers="protected"
-    //* returnType="string">
+    //* <method name="_GetCacheListFilePath" modifiers="protected" returnType="string">
+    //* Get path of cache list file for page
+    //* <parameter name="$pageName" type="string">
+    //* Optional.  Name of page.  If not given uses name of current page.
+    //* </parameter>
+    //* </method>
+    function _GetCacheListFilePath($pageName = false)
+    {
+        if (!$pageName)
+        {
+            $page =& $this->_page;
+            $pageName = $page->get_PageName();
+        }
+        // get page name without leading / or \ and .php extension
+        $safePageName = ereg_replace('^[/\](.*)\.php', '\1', $pageName); 
+        $safePageName = $this->_FileSystemSafeName($safePageName);
+        $cacheDirectory = $this->_cacheDirectory;
+        
+        return $cacheDirectory.$safePageName.'.cache';
+    }
+    
+    //* <method name="_FileSystemSafeName" modifiers="protected" returnType="string">
     //* Encode string to be safe to use as a file or directory name.
     //* <parameter name="$name" type="string">
     //* String to encode.
@@ -235,8 +511,7 @@ class PageCache
         return $safeName;
     }
     
-    //* <method name="_GetNameFromFileSystemSafeName" modifiers="protected"
-    //* returnType="string">
+    //* <method name="_GetNameFromFileSystemSafeName" modifiers="protected" returnType="string">
     //* Decode string previously encoded with _FileSystemSafeName()
     //* <parameter name="$safeName" type="string">
     //* String to decode.
@@ -260,8 +535,7 @@ class PageCache
         return $name;
     }
     
-    //* <method name="_TidyDirName" modifiers="protected"
-    //* returnType="string">
+    //* <method name="_TidyDirName" modifiers="protected" returnType="string">
     //* Clean up directory name to consistently use OS specific directory
     //* separator and ensure terminated by directory separator.
     //* <parameter name="$safeName" type="string">
