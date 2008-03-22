@@ -22,26 +22,49 @@
  *************************************************************************
  */
  
-require_once("ChildPageTemplate.php");
-require_once("PageBase.php");
+require_once("../framework/PageBase.php");
+require_once("ParentPageTemplate.php");
 
-class IndexPage2Code extends PageBase
-{
-    // protected overridden methods
-    function IndexPage2Code()
+class ChildPageTemplateCode extends PageBase
+{    
+    function ChildPageTemplateCode()
     {
-        $pageTemplate =& new ChildPageTemplate();
-        $this->_set_PageTemplate($pageTemplate);        
+        $this->PageBase();
+        $pageTemplate =& new ParentPageTemplate();
         $pageTemplate->set_Page($this);
-        $this->_RegisterPlaceHolder("top", "PlaceHolder_top");
-        $this->_RegisterPlaceHolder("bottom", "PlaceHolder_bottom");
-        $this->set_Title("PHP Page Template - Nested Template Example");        
-        $pageTemplate->set_Heading("PHP Page Template - Nested Template Example");  
+        $this->_set_PageTemplate($pageTemplate);
+        $this->_RegisterPlaceHolder("leftcol", "PlaceHolder_leftcol");
+        $this->_RegisterPlaceHolder("rightcol", "PlaceHolder_rightcol");
+        $this->_RegisterPlaceHolder("maincol", "PlaceHolder_maincol");
+        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate 
+        $pageTemplate->set_Heading($this->get_Heading());     
     }
+    
+    // public accessors
+    function get_Heading()
+    {
+        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
+        return !$pageTemplate ? "" : $pageTemplate->get_Heading();
+    }
+    
+    function get_EncodedHeading()
+    {
+        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
+        return !$pageTemplate ? "" : $pageTemplate->get_EncodedHeading();        
+    }
+    
+    function set_Heading($heading)
+    {
+        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
+        if ($pageTemplate)
+        {
+            $pageTemplate->set_Heading($heading);
+        }
+    }     
     
     function Render()
     {
-        parent::Render();                              
+        parent::Render();
     }
     
     function _set_PageTemplate($pageTemplate)

@@ -22,25 +22,25 @@
  *************************************************************************
  */
  
-require_once "phpunit.php";
+require_once "PHPUnit/Framework.php";
 require_once "MockPage.php";
 require_once "MockTemplate.php";
 
 //* <class name="PageBaseTests" modifiers="public">
 //* A selection of unit tests for PageBase
 //* </class>
-class PageBaseTests extends TestCase
+class PageBaseTests extends PHPUnit_Framework_TestCase
 {
     function test_Create_Page()
     {
         $page =& $this->_CreatePage();
-        $this->assert($page, "Expected page object");
+        $this->assertNotNull($page, "Expected page object");
     }
     
     function test_Create_Template()
     {
         $template =& $this->_CreateTemplate();
-        $this->assert($template, "Expected template object");
+        $this->assertNotNull($template, "Expected template object");
     }
     
     function test_Get_Page_Title_Single_Page()
@@ -94,7 +94,7 @@ class PageBaseTests extends TestCase
         $page->ResetPlaceHolderState();
         $page->RegisterPlaceHolderFunction("placeholder");
         $page->CallFunctionForPlaceHolder("placeholder");
-        $this->assert($page->WasPlaceHolderCalled(), 
+        $this->assertNotNull($page->WasPlaceHolderCalled(), 
             "Place holder function not called");
         $page->ResetPlaceHolderState();
     }
@@ -108,7 +108,7 @@ class PageBaseTests extends TestCase
         $page->ResetPlaceHolderState();
         $page->RegisterPlaceHolderFunction("placeholder");
         $template->RenderPlaceHolder("placeholder");
-        $this->assert($page->WasPlaceHolderCalled(), 
+        $this->assertNotNull($page->WasPlaceHolderCalled(), 
             "Place holder function not called");
         $page->ResetPlaceHolderState();
     }
@@ -127,15 +127,3 @@ class PageBaseTests extends TestCase
 }
 ?>
 
-<html>
-  <head>
-    <title>PHP-Unit Results</title>
-  </head>
-  <body>
-<?php
-$suite = new TestSuite("PageBaseTests");
-$testRunner = new TestRunner();
-$testRunner->run($suite);
-?>
-  </body>
-</html>

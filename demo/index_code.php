@@ -22,51 +22,21 @@
  *************************************************************************
  */
  
-require_once("PageBase.php");
+require_once("TestPageTemplate.php");
+require_once("../framework/PageBase.php");
 
-class ParentPageTemplateCode extends PageBase
-{    
-    // private member variables
-    var $_heading = "";
-    
-    // public accessors
-    function get_Heading()
+class IndexPageCode extends PageBase
+{
+    function IndexPageCode()
     {
-        if ($this->_heading == "")
-        {
-            return $this->_title;
-        }
-        else
-        {
-            return $this->_heading;
-        }
-    }
-    
-    function get_EncodedHeading()
-    {
-        if ($this->_heading == "")
-        {
-            return $this->get_EncodedTitle();
-        }
-        else
-        {
-            return htmlentities($this->_heading);
-        }
-    }
-    
-    function set_Heading($heading)
-    {
-        $this->_heading = trim($heading);
-    }     
-    
-    function Render()
-    {
-        parent::Render();
-    }
-    
-    function _set_PageTemplate($pageTemplate)
-    {
-        parent::_set_PageTemplate($pageTemplate);
+        $this->PageBase();
+        $pageTemplate =& new TestPageTemplate();
+        $pageTemplate->set_Page($this);
+        $this->set_Title("PHP Page Template - Simple Template Example");        
+        $pageTemplate->set_Heading("PHP Page Template - Simple Template Example");
+        $this->_set_PageTemplate($pageTemplate);
+        $this->_RegisterPlaceHolder("content1", "PlaceHolder_content1");
+        $this->_RegisterPlaceHolder("content2", "PlaceHolder_content2");        
     }
 }
 ?>

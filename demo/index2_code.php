@@ -22,41 +22,31 @@
  *************************************************************************
  */
  
-require_once("PageBase.php");
+require_once("ChildPageTemplate.php");
+require_once("../framework/PageBase.php");
 
-class TestPageTemplateCode extends PageBase
-{    
-    // private member variables
-    var $_heading = "";
-    
-    // public accessors
-    function get_Heading()
+class IndexPage2Code extends PageBase
+{
+    // protected overridden methods
+    function IndexPage2Code()
     {
-        if ($this->_heading == "")
-        {
-            return $this->_title;
-        }
-        else
-        {
-            return $this->_heading;
-        }
+        $pageTemplate =& new ChildPageTemplate();
+        $this->_set_PageTemplate($pageTemplate);        
+        $pageTemplate->set_Page($this);
+        $this->_RegisterPlaceHolder("top", "PlaceHolder_top");
+        $this->_RegisterPlaceHolder("bottom", "PlaceHolder_bottom");
+        $this->set_Title("PHP Page Template - Nested Template Example");        
+        $pageTemplate->set_Heading("PHP Page Template - Nested Template Example");  
     }
     
-    function get_EncodedHeading()
+    function Render()
     {
-        if ($this->_heading == "")
-        {
-            return $this->get_EncodedTitle();
-        }
-        else
-        {
-            return htmlentities($this->_heading);
-        }
+        parent::Render();                              
     }
     
-    function set_Heading($heading)
+    function _set_PageTemplate($pageTemplate)
     {
-        $this->_heading = trim($heading);
-    }   
+        parent::_set_PageTemplate($pageTemplate);
+    }
 }
 ?>

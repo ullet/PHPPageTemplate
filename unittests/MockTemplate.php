@@ -22,7 +22,7 @@
  *************************************************************************
  */
  
-require_once "PageBase.php";
+require_once "../framework/PageBase.php";
 
 class MockTemplate extends PageBase
 {

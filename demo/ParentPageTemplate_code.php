@@ -22,44 +22,41 @@
  *************************************************************************
  */
  
-require_once("PageBase.php");
-require_once("ParentPageTemplate.php");
+require_once("../framework/PageBase.php");
 
-class ChildPageTemplateCode extends PageBase
+class ParentPageTemplateCode extends PageBase
 {    
-    function ChildPageTemplateCode()
-    {
-        $this->PageBase();
-        $pageTemplate =& new ParentPageTemplate();
-        $pageTemplate->set_Page($this);
-        $this->_set_PageTemplate($pageTemplate);
-        $this->_RegisterPlaceHolder("leftcol", "PlaceHolder_leftcol");
-        $this->_RegisterPlaceHolder("rightcol", "PlaceHolder_rightcol");
-        $this->_RegisterPlaceHolder("maincol", "PlaceHolder_maincol");
-        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate 
-        $pageTemplate->set_Heading($this->get_Heading());     
-    }
+    // private member variables
+    var $_heading = "";
     
     // public accessors
     function get_Heading()
     {
-        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
-        return !$pageTemplate ? "" : $pageTemplate->get_Heading();
+        if ($this->_heading == "")
+        {
+            return $this->_title;
+        }
+        else
+        {
+            return $this->_heading;
+        }
     }
     
     function get_EncodedHeading()
     {
-        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
-        return !$pageTemplate ? "" : $pageTemplate->get_EncodedHeading();        
+        if ($this->_heading == "")
+        {
+            return $this->get_EncodedTitle();
+        }
+        else
+        {
+            return htmlentities($this->_heading);
+        }
     }
     
     function set_Heading($heading)
     {
-        $pageTemplate =& $this->_get_PageTemplate(); // as ParentPageTemplate
-        if ($pageTemplate)
-        {
-            $pageTemplate->set_Heading($heading);
-        }
+        $this->_heading = trim($heading);
     }     
     
     function Render()
