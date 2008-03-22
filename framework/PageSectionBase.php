@@ -2,7 +2,7 @@
 /*
  *************************************************************************
  * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.2.1 (14 January 2007)                                       *
+ * Version 0.3.0 (11 November 2007)                                      *
  * Copyright (C) 2006-2007 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
@@ -27,6 +27,34 @@
 //* </class>
 class PageSectionBase
 {    
+    //// private member variables
+    //* <property name="_page" modifiers="private" type="&amp;PageBase">
+    //* Parent page
+    //* </property>
+    var $_page;
+    //// end private member variables
+    
+    //// protected accessors
+    //* <method name="set_Page" modifiers="protected" returnType="void">
+    //* Sets parent page object
+    //* <parameter name="$page" type="&amp;PageBase">
+    //* Parent page object
+    //* </parameter>
+    //* </method>
+    function set_Page(&$page)
+    {
+        $this->_page =& $page;
+    }
+    
+    //* <method name="get_Page" modifiers="protected" returnType="&amp;PageBase">
+    //* Gets the parent page object 
+    //* </method>
+    function &get_Page()
+    {
+        return $this->_page;
+    }
+    //// end protected accessors
+    
     //// public methods
     //* <method name="Render" modifiers="public" returnType="void">
     //* Render page section
@@ -59,6 +87,21 @@ class PageSectionBase
     function _ConvertStringToBool($value)
     {
         return ($value=="true" || $value=="on" || $value=="yes" || $value=="1");
+    }
+    
+    //// public methods
+    //* <method name="RenderPageSection" modifiers="public" returnType="void">
+    //* Render a child page section
+    //* </method>
+    function RenderPageSection($pageSectionName)
+    {
+        // delegate rendering to parent page.
+        $args = func_get_args();
+        for ($idx=1; $idx<func_num_args(); $idx++)
+        {
+            $param = $args[$idx];
+        }
+        $this->_page->RenderPageSection($pageSectionName, $args);
     }
     //// end protected methods
 }

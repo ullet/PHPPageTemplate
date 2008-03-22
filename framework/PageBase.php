@@ -2,7 +2,7 @@
 /*
  *************************************************************************
  * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.2.1 (14 January 2007)                                       *
+ * Version 0.3.0 (11 November 2007)                                      *
  * Copyright (C) 2006-2007 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
@@ -22,7 +22,8 @@
  *************************************************************************
  */
 
-require_once "PageCache.php";
+require_once dirname(__FILE__)."/PageCache.php";
+require_once dirname(__FILE__)."/Theme.php";
 
 //* <class name="PageBase" modifiers="public, abstract">
 //* Base class for a web page based on a template and a template page
@@ -61,6 +62,27 @@ class PageBase
     //* PageCache for caching page.
     //* </property>
     var $_pageCache = false;
+    //* <property name="_pageSections" modifiers="private" 
+    //* type="[string,PageSectionBase]">
+    //* Array of PageSections
+    //* </property>
+    var $_pageSections;
+    //* <property name="_theme" modifiers="private" type="&amp;Theme">
+    //* Page theme
+    //* </property>    
+    var $_theme = false;
+    //* <property name="_themeList" modifiers="private" type="&amp;ThemeList">
+    //* List of page themes
+    //* </property>    
+    var $_themeList = false;
+    //* <property name="_themeListPath" modifiers="private" type="string">
+    //* Path of XML document defining themes
+    //* </property>    
+    var $_themeListPath = false;
+    //* <property name="_defaultThemeName" modifiers="private" type="string">
+    //* Name of default theme
+    //* </property>    
+    var $_defaultThemeName = false;
     //// end private member variables
     
     //// constructors
@@ -230,8 +252,101 @@ class PageBase
         $pageCache =& $this->_get_PageCache();
         return $pageCache->_cacheParameters;
     }
-    //// end public accessors
     
+    //* <method name="set_CaseInsensitiveCacheParameters" modifiers="public" 
+    //* returnType="void">
+    //* Set flag indicating if cache parameters should be case insensitive.
+    //* <parameter name="$value" type="boolean">
+    //* Boolean.
+    //* </parameter>
+    //* </method>    
+    function set_CaseInsensitiveCacheParameters($value)
+    {
+        $pageCache =& $this->_get_PageCache();
+        $pageCache->set_CaseInsensitiveCacheParameters($value);
+    }    
+    
+    //* <method name="set_CaseInsensitiveCacheParameterKeys" 
+    //* modifiers="public" returnType="void">
+    //* Set flag indicating if cache parameter keys should be case insensitive.
+    //* <parameter name="$value" type="boolean">
+    //* Boolean.
+    //* </parameter>
+    //* </method>    
+    function set_CaseInsensitiveCacheParameterKeys($value)
+    {
+        $pageCache =& $this->_get_PageCache();
+        $pageCache->set_CaseInsensitiveCacheParameterKeys($value);
+    }   
+    
+    //* <method name="set_CaseInsensitiveCacheParameterValues" 
+    //* modifiers="public" returnType="void">
+    //* Set flag indicating if cache parameter values should be case
+    //* insensitive.
+    //* <parameter name="$value" type="boolean">
+    //* Boolean.
+    //* </parameter>
+    //* </method>    
+    function set_CaseInsensitiveCacheParameterValues($value)
+    {
+        $pageCache =& $this->_get_PageCache();
+        $pageCache->set_CaseInsensitiveCacheParameterValues($value);
+    }   
+    
+    function &get_Theme()
+    {
+        if (!$this->_theme)
+        {
+            $themeList =& $this->get_ThemeList();
+            if ($themeList)
+            {
+                $this->_theme =& $themeList->get_SelectedTheme();
+            }
+        }
+        return $this->_theme;
+    }
+    
+    function set_Theme($theme)
+    {
+        $this->_theme = $theme;
+    }
+    
+    function &get_ThemeList()
+    {
+        if (!$this->_themeList && $this->get_ThemeListPath())
+        {
+            $this->_themeList =& new ThemeList(
+                $this->get_ThemeListPath(), $this->get_DefaultThemeName());
+        }
+        return $this->_themeList;
+    }
+    
+    function set_ThemeList($themeList)
+    {
+        $this->_themeList =& $themeList;
+    }
+    
+    function set_ThemeListPath($path)
+    {
+        $this->_themeListPath = $path;
+    }
+    
+    function get_ThemeListPath()
+    {
+        return $this->_themeListPath;
+    }
+    
+    function set_DefaultThemeName($name)
+    {
+        $this->_defaultThemeName = $name;
+    }
+    
+    function get_DefaultThemeName()
+    {
+        return $this->_defaultThemeName;
+    }
+    //// end public accessors
+        
     //// public methods
     //* <method name="RenderPageSection" modifiers="public" returnType="void">
     //* Render specified page section
@@ -242,27 +357,60 @@ class PageBase
     function RenderPageSection($pageSectionName)
     {
         $pageSection =& new $pageSectionName();
-        for ($idx=1; $idx<func_num_args(); $idx++)
-        {
-            $param = func_get_arg($idx);
-            $keyValue = split("=",$param);
-            if (count($keyValue) > 1)
+        $pageSection->set_Page($this);
+        $this->_pageSections[$pageSectionName] =& $pageSection;
+        $args = func_get_args();
+        $this->_ProcessPageSectionProperties($pageSection, $args);
+        $this->PreRenderPageSection($pageSectionName);
+        $pageSection->Render();
+        $this->PostRenderPageSection($pageSectionName);
+    }
+    
+    function SetSelectedThemeCookie()
+    {
+        //if ($this->get_ThemesEnabled() && $this->get_UseCookies())
+        //{
+            $themeList =& $this->get_ThemeList();
+            if ($themeList)
             {
-                $key = $keyValue[0];
-                if (count($keyValue) > 2)
-                {
-                    // value contained 1 or more "=" so need to join value
-                    // back together
-                    $value = join("=", array_slice($keyValue, 1));
-                }
-                else
-                {
-                    $value = $keyValue[1];
-                }
-                $pageSection->SetProperty(strtolower($key), $value);
+                $themeList->SetSelectedThemeCookie();
+            }
+        //}
+    }
+    
+    function _ProcessPageSectionProperties(&$pageSection, $args)
+    {
+        foreach ($args as $param)
+        {
+            if (is_array($param))
+            {
+                $this->_ProcessPageSectionProperties($pageSection, $param);                
+            }
+            else
+            {
+                $this->_ProcessPageSectionProperty($pageSection, $param);
             }
         }
-        $pageSection->Render();
+    }
+    
+    function _ProcessPageSectionProperty(&$pageSection, $param)
+    {
+        $keyValue = split("=",$param);
+        if (count($keyValue) > 1)
+        {
+            $key = $keyValue[0];
+            if (count($keyValue) > 2)
+            {
+                // value contained 1 or more "=" so need to join value
+                // back together
+                $value = join("=", array_slice($keyValue, 1));
+            }
+            else
+            {
+                $value = $keyValue[1];
+            }
+            $pageSection->SetProperty(strtolower($key), $value);
+        }
     }
     
     //* <method name="Render" modifiers="public" returnType="void">
@@ -299,10 +447,102 @@ class PageBase
         }
         if ($this->get_EnablePageBuffering())
         {
+            $this->PostProcessOutput();
             ob_end_flush();
         }
         
         $this->PostRender();
+    }
+    
+    //* <method name="PostProcessOutput" modifiers="public" returnType="void">
+    //* Post-process output before final output is rendered to browser
+    //* </method>
+    function PostProcessOutput()
+    {
+        if ($this->get_EnablePageBuffering())
+        {
+            $output = $this->DoPostProcessOutput(ob_get_contents());
+            if ($output)
+            {
+                ob_clean();
+                echo $output;
+            }
+        }
+    }
+    
+    //* <method name="DoPostProcessOutput" modifiers="public"
+    //* returnType="[string,boolean]">
+    //* Post-process output before final output is rendered to browser
+    //* <remarks>
+    //* If no processing performed should return false, otherwise should
+    //* return processed string.
+    //* </remarks>
+    //* </method>
+    function DoPostProcessOutput($output)
+    {
+        //if ($this->get_ThemesEnabled())
+        //{
+            return $this->SetThemeParameterPostProcessOutput($output);
+        //}
+    }
+    
+    function SetThemeParameterPostProcessOutput($output)
+    {
+        if ("" == $output)
+        {
+            return false;
+        }
+        
+        $themeList =& $this->get_ThemeList();
+        
+        if (!$themeList)
+        {
+            return false;
+        }
+        
+        if (!$themeList->get_ThemeExplicitlySelected())
+        {
+            return false;
+        }
+        
+        if ($themeList->get_ThemeInCookie())
+        {
+            return false;
+        }
+        
+        $theme =& $this->get_Theme();
+                            
+        $procOutput = $output;
+        if (preg_match_all('/(<a\s+(?:.*?\s+)?href\s*=\s*\"[^\"#]*)([\"#])/i', $procOutput, $matches))
+        {
+            $mindex = 0;
+            foreach ($matches[1] as $match)
+            {
+                $string = $match.$matches[2][$mindex];
+
+                if (!preg_match('/^(.*?href\s*=\s*\".*?theme=).*?((?:\?|&(?:amp;)?)?.*?)$/i', $match, $parts))
+                {
+                    if (preg_match('/href\s*=\s*\".*?\?/i', $match))
+                    {
+                        $replacement = $match."&amp;";
+                    }
+                    else
+                    {
+                        $replacement = $match."?";
+                    }
+                    $replacement .= "theme=" .
+                        $theme->get_Name();
+                    $replacement .= $matches[2][$mindex];
+                
+                    if (!preg_match('/<a\s+(?:.*?\s+)?href\s*=\s*\"\s*[hf]tt?p/i', $match))
+                    {
+                       $procOutput = str_replace($string, $replacement, $procOutput);
+                    }
+                }
+                $mindex++;
+            }
+        }
+        return $procOutput;
     }
     
     //* <method name="DoRender" modifiers="public" returnType="void">
@@ -403,6 +643,28 @@ class PageBase
     //* </method>
     function PostRender()
     {
+    }
+    
+    //* <method name="PreRenderPageSection" modifiers="protected, abstract" returnType="void">
+    //* Execute code required before RenderPageSection().  Will always be called even if page is cached.
+    //* </method>
+    function PreRenderPageSection($pageSectionName)
+    {
+    }
+    
+    //* <method name="PostRenderPageSection" modifiers="protected, abstract" returnType="void">
+    //* Execute code required after RenderPageSection().
+    //* </method>
+    function PostRenderPageSection($pageSectionName)
+    {
+    }
+    
+    //* <method name="PageSectionFromName" modifiers="protected" returnType="object">
+    //* Get PageSection object for specified name.
+    //* </method>
+    function &PageSectionFromName($pageSectionName)
+    {
+        return $this->_pageSections[$pageSectionName];
     }
     
     //* <method name="_RegisterPlaceHolder" modifiers="protected" returnType="void">
