@@ -1,9 +1,9 @@
 <?php
 /*
  *************************************************************************
- * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.3.0 (11 November 2007)                                      *
- * Copyright (C) 2006-2007 Trevor Barnett                                *
+ * PHPPageTemplate: A PHP page templating system.                        *
+ * Version 0.3.1 (05 May 2008)                                           *
+ * Copyright (C) 2006-2008 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -30,15 +30,15 @@ class ListIterator
     //* <property name="_currentItem" modifiers="private" type="mixed">
     //* Current item in list.
     //* </property>
-    var $_currentItem = false;
+    private $_currentItem = false;
     //* <property name="_currentItemIndex" modifiers="private" type="int">
     //* Index of current item in list.
     //* </property>
-    var $_currentItemIndex = -1;
+    private $_currentItemIndex = -1;
     //* <property name="_list" modifiers="private" type="mixed[]">
     //* List of items.
     //* </property>
-    var $_list = false;
+    private $_list = false;
     
     //// public accessors
     //* <method name="set_List" modifiers="public" returnType="void">
@@ -47,7 +47,7 @@ class ListIterator
     //* List of items
     //* </parameter>
     //* </method>    
-    function set_List(&$list)
+    public function set_List(&$list)
     {
         $this->_list =& $list;
     }
@@ -55,7 +55,7 @@ class ListIterator
     //* <method name="get_List" modifiers="public" returnType="string">
     //* Get list on which iterator operates
     //* </method>    
-    function &get_List()
+    public function &get_List()
     {
         return $this->_list;
     }
@@ -63,7 +63,7 @@ class ListIterator
     //* <method name="get_CurrentItemIndex" modifiers="public" returnType="int">
     //* Get index of current item in list
     //* </method>    
-    function get_CurrentItemIndex()
+    public function get_CurrentItemIndex()
     {
         return $this->_currentItemIndex;
     }
@@ -73,7 +73,7 @@ class ListIterator
     //* <method name="NextItem" modifiers="public" returnType="boolean">
     //* Move to next item in list
     //* </method>
-    function NextItem()
+    public function NextItem()
     {
         $this->_currentItemIndex ++;
         
@@ -102,7 +102,7 @@ class ListIterator
     //* processing on the current item/value of current item $property
     //* </parameter>
     //* </method>
-    function CurrentItem(&$object, $item, $property, $evalFunction = false)
+    public function CurrentItem(&$object, $item, $property, $evalFunction = false)
     {
         if (!$evalFunction && !$property)
         {
@@ -141,7 +141,7 @@ class ListIterator
         {
             if (substr($evalFunction,0,5) != "\$this")
             {
-                if (method_exists($object, $evalFunction))
+                if ($object && method_exists($object, $evalFunction))
                 {
                     $evalFunction = "\$object->$evalFunction";
                 }
@@ -182,7 +182,7 @@ class ListIterator
     //* processing on the current item/value of current item $property
     //* </parameter>
     //* </method>
-    function CurrentListItem(&$object, $property = false, $evalFunction = false)
+    public function CurrentListItem(&$object = false, $property = false, $evalFunction = false)
     {
         return $this->CurrentItem($object, "_currentItem", $property, $evalFunction);
     }

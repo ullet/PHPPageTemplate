@@ -1,9 +1,9 @@
 <?php
 /*
  *************************************************************************
- * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.3.0 (11 November 2007)                                      *
- * Copyright (C) 2006-2007 Trevor Barnett                                *
+ * PHPPageTemplate: A PHP page templating system.                        *
+ * Version 0.3.1 (05 May 2008)                                           *
+ * Copyright (C) 2006-2008 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *
@@ -22,19 +22,43 @@
  *************************************************************************
  */
 
+require_once dirname(__FILE__)."/CookieCollection.php";
+require_once dirname(__FILE__)."/QueryStringCollection.php";
+ 
 //* <class name="PageRequest" modifiers="public">
 //* Page request class
 //* </class>
 class PageRequest
 {
+    private $cookieCollection = false;
+    private $queryStringCollection = false;
+    
     //// public methods
+    public function get_CookieCollection()
+    {
+        if (!$this->cookieCollection)
+        {
+            $this->cookieCollection = new CookieCollection();
+        }
+        return $this->cookieCollection;
+    }    
+    
+    public function get_QueryStringCollection()
+    {
+        if (!$this->queryStringCollection)
+        {
+            $this->queryStringCollection = new QueryStringCollection();
+        }
+        return $this->queryStringCollection;
+    }
+    
     //* <method name="QueryString" modifiers="public" 
     //* returnType="[string=>string]">
     //* Gets querystring parameters as an associative array
     //* </method>
-    function &QueryString()
+    public function QueryString()
     {
-        return $_GET;
+        return $this->get_QueryStringCollection()->QueryString();
     }
     
     //* <method name="QueryStringLC" modifiers="public" 
@@ -42,14 +66,9 @@ class PageRequest
     //* Gets querystring parameters as an associative array with all keys and
     //* values in lower case
     //* </method>
-    function &QueryStringLC()
+    public function QueryStringLC()
     {
-        $qslc = array();
-        foreach (array_keys($_GET) as $key)
-        {
-            $qslc[strtolower($key)] = strtolower($_GET[$key]);
-        }
-        return $qslc;
+        return $this->get_QueryStringCollection()->QueryStringLC();
     }
     
     //* <method name="QueryStringLCKeys" modifiers="public" 
@@ -57,14 +76,9 @@ class PageRequest
     //* Gets querystring parameters as an associative array with all keys in 
     //* lower case
     //* </method>
-    function &QueryStringLCKeys()
+    public function QueryStringLCKeys()
     {
-        $qslc = array();
-        foreach (array_keys($_GET) as $key)
-        {
-            $qslc[strtolower($key)] = $_GET[$key];
-        }
-        return $qslc;
+        return $this->get_QueryStringCollection()->QueryStringLCKeys();
     }
     
     //* <method name="QueryStringLCValues" modifiers="public" 
@@ -72,14 +86,9 @@ class PageRequest
     //* Gets querystring parameters as an associative array with all values in 
     //* lower case
     //* </method>
-    function &QueryStringLCValues()
+    public function QueryStringLCValues()
     {
-        $qslc = array();
-        foreach (array_keys($_GET) as $key)
-        {
-            $qslc[$key] = strtolower($_GET[$key]);
-        }
-        return $qslc;
+        return $this->get_QueryStringCollection()->QueryStringLCValues();
     }
     
     //* <method name="QueryStringHash" modifiers="public" 
@@ -89,26 +98,18 @@ class PageRequest
     //* key (actualKey), value of parameter (value) and 
     //* lower case value (valueLC).
     //* </method>
-    function &QueryStringHash()
+    public function QueryStringHash()
     {
-        $qs = array();
-        foreach (array_keys($_GET) as $key)
-        {
-            $qs[strtolower($key)] = array(
-                "actualKey" => $key,
-                "value" => $_GET[$key],
-                "valueLC" => strtolower($_GET[$key]));
-        }
-        return $qs;
+        return $this->get_QueryStringCollection()->QueryStringHash();
     }
     
     //* <method name="Cookies" modifiers="public" 
     //* returnType="[string=>string]">
     //* Gets cookies as an associative array
     //* </method>
-    function &Cookies()
+    public function Cookies()
     {
-        return $_COOKIE;
+        return $this->get_CookieCollection()->Cookies();
     }
     
     //* <method name="CookiesLC" modifiers="public" 
@@ -116,14 +117,9 @@ class PageRequest
     //* Gets cookies as an associative array with all keys and
     //* values in lower case
     //* </method>
-    function &CookiesLC()
+    public function CookiesLC()
     {
-        $clc = array();
-        foreach (array_keys($_COOKIE) as $key)
-        {
-            $clc[strtolower($key)] = strtolower($_COOKIE[$key]);
-        }
-        return $clc;
+        return $this->get_CookieCollection()->CookiesLC();
     }
     
     //* <method name="CookiesLCKeys" modifiers="public" 
@@ -131,14 +127,9 @@ class PageRequest
     //* Gets cookies as an associative array with all keys in 
     //* lower case
     //* </method>
-    function &CookiesLCKeys()
+    public function CookiesLCKeys()
     {
-        $clc = array();
-        foreach (array_keys($_COOKIE) as $key)
-        {
-            $clc[strtolower($key)] = $_COOKIE[$key];
-        }
-        return $clc;
+        return $this->get_CookieCollection()->CookiesLCKeys();
     }
     
     //* <method name="CookiesLCValues" modifiers="public" 
@@ -146,14 +137,9 @@ class PageRequest
     //* Gets cookies as an associative array with all values in 
     //* lower case
     //* </method>
-    function &CookiesLCValues()
+    public function CookiesLCValues()
     {
-        $clc = array();
-        foreach (array_keys($_COOKIE) as $key)
-        {
-            $clc[$key] = strtolower($_COOKIE[$key]);
-        }
-        return $clc;
+        return $this->get_CookieCollection()->CookiesLCValues();
     }
     
     //* <method name="CookiesHash" modifiers="public" 
@@ -163,17 +149,20 @@ class PageRequest
     //* key (actualKey), value of parameter (value) and 
     //* lower case value (valueLC).
     //* </method>
-    function &CookiesHash()
+    public function CookiesHash()
     {
-        $cookies = array();
-        foreach (array_keys($_COOKIE) as $key)
-        {
-            $cookies[strtolower($key)] = array(
-                "actualKey" => $key,
-                "value" => $_COOKIE[$key],
-                "valueLC" => strtolower($_COOKIE[$key]));
-        }
-        return $cookies;
+        return $this->get_CookieCollection()->CookiesHash();
     }    
     //// end public methods
+    
+    protected function set_CookieCollection($cookieCollection)
+    {
+        $this->cookieCollection = $cookieCollection;
+    }
+    
+    protected function set_QueryStringCollection($queryStringCollection)
+    {
+        $this->queryStringCollection = $queryStringCollection;
+    }
 }
+?>

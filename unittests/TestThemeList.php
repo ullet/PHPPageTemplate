@@ -22,68 +22,55 @@
  *************************************************************************
  */
  
-require_once("ChildPageTemplate_code.php");
+require_once "../framework/ThemeList.php";
 
-class ChildPageTemplate extends ChildPageTemplateCode
-{    
-    function ChildPageTemplate()
+class TestThemeList extends ThemeList
+{
+    var $_themeListPath;
+    
+    // override constructor so can capture themeListPath for testing
+    function TestThemeList($themeListPath, $defaultTheme=false, $pageRequest=false)
     {
-        $this->ChildPageTemplateCode();
+        $this->_themeListPath = $themeListPath;
+        parent::ThemeList($themeListPath, $defaultTheme, $pageRequest);
     }
-        
-    function PlaceHolder_leftcol()
-    { 
-?>
-<fieldset>
-  <legend>Main Menu</legend>
-  <ul id="mainmenu">
-    <li><a href="#">Duis quis leo quis</a></li>
-    <li><a href="#">Ut in magna eu lorem</a></li>
-    <li><a href="#">Nullam faucibus odio</a></li>
-    <li><a href="#">Vivamus sed eros quis</a></li>
-    <li><a href="#">Curabitur bibendum</a></li>
-    <li><a href="#">Cras blandit elit</a></li>
-    <li><a href="#">Quisque accumsan</a></li>
-  </ul>
-</fieldset>
-<?php
-    }        
     
-    function PlaceHolder_rightcol()
-    { 
-?>
-<fieldset>
-  <legend>Sub Menu</legend>
-  <ul id="submenu">
-    <li><a href="#">Praesent ut turpis</a></li>
-    <li><a href="#">Pellentesque quis</a></li>
-    <li><a href="#">Integer in nisi</a></li>
-    <li><a href="#">Etiam bibendum</a></li>
-    <li><a href="#">Aliquam volutpat</a></li>
-    <li><a href="#">Donec scelerisque</a></li>
-    <li><a href="#">In vel orci non</a></li>
-    <li><a href="#">Suspendisse id</a></li>
-  </ul>
-</fieldset>
-<?php
-    } 
-    
-    function PlaceHolder_maincol()
+    function get_ThemeListPath_ForTesting()
     {
-?>
-<fieldset>
-  <legend>Top</legend>
-  <?php $this->_RenderPlaceHolder("top") ?>
-</fieldset>
-<div>
-  <hr />
-  <hr />
-</div>
-<fieldset>
-  <legend>Bottom</legend>
-  <?php $this->_RenderPlaceHolder("bottom") ?>
-</fieldset>
-<?php
+        return $this->_themeListPath;
+    }
+    
+    function get_SelectedThemeQS_ForTesting()
+    {
+        return $this->_get_SelectedThemeQS();
+    }
+    
+    function get_SelectedThemeCookies_ForTesting()
+    {
+        return $this->_get_SelectedThemeCookies();
+    }
+    
+    function get_ExplicitlySelectedTheme_ForTesting()
+    {
+        return $this->_get_ExplicitlySelectedTheme();
+    }
+    
+    function SelectedThemeFromCollection_ForTesting(&$col)
+    {
+        return $this->_SelectedThemeFromCollection($col);
+    }
+    
+    function ParseThemes_ForTesting($themeListPath)
+    {
+        // use parent not $this to ensure real
+        // method is called not one of the overridden
+        // test methods.
+        return parent::_ParseThemes($themeListPath);
+    }
+    
+    function AddTheme_ForTesting($theme)
+    {
+        $this->_AddTheme($theme);
     }
 }
 ?>

@@ -1,9 +1,9 @@
 <?php
 /*
  *************************************************************************
- * PHPPageTemplate: A PHP4 page templating system.                       *
- * Version 0.3.0 (11 November 2007)                                      *
- * Copyright (C) 2006-2007 Trevor Barnett                                *
+ * PHPPageTemplate: A PHP page templating system.                        *
+ * Version 0.3.1 (05 May 2008)                                           *
+ * Copyright (C) 2006-2008 Trevor Barnett                                *
  *                                                                       *
  * This program is free software; you can redistribute it and/or modify  *
  * it under the terms of the GNU General Public License as published by  *

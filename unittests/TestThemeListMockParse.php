@@ -22,68 +22,25 @@
  *************************************************************************
  */
  
-require_once("ChildPageTemplate_code.php");
+require_once "TestThemeList.php";
+require_once "TestQSTheme.php";
+require_once "TestCookieTheme.php";
 
-class ChildPageTemplate extends ChildPageTemplateCode
-{    
-    function ChildPageTemplate()
+class TestThemeListMockParse extends TestThemeList
+{
+    function TestThemeListNoParse($themeListPath, $defaultTheme=false, $pageRequest=false)
     {
-        $this->ChildPageTemplateCode();
+        parent::TestThemeList($themeListPath, $defaultTheme, $pageRequest);
     }
-        
-    function PlaceHolder_leftcol()
-    { 
-?>
-<fieldset>
-  <legend>Main Menu</legend>
-  <ul id="mainmenu">
-    <li><a href="#">Duis quis leo quis</a></li>
-    <li><a href="#">Ut in magna eu lorem</a></li>
-    <li><a href="#">Nullam faucibus odio</a></li>
-    <li><a href="#">Vivamus sed eros quis</a></li>
-    <li><a href="#">Curabitur bibendum</a></li>
-    <li><a href="#">Cras blandit elit</a></li>
-    <li><a href="#">Quisque accumsan</a></li>
-  </ul>
-</fieldset>
-<?php
-    }        
     
-    function PlaceHolder_rightcol()
-    { 
-?>
-<fieldset>
-  <legend>Sub Menu</legend>
-  <ul id="submenu">
-    <li><a href="#">Praesent ut turpis</a></li>
-    <li><a href="#">Pellentesque quis</a></li>
-    <li><a href="#">Integer in nisi</a></li>
-    <li><a href="#">Etiam bibendum</a></li>
-    <li><a href="#">Aliquam volutpat</a></li>
-    <li><a href="#">Donec scelerisque</a></li>
-    <li><a href="#">In vel orci non</a></li>
-    <li><a href="#">Suspendisse id</a></li>
-  </ul>
-</fieldset>
-<?php
-    } 
-    
-    function PlaceHolder_maincol()
+    // Override _ParseThemes method to set test values in order to be able
+    // to test methods that need config data (but don't need to parse a file).
+    function _ParseThemes($themeListPath)
     {
-?>
-<fieldset>
-  <legend>Top</legend>
-  <?php $this->_RenderPlaceHolder("top") ?>
-</fieldset>
-<div>
-  <hr />
-  <hr />
-</div>
-<fieldset>
-  <legend>Bottom</legend>
-  <?php $this->_RenderPlaceHolder("bottom") ?>
-</fieldset>
-<?php
+        $theme =& new TestQSTheme();
+        $this->_AddTheme($theme);
+        $theme =& new TestCookieTheme();
+        $this->_AddTheme($theme);
     }
 }
 ?>

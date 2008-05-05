@@ -21,69 +21,50 @@
  * USA                                                                   *
  *************************************************************************
  */
+require_once "../framework/CookieCollection.php";
  
-require_once("ChildPageTemplate_code.php");
-
-class ChildPageTemplate extends ChildPageTemplateCode
-{    
-    function ChildPageTemplate()
+//* <class name="Cookie" modifiers="public">
+//* MockCookieCollection class
+//* </class>
+class MockCookieCollection extends CookieCollection
+{
+    private $cookies = array();
+    
+    public function SetCookie($name, $value, $duration, $path="", $domain="", $secure=0)
     {
-        $this->ChildPageTemplateCode();
+        $this->cookies[] = array(
+                'name'=>$name,
+                'value'=>$value,
+                'expires'=>$this->CurrentTime() + $duration,
+                'path'=>$path,
+                'domain'=>$doamin,
+                'secure'=>$secure);
     }
-        
-    function PlaceHolder_leftcol()
-    { 
-?>
-<fieldset>
-  <legend>Main Menu</legend>
-  <ul id="mainmenu">
-    <li><a href="#">Duis quis leo quis</a></li>
-    <li><a href="#">Ut in magna eu lorem</a></li>
-    <li><a href="#">Nullam faucibus odio</a></li>
-    <li><a href="#">Vivamus sed eros quis</a></li>
-    <li><a href="#">Curabitur bibendum</a></li>
-    <li><a href="#">Cras blandit elit</a></li>
-    <li><a href="#">Quisque accumsan</a></li>
-  </ul>
-</fieldset>
-<?php
-    }        
     
-    function PlaceHolder_rightcol()
-    { 
-?>
-<fieldset>
-  <legend>Sub Menu</legend>
-  <ul id="submenu">
-    <li><a href="#">Praesent ut turpis</a></li>
-    <li><a href="#">Pellentesque quis</a></li>
-    <li><a href="#">Integer in nisi</a></li>
-    <li><a href="#">Etiam bibendum</a></li>
-    <li><a href="#">Aliquam volutpat</a></li>
-    <li><a href="#">Donec scelerisque</a></li>
-    <li><a href="#">In vel orci non</a></li>
-    <li><a href="#">Suspendisse id</a></li>
-  </ul>
-</fieldset>
-<?php
-    } 
-    
-    function PlaceHolder_maincol()
+    public function Cookies()
     {
-?>
-<fieldset>
-  <legend>Top</legend>
-  <?php $this->_RenderPlaceHolder("top") ?>
-</fieldset>
-<div>
-  <hr />
-  <hr />
-</div>
-<fieldset>
-  <legend>Bottom</legend>
-  <?php $this->_RenderPlaceHolder("bottom") ?>
-</fieldset>
-<?php
+        $cookieArray = array();
+        foreach ($this->cookies as $cookie)
+        {
+            $cookieArray[$cookie['name']] = $cookie['value'];
+        }
+        return $cookieArray;
+    }
+    
+    protected function CurrentTime()
+    {
+        // this method exist purely to make testing easier, can override
+        // this method to ensure fixed time to test against
+        return time();
+    }
+    
+    public function ClearTestCookies()
+    {
+        $this->cookies = array();
+    }
+    
+    public function AddTestCookie($key, $value)
+    {
+        $this->SetCookie($key, $value, 3600);
     }
 }
-?>

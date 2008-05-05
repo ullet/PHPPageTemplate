@@ -22,68 +22,20 @@
  *************************************************************************
  */
  
-require_once("ChildPageTemplate_code.php");
+require_once "../framework/Theme.php";
 
-class ChildPageTemplate extends ChildPageTemplateCode
-{    
-    function ChildPageTemplate()
+class TestQSTheme extends Theme
+{
+    function TestQSTheme()
     {
-        $this->ChildPageTemplateCode();
-    }
-        
-    function PlaceHolder_leftcol()
-    { 
-?>
-<fieldset>
-  <legend>Main Menu</legend>
-  <ul id="mainmenu">
-    <li><a href="#">Duis quis leo quis</a></li>
-    <li><a href="#">Ut in magna eu lorem</a></li>
-    <li><a href="#">Nullam faucibus odio</a></li>
-    <li><a href="#">Vivamus sed eros quis</a></li>
-    <li><a href="#">Curabitur bibendum</a></li>
-    <li><a href="#">Cras blandit elit</a></li>
-    <li><a href="#">Quisque accumsan</a></li>
-  </ul>
-</fieldset>
-<?php
-    }        
-    
-    function PlaceHolder_rightcol()
-    { 
-?>
-<fieldset>
-  <legend>Sub Menu</legend>
-  <ul id="submenu">
-    <li><a href="#">Praesent ut turpis</a></li>
-    <li><a href="#">Pellentesque quis</a></li>
-    <li><a href="#">Integer in nisi</a></li>
-    <li><a href="#">Etiam bibendum</a></li>
-    <li><a href="#">Aliquam volutpat</a></li>
-    <li><a href="#">Donec scelerisque</a></li>
-    <li><a href="#">In vel orci non</a></li>
-    <li><a href="#">Suspendisse id</a></li>
-  </ul>
-</fieldset>
-<?php
-    } 
-    
-    function PlaceHolder_maincol()
-    {
-?>
-<fieldset>
-  <legend>Top</legend>
-  <?php $this->_RenderPlaceHolder("top") ?>
-</fieldset>
-<div>
-  <hr />
-  <hr />
-</div>
-<fieldset>
-  <legend>Bottom</legend>
-  <?php $this->_RenderPlaceHolder("bottom") ?>
-</fieldset>
-<?php
+        parent::Theme("qstheme");
+        $this->set_FavIconUrl("/qstheme.ico");
+        $this->set_StyleSheetPath("/qstheme.css");
+        $this->set_StyleSheetPathIE6("/qsthemeie6.css");
+        $this->set_StyleSheetPathIE7("/qsthemeie7.css");
+        $this->set_Title("QS Theme");
+        $this->set_Description("The QS theme");
+        $this->set_ThumbnailUrl("/qsthemethumb.jpg");
     }
 }
 ?>
