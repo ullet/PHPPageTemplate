@@ -55,7 +55,6 @@ class ThemeList
     private $_cookieDuration = 2592000; // default to 30 days
     private $_iterator = false;
     private $_pageRequest = false;
-    private $_cookieCollection = false;
     
     //// constructors               
     public function ThemeList($themeListPath, $defaultTheme=false, $pageRequest=false)
@@ -81,18 +80,9 @@ class ThemeList
         return $this->_pageRequest;
     }
     
-    public function set_CookieCollection($cookieCollection)
+    protected function get_CookieCollection()
     {
-        $this->_cookieCollection = $cookieCollection;
-    }
-    
-    public function get_CookieCollection()
-    {
-        if (!$this->_cookieCollection)
-        {
-            $this->_cookieCollection = new CookieCollection();
-        }
-        return $this->_cookieCollection;
+        return $this->get_PageRequest()->get_CookieCollection();
     }
     
     public function set_CookieDuration($duration)

@@ -408,45 +408,125 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
         $this->assertTrue($themeList->ThemeExists("cookietheme"));
         $this->assertFalse($themeList->ThemeExists("test1"));
     }
+    
+    public function test_SetSelectedThemeCookie()
+    {
+        // need theme selected in QS else cookie won't be set (as
+        // will be determined nothing to set).
+        $themeList = $this->_CreateThemeListMockParseWithQS();
+        $pageRequest = $themeList->get_PageRequest();
+        
+        // verify start with no cookies
+        $this->assertEquals(0, count($pageRequest->Cookies()));
+        
+        $themeList->SetSelectedThemeCookie();
+        
+        $cookies = $pageRequest->Cookies();
+        $this->assertEquals(1, count($cookies));
+        $cookieKeys = array_keys($cookies);
+        $cookieValues = array_values($cookies);
+        $this->assertEquals("theme", $cookieKeys[0]);
+        $this->assertEquals("qstheme", $cookieValues[0]);
+    }
+    
+    public function test_SetSelectedThemeCookie_NoThemeSelected()
+    {
+        // no selected theme so should not set cookie
+        $themeList = $this->_CreateThemeListMockParse();
+        $pageRequest = $themeList->get_PageRequest();
+        
+        // verify start with no cookies
+        $this->assertEquals(0, count($pageRequest->Cookies()));
+        
+        $themeList->SetSelectedThemeCookie();
+        
+        // verify end with no cookies
+        $this->assertEquals(0, count($pageRequest->Cookies()));
+    }
+    
+    public function test_SetSelectedThemeCookie_ThemeAlreadyInCookie()
+    {
+        // no selected theme so should not set cookie
+        $themeList = $this->_CreateThemeListMockParseWithCookie();
+        $pageRequest = $themeList->get_PageRequest();
+        
+        // verify start with expected theme cookie
+        $cookies = $pageRequest->Cookies();
+        $this->assertEquals(1, count($cookies));
+        $cookieKeys = array_keys($cookies);
+        $cookieValues = array_values($cookies);
+        $this->assertEquals("theme", $cookieKeys[0]);
+        $this->assertEquals("cookietheme", $cookieValues[0]);
+        
+        $themeList->SetSelectedThemeCookie();
+        
+        // verify end with same cookie
+        $cookies = $pageRequest->Cookies();
+        $this->assertEquals(1, count($cookies));
+        $cookieKeys = array_keys($cookies);
+        $cookieValues = array_values($cookies);
+        $this->assertEquals("theme", $cookieKeys[0]);
+        $this->assertEquals("cookietheme", $cookieValues[0]);
+    }
+    
+    public function test_SetSelectedThemeCookie_ThemeAlreadyInCookie_NewThemeInQS()
+    {
+        $pageRequest = new TestPageRequest();
+        $pageRequest->AddTestQueryStringParameter("theme", "qstheme");
+        $pageRequest->AddTestCookie("theme", "cookietheme");
+        $themeList = new TestThemeListMockParse("/notadir/notafile.xml", "test1", $pageRequest);
+        
+        // verify start with expected theme cookie
+        $cookies = $pageRequest->Cookies();
+        $this->assertEquals(1, count($cookies));
+        $cookieKeys = array_keys($cookies);
+        $cookieValues = array_values($cookies);
+        $this->assertEquals("theme", $cookieKeys[0]);
+        $this->assertEquals("cookietheme", $cookieValues[0]);
+        
+        $themeList->SetSelectedThemeCookie();
+        
+        // verify end with new cookie
+        $cookies = $pageRequest->Cookies();
+        $this->assertEquals(1, count($cookies));
+        $cookieKeys = array_keys($cookies);
+        $cookieValues = array_values($cookies);
+        $this->assertEquals("theme", $cookieKeys[0]);
+        $this->assertEquals("qstheme", $cookieValues[0]);
+    }
     //// End: The Tests
     
     //// Begin: Utility methods
-    function &_CreateThemeList()
+    protected function _CreateThemeList()
     {
         return new TestThemeList("testthemeconfig.xml", "test1");        
     }
     
-    function &_CreateThemeListNoParse()
+    protected function _CreateThemeListNoParse()
     {
         // Create a non-parsing theme list so to avoid unnecessary parsing of 
         // config for tests that don't need it.
         return new TestThemeListNoParse("/notadir/notafile.xml", "test1");
     }
     
-    function &_CreateThemeListMockParse()
+    protected function _CreateThemeListMockParse()
     {
         // Create a theme list with mock config data
         return new TestThemeListMockParse("/notadir/notafile.xml", "test1");
     }
     
-    function &_CreateThemeListMockParseWithQS()
+    protected function _CreateThemeListMockParseWithQS()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
-        $pageRequest =& new TestPageRequest();
+        $pageRequest = new TestPageRequest();
         $pageRequest->AddTestQueryStringParameter("theme", "qstheme");
-        $themeList->set_PageRequest($pageRequest);
-        
-        return $themeList;
+        return new TestThemeListMockParse("/notadir/notafile.xml", "test1", $pageRequest);
     }
     
-    function &_CreateThemeListMockParseWithCookie()
+    protected function _CreateThemeListMockParseWithCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
-        $pageRequest =& new TestPageRequest();
+        $pageRequest = new TestPageRequest();
         $pageRequest->AddTestCookie("theme", "cookietheme");
-        $themeList->set_PageRequest($pageRequest);
-        
-        return $themeList;
+        return new TestThemeListMockParse("/notadir/notafile.xml", "test1", $pageRequest);
     }
     //// End: Utility methods
 }
