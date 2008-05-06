@@ -38,27 +38,27 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     // Test the utility methods in TestPageRequest
     public function test_ClearQueryString()
     {
-        $pageRequest =& $this->CreatePageRequest();
-        $qsBefore =& $pageRequest->QueryString();
+        $pageRequest = $this->CreatePageRequest();
+        $qsBefore = $pageRequest->QueryString();
         $this->assertNotEquals(0, count($qsBefore));
         $pageRequest->ClearTestQueryString();
-        $qsAfter =& $pageRequest->QueryString();
+        $qsAfter = $pageRequest->QueryString();
         $this->assertEquals(0, count($qsAfter));
     }
     
     public function test_ClearCookies()
     {
-        $pageRequest =& $this->CreatePageRequest();
-        $cookiesBefore =& $pageRequest->Cookies();
+        $pageRequest = $this->CreatePageRequest();
+        $cookiesBefore = $pageRequest->Cookies();
         $this->assertNotEquals(0, count($cookiesBefore));
         $pageRequest->ClearTestCookies();
-        $cookiesAfter =& $pageRequest->Cookies();
+        $cookiesAfter = $pageRequest->Cookies();
         $this->assertEquals(0, count($cookiesAfter));
     }
     
     public function test_CreateTestPageRequest()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         $this->assertEquals(3, count($pageRequest->QueryString()));
         $this->assertEquals(2, count($pageRequest->Cookies()));        
         $qskeys = array_keys($pageRequest->QueryString());
@@ -85,9 +85,9 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     //// Begin: The Tests
     public function test_QueryStringLC()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         
-        $qs =& $pageRequest->QueryStringLC();
+        $qs = $pageRequest->QueryStringLC();
         
         $this->assertEquals(3, count($qs));        
         $qskeys = array_keys($qs);
@@ -104,9 +104,9 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_QueryStringLCKeys()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         
-        $qs =& $pageRequest->QueryStringLCKeys();
+        $qs = $pageRequest->QueryStringLCKeys();
         
         $this->assertEquals(3, count($qs));        
         $qskeys = array_keys($qs);
@@ -123,9 +123,9 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_QueryStringLCValues()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         
-        $qs =& $pageRequest->QueryStringLCValues();
+        $qs = $pageRequest->QueryStringLCValues();
         
         $this->assertEquals(3, count($qs));        
         $qskeys = array_keys($qs);
@@ -142,9 +142,9 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_QueryStringHash()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         
-        $qs =& $pageRequest->QueryStringHash();
+        $qs = $pageRequest->QueryStringHash();
         
         $this->assertEquals(3, count($qs));        
         $qskeys = array_keys($qs);
@@ -170,9 +170,9 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_CookiesLC()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         
-        $cookies =& $pageRequest->CookiesLC();
+        $cookies = $pageRequest->CookiesLC();
         
         $this->assertEquals(2, count($cookies));        
         $cookiekeys = array_keys($cookies);
@@ -187,9 +187,9 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_CookiesLCKeys()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         
-        $cookies =& $pageRequest->CookiesLCKeys();
+        $cookies = $pageRequest->CookiesLCKeys();
         
         $this->assertEquals(2, count($cookies));        
         $cookiekeys = array_keys($cookies);
@@ -204,9 +204,9 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_CookiesLCValues()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         
-        $cookies =& $pageRequest->CookiesLCValues();
+        $cookies = $pageRequest->CookiesLCValues();
         
         $this->assertEquals(2, count($cookies));        
         $cookiekeys = array_keys($cookies);
@@ -221,9 +221,9 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_CookiesHash()
     {
-        $pageRequest =& $this->CreatePageRequest();
+        $pageRequest = $this->CreatePageRequest();
         
-        $cookies =& $pageRequest->CookiesHash();
+        $cookies = $pageRequest->CookiesHash();
         
         $this->assertEquals(2, count($cookies));        
         $cookiekeys = array_keys($cookies);

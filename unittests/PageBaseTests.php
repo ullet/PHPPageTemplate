@@ -31,29 +31,29 @@ require_once "MockTemplate.php";
 //* </class>
 class PageBaseTests extends PHPUnit_Framework_TestCase
 {
-    function test_Create_Page()
+    public function test_Create_Page()
     {
-        $page =& $this->_CreatePage();
+        $page = $this->CreatePage();
         $this->assertNotNull($page, "Expected page object");
     }
     
-    function test_Create_Template()
+    public function test_Create_Template()
     {
-        $template =& $this->_CreateTemplate();
+        $template = $this->CreateTemplate();
         $this->assertNotNull($template, "Expected template object");
     }
     
-    function test_Get_Page_Title_Single_Page()
+    public function test_Get_Page_Title_Single_Page()
     {
-        $page =& $this->_CreatePage();
+        $page = $this->CreatePage();
         $page->set_Title("The Page");
         $this->assertEquals("The Page", $page->get_Title());
     }
     
-    function test_Get_Page_Title_Templated_Page()
+    public function test_Get_Page_Title_Templated_Page()
     {
-        $page =& $this->_CreatePage();
-        $template =& $this->_CreateTemplate();
+        $page = $this->CreatePage();
+        $template = $this->CreateTemplate();
         $page->set_Title("The Page");
         $template->set_Title("The Template");
         $this->assertEquals("The Page", $page->get_Title());
@@ -64,12 +64,12 @@ class PageBaseTests extends PHPUnit_Framework_TestCase
         $this->assertEquals("The Page", $template->get_Title());
     }  
     
-    function test_Get_Page_Title_Nested_Templated_Page()
+    public function test_Get_Page_Title_Nested_Templated_Page()
     {
-        $page =& $this->_CreatePage();
-        $template1 =& $this->_CreateTemplate();
-        $template2 =& $this->_CreateTemplate();
-        $template3 =& $this->_CreateTemplate();
+        $page = $this->CreatePage();
+        $template1 = $this->CreateTemplate();
+        $template2 = $this->CreateTemplate();
+        $template3 = $this->CreateTemplate();
         $page->set_Title("The Page");
         $template1->set_Title("Template 1");
         $template2->set_Title("Template 2");
@@ -88,9 +88,9 @@ class PageBaseTests extends PHPUnit_Framework_TestCase
         $this->assertEquals("The Page", $template3->get_Title());
     } 
     
-    function test_CallFunctionForPlaceHolder()
+    public function test_CallFunctionForPlaceHolder()
     {
-        $page =& $this->_CreatePage();
+        $page = $this->CreatePage();
         $page->ResetPlaceHolderState();
         $page->RegisterPlaceHolderFunction("placeholder");
         $page->CallFunctionForPlaceHolder("placeholder");
@@ -99,10 +99,10 @@ class PageBaseTests extends PHPUnit_Framework_TestCase
         $page->ResetPlaceHolderState();
     }
     
-    function test_RenderPlaceHolder()
+    public function test_RenderPlaceHolder()
     {
-        $page =& $this->_CreatePage();
-        $template =& $this->_CreateTemplate();
+        $page = $this->CreatePage();
+        $template = $this->CreateTemplate();
         $page->set_PageTemplate($template);
         $template->set_Page($page);
         $page->ResetPlaceHolderState();
@@ -113,16 +113,18 @@ class PageBaseTests extends PHPUnit_Framework_TestCase
         $page->ResetPlaceHolderState();
     }
     
-    function &_CreatePage()
+    protected function CreatePage()
     {
-        $page =& new MockPage();
-        return $page;
+        // NB. MockPage extends PageBase and implements additional
+        // sensing methods.  Code under test is from PageBase.
+        return new MockPage();
     }
     
-    function &_CreateTemplate()
+    protected function CreateTemplate()
     {
-        $template =& new MockTemplate();
-        return $template;
+        // NB. MockTemplate extends PageBase and implements additional
+        // sensing methods.  Code under test is from PageBase.        
+        return new MockTemplate();
     }
 }
 ?>

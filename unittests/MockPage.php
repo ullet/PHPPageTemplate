@@ -26,33 +26,34 @@ require_once "../framework/PageBase.php";
 
 class MockPage extends PageBase
 {   
-    var $_placeHolderCalled = false;
-    function ResetPlaceHolderState()
+    private $_placeHolderCalled = false;
+    
+    public function ResetPlaceHolderState()
     {
         $this->_placeHolderCalled = false;
     }
     
-    function WasPlaceHolderCalled()
+    public function WasPlaceHolderCalled()
     {
         return $this->_placeHolderCalled;
     }
         
-    function PlaceHolderFunction()
+    public function PlaceHolderFunction()
     {
         $this->_placeHolderCalled = true;
     }
     
-    function RegisterPlaceHolderFunction($name)
+    public function RegisterPlaceHolderFunction($name)
     {
         $this->_RegisterPlaceHolder($name, "PlaceHolderFunction");
     }
     
-    function set_PageTemplate(&$template)
+    public function set_PageTemplate(&$template)
     {
         $this->_set_PageTemplate($template);
     }
     
-    function &get_PageTemplate()
+    public function &get_PageTemplate()
     {
         return $this->_get_PageTemplate();
     }

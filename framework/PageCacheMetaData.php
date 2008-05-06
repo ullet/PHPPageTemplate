@@ -31,20 +31,20 @@ class PageCacheMetaData
     //* <property name="_pageName" modifiers="private" type="string">
     //* Name of page.
     //* </property>
-    var $_pageName = "";
+    private $_pageName = "";
     //* <property name="_expiration" modifiers="private" type="int">
     //* Time of page expiration.
     //* </property>
-    var $_expiration = 0;
+    private $_expiration = 0;
     //* <property name="_parameterValues" modifiers="private" 
     //* type="string[string]">
     //* Hash array of parameters.
     //* </property>    
-    var $_parameterValues = false;
+    private $_parameterValues = false;
     //* <property name="_cacheFilePath" modifiers="private" type="string">
     //* Path of cache file.
     //* </property>
-    var $_cacheFilePath = "";    
+    private $_cacheFilePath = "";    
     //// end private member variables
     
     //// public accessor methods
@@ -55,7 +55,7 @@ class PageCacheMetaData
     //* Name of page.
     //* </parameter>
     //* </method>
-    function set_PageName($pageName)
+    public function set_PageName($pageName)
     {
         $this->_pageName = $pageName;
     }
@@ -64,7 +64,7 @@ class PageCacheMetaData
     //* returnType="string">
     //* Gets name of page. 
     //* </method>
-    function get_PageName()
+    public function get_PageName()
     {
         return $this->_pageName;
     }
@@ -76,7 +76,7 @@ class PageCacheMetaData
     //* Expiration time of page.
     //* </parameter>
     //* </method>
-    function set_Expiration($expiration)
+    public function set_Expiration($expiration)
     {
         $this->_expiration = $expiration;
     }
@@ -85,7 +85,7 @@ class PageCacheMetaData
     //* returnType="int">
     //* Gets expiration time of page. 
     //* </method>
-    function get_Expiration()
+    public function get_Expiration()
     {
         return $this->_expiration;
     }
@@ -97,7 +97,7 @@ class PageCacheMetaData
     //* Cache file path.
     //* </parameter>
     //* </method>
-    function set_CacheFilePath($cacheFilePath)
+    public function set_CacheFilePath($cacheFilePath)
     {
         $this->_cacheFilePath = $cacheFilePath;
     }
@@ -106,7 +106,7 @@ class PageCacheMetaData
     //* returnType="string">
     //* Gets cache file path. 
     //* </method>
-    function get_CacheFilePath()
+    public function get_CacheFilePath()
     {
         return $this->_cacheFilePath;
     }
@@ -118,7 +118,7 @@ class PageCacheMetaData
     //* Parameters hash array.
     //* </parameter>
     //* </method>
-    function set_Parameters($parameters)
+    public function set_Parameters($parameters)
     {
         $this->_parameterValues = $parameters;
     }    
@@ -127,9 +127,9 @@ class PageCacheMetaData
     //* returnType="string[string]">
     //* Gets parameters hash array. 
     //* </method>
-    function get_Parameters()
+    public function get_Parameters()
     {
-        return $this->_parameterValues;
+        return $this->_parameterValues;        
     }
 }
 ?>

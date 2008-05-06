@@ -28,19 +28,17 @@ require_once "TestCookieTheme.php";
 
 class TestThemeListMockParse extends TestThemeList
 {
-    function TestThemeListNoParse($themeListPath, $defaultTheme=false, $pageRequest=false)
+    public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
     {
-        parent::TestThemeList($themeListPath, $defaultTheme, $pageRequest);
+        parent::__construct($themeListPath, $defaultTheme, $pageRequest);
     }
     
     // Override _ParseThemes method to set test values in order to be able
     // to test methods that need config data (but don't need to parse a file).
-    function _ParseThemes($themeListPath)
+    protected function _ParseThemes($themeListPath)
     {
-        $theme =& new TestQSTheme();
-        $this->_AddTheme($theme);
-        $theme =& new TestCookieTheme();
-        $this->_AddTheme($theme);
+        $this->_AddTheme(new TestQSTheme());
+        $this->_AddTheme(new TestCookieTheme());
     }
 }
 ?>

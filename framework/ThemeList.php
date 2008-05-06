@@ -53,11 +53,11 @@ class ThemeList
     //* theme should expire.
     //* </property>
     private $_cookieDuration = 2592000; // default to 30 days
-    private $_iterator = false;
-    private $_pageRequest = false;
+    private $_iterator = NULL;
+    private $_pageRequest = NULL;
     
     //// constructors               
-    public function ThemeList($themeListPath, $defaultTheme=false, $pageRequest=false)
+    public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
     {
         $this->set_DefaultThemeName($defaultTheme);
         $this->set_PageRequest($pageRequest);
@@ -97,6 +97,8 @@ class ThemeList
     
     public function set_DefaultThemeName($theme)
     {
+        // aside: incorrectly setting type hint of 'Theme' caused
+        // a segmentation fault! (Not the 'Fatal Error' would have expected)
         $this->_defaultTheme = $theme;
     }
     
@@ -223,7 +225,7 @@ class ThemeList
     //// end public methods
     
     //// protected methods    
-    protected function _SelectedThemeFromCollection(&$col)
+    protected function _SelectedThemeFromCollection(array $col)
     {
         if (array_key_exists('theme', $col))
         {
@@ -348,7 +350,7 @@ class ThemeList
         $this->_currentElement = false;
     } 
     
-    protected function _AddTheme($theme)
+    protected function _AddTheme(Theme $theme)
     {
         if ($theme)
         {

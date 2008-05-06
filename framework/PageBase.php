@@ -29,67 +29,67 @@ require_once dirname(__FILE__)."/Theme.php";
 //* Base class for a web page based on a template and a template page
 //* </class>
 // NB. A template page is just a page with place holders.
-class PageBase
+abstract class PageBase
 {
     //// private member variables
     //* <property name="_pageTemplate" modifiers="private" type="&amp;PageBase">
     //* Template for Page
     //* </property>
-    var $_pageTemplate;   
+    private $_pageTemplate;   
     //* <property name="_placeHolderfunctions" modifiers="private" type="[string,string]">
     //* Array of functions for place holders
     //* </property>
-    var $_placeHolderfunctions;
+    private $_placeHolderfunctions;
     //* <property name="_page" modifiers="private" 
     //* type="&amp;PageBase">
     //* Reference to page using template
     //* </property>
-    var $_page;
+    private $_page;
     //* <property name="_title" modifiers="private" type="string">
     //* Title of page for display in browser title bar
     //* </property>
-    var $_title = "Untitled page";
+    private $_title = "Untitled page";
     //* <property name="_enablePageCaching" modifiers="private" type="bool">
     //* Flag setting page output caching enabled/disabled
     //* </property>
-    var $_enablePageCaching = false;
+    private $_enablePageCaching = false;
     //* <property name="_enablePageBuffering" modifiers="private" type="bool">
     //* Flag setting page output buffering enabled/disabled.
     //* Buffering must be enabled to enable page caching.
     //* </property>    
-    var $_enablePageBuffering = true;
+    private $_enablePageBuffering = true;
     //* <property name="_pageCache" modifiers="private" type="&amp;PageCache">
     //* PageCache for caching page.
     //* </property>
-    var $_pageCache = false;
+    private $_pageCache = false;
     //* <property name="_pageSections" modifiers="private" 
     //* type="[string,PageSectionBase]">
     //* Array of PageSections
     //* </property>
-    var $_pageSections;
+    private $_pageSections;
     //* <property name="_theme" modifiers="private" type="&amp;Theme">
     //* Page theme
     //* </property>    
-    var $_theme = false;
+    private $_theme = false;
     //* <property name="_themeList" modifiers="private" type="&amp;ThemeList">
     //* List of page themes
     //* </property>    
-    var $_themeList = false;
+    private $_themeList = false;
     //* <property name="_themeListPath" modifiers="private" type="string">
     //* Path of XML document defining themes
     //* </property>    
-    var $_themeListPath = false;
+    private $_themeListPath = false;
     //* <property name="_defaultThemeName" modifiers="private" type="string">
     //* Name of default theme
     //* </property>    
-    var $_defaultThemeName = false;
+    private $_defaultThemeName = false;
     //// end private member variables
     
     //// constructors
     //* <constructor modifiers="protected">
     //* Create PageBase object.
     //* </constructor>
-    function PageBase()
+    public function __construct()
     {
         $this->_placeHolderfunctions = array();
     }
@@ -99,7 +99,7 @@ class PageBase
     //* <method name="get_EncodedTitle" modifiers="public" returnType="string">
     //* Gets HTML encoded page title 
     //* </method>
-    function get_EncodedTitle()
+    public function get_EncodedTitle()
     {
        return htmlentities($this->get_Title());
     }
@@ -107,7 +107,7 @@ class PageBase
     //* <method name="get_Title" modifiers="public" returnType="string">
     //* Gets page title 
     //* </method>
-    function get_Title()
+    public function get_Title()
     {
         if ($this->_page)
         {
@@ -122,7 +122,7 @@ class PageBase
     //* Title of page
     //* </parameter>
     //* </method>
-    function set_Title($title)
+    public function set_Title($title)
     {
         if ($this->_page)
         {
@@ -137,7 +137,7 @@ class PageBase
     //* <method name="get_Page" modifiers="public" returnType="&amp;PageBase">
     //* Gets page using template 
     //* </method>
-    function &get_Page()
+    public function get_Page()
     {
         return $this->_page;
     }
@@ -148,15 +148,15 @@ class PageBase
     //* Page using template
     //* </parameter>
     //* </method>
-    function set_Page(&$page)
+    public function set_Page(PageBase $page)
     {
-        $this->_page =& $page;
+        $this->_page = $page;
     }
     
     //* <method name="get_PageUrl" modifiers="public" returnType="string">
     //* Gets the URL of the currently executing page.
     //* </method>
-    function get_PageUrl()
+    public function get_PageUrl()
     {
         $host = $_SERVER['HTTP_HOST'];
         $page = $this->get_PageName();        
@@ -167,7 +167,7 @@ class PageBase
     //* <method name="get_PageName" modifiers="public" returnType="string">
     //* Gets the name of the currently executing page.
     //* </method>
-    function get_PageName()
+    public function get_PageName()
     {
         // for some reason $_SERVER['SCRIPT_NAME'] doesn't work right
         return $_SERVER['PHP_SELF'];
@@ -179,7 +179,7 @@ class PageBase
     //* Boolean flag
     //* </parameter>
     //* </method>
-    function set_EnablePageCaching($enabled)
+    public function set_EnablePageCaching($enabled)
     {
         $this->_enablePageCaching = $enabled;
     }
@@ -187,7 +187,7 @@ class PageBase
     //* <method name="get_EnablePageCaching" modifiers="public" returnType="bool">
     //* Get flag indicating if page caching is enabled.
     //* </method>
-    function get_EnablePageCaching()
+    public function get_EnablePageCaching()
     {
         return $this->_enablePageBuffering && $this->_enablePageCaching;
     }
@@ -198,7 +198,7 @@ class PageBase
     //* Boolean flag
     //* </parameter>
     //* </method>
-    function set_EnablePageBuffering($enabled)
+    public function set_EnablePageBuffering($enabled)
     {
         $this->_enablePageBuffering = $enabled;
     }
@@ -206,7 +206,7 @@ class PageBase
     //* <method name="get_EnablePageBuffering" modifiers="public" returnType="bool">
     //* Get flag indicating if page buffering is enabled.
     //* </method>
-    function get_EnablePageBuffering()
+    public function get_EnablePageBuffering()
     {
         return $this->_enablePageBuffering;
     }
@@ -217,18 +217,18 @@ class PageBase
     //* Duration to cache page.
     //* </parameter>
     //* </method>
-    function set_CacheDuration($duration)
+    public function set_CacheDuration($duration)
     {
-        $pageCache =& $this->_get_PageCache();
+        $pageCache = $this->_get_PageCache();
         $pageCache->_cacheDuration = $duration;
     }
     
     //* <method name="get_CacheDuration" modifiers="public" returnType="int">
     //* Get duration to cache page
     //* </method>
-    function get_CacheDuration()
+    public function get_CacheDuration()
     {
-        $pageCache =& $this->_get_PageCache();
+        $pageCache = $this->_get_PageCache();
         return $pageCache->set_CacheDuration;
     }
     
@@ -238,18 +238,18 @@ class PageBase
     //* Querysting parameters to vary cache.
     //* </parameter>
     //* </method>
-    function set_CacheParameters($parameters)
+    public function set_CacheParameters($parameters)
     {
-        $pageCache =& $this->_get_PageCache();
+        $pageCache = $this->_get_PageCache();
         $pageCache->set_CacheParameters($parameters);
     }
     
     //* <method name="get_CacheParameters" modifiers="public" returnType="string">
     //* Get querysting parameters to vary cache
     //* </method>
-    function get_CacheParameters()
+    public function get_CacheParameters()
     {
-        $pageCache =& $this->_get_PageCache();
+        $pageCache = $this->_get_PageCache();
         return $pageCache->_cacheParameters;
     }
     
@@ -260,9 +260,9 @@ class PageBase
     //* Boolean.
     //* </parameter>
     //* </method>    
-    function set_CaseInsensitiveCacheParameters($value)
+    public function set_CaseInsensitiveCacheParameters($value)
     {
-        $pageCache =& $this->_get_PageCache();
+        $pageCache = $this->_get_PageCache();
         $pageCache->set_CaseInsensitiveCacheParameters($value);
     }    
     
@@ -273,9 +273,9 @@ class PageBase
     //* Boolean.
     //* </parameter>
     //* </method>    
-    function set_CaseInsensitiveCacheParameterKeys($value)
+    public function set_CaseInsensitiveCacheParameterKeys($value)
     {
-        $pageCache =& $this->_get_PageCache();
+        $pageCache = $this->_get_PageCache();
         $pageCache->set_CaseInsensitiveCacheParameterKeys($value);
     }   
     
@@ -287,61 +287,61 @@ class PageBase
     //* Boolean.
     //* </parameter>
     //* </method>    
-    function set_CaseInsensitiveCacheParameterValues($value)
+    public function set_CaseInsensitiveCacheParameterValues($value)
     {
-        $pageCache =& $this->_get_PageCache();
+        $pageCache = $this->_get_PageCache();
         $pageCache->set_CaseInsensitiveCacheParameterValues($value);
     }   
     
-    function &get_Theme()
+    public function get_Theme()
     {
         if (!$this->_theme)
         {
-            $themeList =& $this->get_ThemeList();
+            $themeList = $this->get_ThemeList();
             if ($themeList)
             {
-                $this->_theme =& $themeList->get_SelectedTheme();
+                $this->_theme = $themeList->get_SelectedTheme();
             }
         }
         return $this->_theme;
     }
     
-    function set_Theme($theme)
+    public function set_Theme($theme)
     {
         $this->_theme = $theme;
     }
     
-    function &get_ThemeList()
+    public function get_ThemeList()
     {
         if (!$this->_themeList && $this->get_ThemeListPath())
         {
-            $this->_themeList =& new ThemeList(
+            $this->_themeList = new ThemeList(
                 $this->get_ThemeListPath(), $this->get_DefaultThemeName());
         }
         return $this->_themeList;
     }
     
-    function set_ThemeList($themeList)
+    public function set_ThemeList(ThemeList $themeList)
     {
-        $this->_themeList =& $themeList;
+        $this->_themeList = $themeList;
     }
     
-    function set_ThemeListPath($path)
+    public function set_ThemeListPath($path)
     {
         $this->_themeListPath = $path;
     }
     
-    function get_ThemeListPath()
+    public function get_ThemeListPath()
     {
         return $this->_themeListPath;
     }
     
-    function set_DefaultThemeName($name)
+    public function set_DefaultThemeName($name)
     {
         $this->_defaultThemeName = $name;
     }
     
-    function get_DefaultThemeName()
+    public function get_DefaultThemeName()
     {
         return $this->_defaultThemeName;
     }
@@ -354,11 +354,11 @@ class PageBase
     //* Name of page section to render
     //* </parameter>
     //* </method>
-    function RenderPageSection($pageSectionName)
+    public function RenderPageSection($pageSectionName)
     {
-        $pageSection =& new $pageSectionName();
+        $pageSection = new $pageSectionName();
         $pageSection->set_Page($this);
-        $this->_pageSections[$pageSectionName] =& $pageSection;
+        $this->_pageSections[$pageSectionName] = $pageSection;
         $args = func_get_args();
         $this->_ProcessPageSectionProperties($pageSection, $args);
         $this->PreRenderPageSection($pageSectionName);
@@ -366,11 +366,11 @@ class PageBase
         $this->PostRenderPageSection($pageSectionName);
     }
     
-    function SetSelectedThemeCookie()
+    public function SetSelectedThemeCookie()
     {
         //if ($this->get_ThemesEnabled() && $this->get_UseCookies())
         //{
-            $themeList =& $this->get_ThemeList();
+            $themeList = $this->get_ThemeList();
             if ($themeList)
             {
                 $themeList->SetSelectedThemeCookie();
@@ -378,7 +378,7 @@ class PageBase
         //}
     }
     
-    function _ProcessPageSectionProperties(&$pageSection, $args)
+    public function _ProcessPageSectionProperties(PageSection $pageSection, $args)
     {
         foreach ($args as $param)
         {
@@ -393,7 +393,7 @@ class PageBase
         }
     }
     
-    function _ProcessPageSectionProperty(&$pageSection, $param)
+    public function _ProcessPageSectionProperty(PageSection $pageSection, $param)
     {
         $keyValue = split("=",$param);
         if (count($keyValue) > 1)
@@ -416,7 +416,7 @@ class PageBase
     //* <method name="Render" modifiers="public" returnType="void">
     //* Render page
     //* </method>
-    function Render()
+    public function Render()
     {
         $this->PreRender();
         
@@ -457,7 +457,7 @@ class PageBase
     //* <method name="PostProcessOutput" modifiers="public" returnType="void">
     //* Post-process output before final output is rendered to browser
     //* </method>
-    function PostProcessOutput()
+    public function PostProcessOutput()
     {
         if ($this->get_EnablePageBuffering())
         {
@@ -478,7 +478,7 @@ class PageBase
     //* return processed string.
     //* </remarks>
     //* </method>
-    function DoPostProcessOutput($output)
+    public function DoPostProcessOutput($output)
     {
         //if ($this->get_ThemesEnabled())
         //{
@@ -486,14 +486,14 @@ class PageBase
         //}
     }
     
-    function SetThemeParameterPostProcessOutput($output)
+    public function SetThemeParameterPostProcessOutput($output)
     {
         if ("" == $output)
         {
             return false;
         }
         
-        $themeList =& $this->get_ThemeList();
+        $themeList = $this->get_ThemeList();
         
         if (!$themeList)
         {
@@ -510,7 +510,7 @@ class PageBase
             return false;
         }
         
-        $theme =& $this->get_Theme();
+        $theme = $this->get_Theme();
                             
         $procOutput = $output;
         if (preg_match_all('/(<a\s+(?:.*?\s+)?href\s*=\s*\"[^\"#]*)([\"#])/i', $procOutput, $matches))
@@ -548,7 +548,7 @@ class PageBase
     //* <method name="DoRender" modifiers="public" returnType="void">
     //* Do rendering of page
     //* </method>
-    function DoRender()
+    public function DoRender()
     {
         if ($this->_pageTemplate)
         {
@@ -563,7 +563,7 @@ class PageBase
     //* Name of placeholder
     //* </parameter>
     //* </method>
-    function CallFunctionForPlaceHolder($placeHolderName)
+    public function CallFunctionForPlaceHolder($placeHolderName)
     {
         if (!in_array($placeHolderName, 
             array_keys($this->_placeHolderfunctions)))
@@ -579,15 +579,12 @@ class PageBase
         }
     }
     
-    //// abstract public methods
-    //* <method name="RenderContent" modifiers="public, abstract" returnType="void">
+    //* <method name="RenderContent" modifiers="public" returnType="void">
     //* Render templated content
     //* </method>
-    function RenderContent() // abstract
+    public function RenderContent()
     {
     }
-    //// end abstract public methods
-    //// end public methods
     
     //// protected accessors
     //* <method name="_set_PageTemplate" modifiers="protected" returnType="void">
@@ -596,15 +593,15 @@ class PageBase
     //* Template for page
     //* </parameter>
     //* </method>
-    function _set_PageTemplate(&$pageTemplate)
+    protected function _set_PageTemplate(PageBase $pageTemplate)
     {
-        $this->_pageTemplate =& $pageTemplate;
+        $this->_pageTemplate = $pageTemplate;
     }
     
     //* <method name="_get_PageTemplate" modifiers="protected" returnType="&amp;PageBase">
     //* Gets page template
     //* </method>
-    function &_get_PageTemplate()
+    protected function _get_PageTemplate()
     {
         return $this->_pageTemplate;
     }
@@ -612,57 +609,58 @@ class PageBase
     //* <method name="_get_PageCache" modifiers="protected" returnType="&amp;PageCache">
     //* Gets PageCache
     //* </method>
-    function &_get_PageCache()
+    protected function _get_PageCache()
     {
         if (!$this->_pageCache)
         {
-            $this->_pageCache =& new PageCache(
+            $this->_pageCache = new PageCache(
                 $this, $this->_get_CacheDirectory());
         }
         return $this->_pageCache;
     }
     
-    //* <method name="_get_CacheDirectory" modifiers="protected, abstract" returnType="string">
+    //* <method name="_get_CacheDirectory" modifiers="protected" returnType="string">
     //* Get cache directory
     //* </method>
-    function _get_CacheDirectory() // abstract
+    protected function _get_CacheDirectory()
     {
+        return "";
     }
     //// end protected accessors
     
     //// protected methods
-    //* <method name="PreRender" modifiers="protected, abstract" returnType="void">
+    //* <method name="PreRender" modifiers="protected" returnType="void">
     //* Execute code required before Render().  Will always be called even if page is cached.
     //* </method>
-    function PreRender()
+    protected function PreRender()
     {
     }
     
-    //* <method name="PostRender" modifiers="protected, abstract" returnType="void">
+    //* <method name="PostRender" modifiers="protected" returnType="void">
     //* Execute code required after Render().  Will always be called even if page is cached.
     //* </method>
-    function PostRender()
+    protected function PostRender()
     {
     }
     
-    //* <method name="PreRenderPageSection" modifiers="protected, abstract" returnType="void">
+    //* <method name="PreRenderPageSection" modifiers="protected" returnType="void">
     //* Execute code required before RenderPageSection().  Will always be called even if page is cached.
     //* </method>
-    function PreRenderPageSection($pageSectionName)
+    protected function PreRenderPageSection($pageSectionName)
     {
     }
     
-    //* <method name="PostRenderPageSection" modifiers="protected, abstract" returnType="void">
+    //* <method name="PostRenderPageSection" modifiers="protected" returnType="void">
     //* Execute code required after RenderPageSection().
     //* </method>
-    function PostRenderPageSection($pageSectionName)
+    protected function PostRenderPageSection($pageSectionName)
     {
     }
     
     //* <method name="PageSectionFromName" modifiers="protected" returnType="object">
     //* Get PageSection object for specified name.
     //* </method>
-    function &PageSectionFromName($pageSectionName)
+    protected function PageSectionFromName($pageSectionName)
     {
         return $this->_pageSections[$pageSectionName];
     }
@@ -676,7 +674,7 @@ class PageBase
     //* Name of function to be called to fill place holder
     //* </parameter>
     //* </method>
-    function _RegisterPlaceHolder($placeHolderName, $functionName)
+    protected function _RegisterPlaceHolder($placeHolderName, $functionName)
     {
         $this->_placeHolderfunctions[$placeHolderName] = $functionName;
     }
@@ -687,7 +685,7 @@ class PageBase
     //* Name of place holder
     //* </parameter>
     //* </method>
-    function _RenderPlaceHolder($name)
+    protected function _RenderPlaceHolder($name)
     {
         if ($this->_page)
         {
@@ -704,7 +702,7 @@ class PageBase
     //* Boolean conditional, only render if true
     //* </parameter>    
     //* </method>
-    function _ConditionalRenderPlaceHolder($name, $condition)
+    protected function _ConditionalRenderPlaceHolder($name, $condition)
     {
         if ($condition)
         {

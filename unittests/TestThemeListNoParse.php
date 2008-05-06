@@ -26,14 +26,14 @@ require_once "TestThemeList.php";
 
 class TestThemeListNoParse extends TestThemeList
 {
-    function TestThemeListNoParse($themeListPath, $defaultTheme=false, $pageRequest=false)
+    public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
     {
-        parent::TestThemeList($themeListPath, $defaultTheme, $pageRequest);
+        parent::__construct($themeListPath, $defaultTheme, $pageRequest);
     }
     
     // Override _ParseThemes method to do nothing in order to be able
     // to test methods that don't need parsing without wasting time parsing.
-    function _ParseThemes($themeListPath)
+    protected function _ParseThemes($themeListPath)
     {
         // do nothing
     }

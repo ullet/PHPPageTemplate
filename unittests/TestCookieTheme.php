@@ -26,9 +26,9 @@ require_once "../framework/Theme.php";
 
 class TestCookieTheme extends Theme
 {
-    function TestCookieTheme()
+    public function __construct()
     {
-        parent::Theme("cookietheme");
+        parent::__construct("cookietheme");
         $this->set_FavIconUrl("/cookietheme.ico");
         $this->set_StyleSheetPath("/cookietheme.css");
         $this->set_StyleSheetPathIE6("/cookiethemeie6.css");

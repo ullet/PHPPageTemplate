@@ -34,42 +34,42 @@ class PageCache
     //* <property name="_cacheDuration" modifiers="private" type="int">
     //* Set duration for page to be cached
     //* </property>    
-    var $_cacheDuration = 0;
+    private $_cacheDuration = 0;
     //* <property name="_cacheParameters" modifiers="private" type="string">
     //* Comma separated list of querystring parameter names to vary cache.
     //* Output for different values of the parameter will be cached separately.
     //* </property>
-    var $_cacheParameters = "";
+    private $_cacheParameters = "";
     //* <property name="_cacheParametersArray" modifiers="private" 
     //* type="string[]">
     //* Array of querystring parameter names to vary cache.
     //* Output for different values of the parameter will be cached separately.
     //* </property>
-    var $_cacheParametersArray = false;
+    private $_cacheParametersArray = false;
     //* <property name="_cacheDirectory" modifiers="private" type="string">
     //* Directory for storing cache files.
     //* </property>
-    var $_cacheDirectory = "";
+    private $_cacheDirectory = "";
     //* <property name="_page" modifiers="private"
-    //* type="&amp;PageBase">
+    //* type="PageBase">
     //* Reference to page to be cached.
     //* </property>
-    var $_page;
+    private $_page;
     //* <property name="_metadata" modifiers="private"
-    //* type="&amp;PageCacheMetaData">
+    //* type="PageCacheMetaData">
     //* Reference to page cache meta data.
     //* </property>
-    var $_metadata = false;
+    private $_metadata = false;
     //* <property name="_caseInsensitiveCacheParameterKeys" 
     //* modifiers="private" type="boolean">
     //* Flag indicating if cache parameter keys should be case insensitive
     //* </property>
-    var $_caseInsensitiveCacheParameterKeys = false;
+    private $_caseInsensitiveCacheParameterKeys = false;
     //* <property name="_caseInsensitiveCacheParameterValues" 
     //* modifiers="private" type="boolean">
     //* Flag indicating if cache parameter values should be case insensitive
     //* </property>
-    var $_caseInsensitiveCacheParameterValues = false;
+    private $_caseInsensitiveCacheParameterValues = false;
     //// end private member variables
     
     //// constructors
@@ -85,10 +85,10 @@ class PageCache
     //* Comma separated list of querystring parameters to vary cache.
     //* </parameter>
     //* </constructor>
-    function PageCache(
-        &$page, $cacheDirectory, $cacheDuration=false, $cacheParameters=false)
+    public function __construct(
+        PageBase $page, $cacheDirectory, $cacheDuration=false, $cacheParameters=false)
     {
-        $this->_page =& $page;
+        $this->_page = $page;
         
         $this->_cacheDirectory = $this->_TidyDirName($cacheDirectory);
         
@@ -106,7 +106,7 @@ class PageCache
     //* Parameter list as comma separated string.
     //* </parameter>
     //* </method>
-    function set_CacheParameters($cacheParameters)
+    public function set_CacheParameters($cacheParameters)
     {
         if ($cacheParameters && $cacheParameters != "")
         {
@@ -130,7 +130,7 @@ class PageCache
     //* Duration in seconds.
     //* </parameter>
     //* </method>
-    function set_CacheDuration($cacheDuration)
+    public function set_CacheDuration($cacheDuration)
     {
         if ($cacheDuration && $cacheDuration > 0)
         {
@@ -145,7 +145,7 @@ class PageCache
     //* Boolean.
     //* </parameter>
     //* </method>
-    function set_CaseInsensitiveCacheParameters($value)
+    public function set_CaseInsensitiveCacheParameters($value)
     {
         $this->set_CaseInsensitiveCacheParameterKeys($value);
         $this->set_CaseInsensitiveCacheParameterValues($value);
@@ -158,7 +158,7 @@ class PageCache
     //* Boolean.
     //* </parameter>
     //* </method>    
-    function set_CaseInsensitiveCacheParameterKeys($value)
+    public function set_CaseInsensitiveCacheParameterKeys($value)
     {
         $this->_caseInsensitiveCacheParameterKeys = $value;
     }   
@@ -171,7 +171,7 @@ class PageCache
     //* Boolean.
     //* </parameter>
     //* </method>    
-    function set_CaseInsensitiveCacheParameterValues($value)
+    public function set_CaseInsensitiveCacheParameterValues($value)
     {
         $this->_caseInsensitiveCacheParameterValues = $value;
     }
@@ -181,7 +181,7 @@ class PageCache
     //* <method name="CachePage" modifiers="public" returnType="void">
     //* Saves page output to cache.
     //* </method>
-    function CachePage()
+    public function CachePage()
     {
         if ($this->_cacheDuration <= 0)
         {
@@ -192,7 +192,7 @@ class PageCache
         
         $cacheFilePath = $this->_GetNewCacheFilePath();
         
-        $metadata =& $this->_GetCacheMetaData();
+        $metadata = $this->_GetCacheMetaData();
         
         $contents = ob_get_contents();
         $contents.= "\n<!-- Cached: " . 
@@ -215,7 +215,7 @@ class PageCache
     //* Get page output from cache.  Returns false if
     //* page not in cache or expired.
     //* </method>
-    function GetCachedPage()
+    public function GetCachedPage()
     {
         $cacheFilePath = $this->_GetCacheFilePath();
         
@@ -242,7 +242,7 @@ class PageCache
         if (!$fh)
         {
             return false;
-        }
+        }                                                          
         $contents = "";
         while ($contentsLine = fgets($fh))
         {
@@ -256,14 +256,14 @@ class PageCache
     //* <method name="ClearCache" modifiers="public" returnType="void">
     //* Clears cache for all pages
     //* </method>
-    function ClearWholeCache()
+    public function ClearWholeCache()
     {
         if ($dh = opendir($this->_cacheDirectory))
         {
             while ($file = readdir($dh))
             {
                 if (ereg("\.(html)|(cache)$", $file))
-                {
+                {                                                  
                     unlink($this->_cacheDirectory.$file);
                 }
             }                
@@ -274,7 +274,7 @@ class PageCache
     //* returnType="void">
     //* Clears cache for current page and querystring parameters
     //* </method>
-    function ClearCacheCurrentEntry()
+    public function ClearCacheCurrentEntry()
     {
         $cacheListFilePath = $this->_GetCacheListFilePath();
         $cacheFilePath = $this->_GetCacheFilePath();
@@ -290,7 +290,7 @@ class PageCache
     //* returnType="void">
     //* Clears cache for specific page and cache file
     //* </method>
-    function ClearCacheSpecificEntry($pageName, $shortCacheFilePath)
+    public function ClearCacheSpecificEntry($pageName, $shortCacheFilePath)
     {
         $cacheListFilePath = $this->_GetCacheListFilePath($pageName);
         
@@ -352,11 +352,11 @@ class PageCache
     //* If not given clears cache for current page.
     //* </parameter>
     //* </method>    
-    function ClearCache($pageName = false)
+    public function ClearCache($pageName = false)
     {
         if (!$pageName)
         {
-            $page =& $this->_page;
+            $page = $this->_page;
             $pageName = $page->get_PageName();
         }
                     
@@ -392,7 +392,7 @@ class PageCache
     //* If not given clears cache for current page.
     //* </parameter>
     //* </method>    
-    function &GetListCachedPages()
+    public function GetListCachedPages()
     {
         $list = array();
         if ($dh = opendir($this->_cacheDirectory))
@@ -423,11 +423,11 @@ class PageCache
     //* Optional.  Name of page.  If not given uses name of current page.
     //* </parameter>
     //* </method>
-    function _GetNewCacheFilePath($pageName = false)
+    protected function _GetNewCacheFilePath($pageName = false)
     {
         if (!$pageName)
         {
-            $page =& $this->_page;
+            $page = $this->_page;
             $pageName = $page->get_PageName();
         }
         
@@ -453,7 +453,7 @@ class PageCache
             $cacheFilePath = "$cacheFilePathBase.$counter.html";
         }        
         
-        $metadata =& $this->_GetCacheMetaData($pageName);
+        $metadata = $this->_GetCacheMetaData($pageName);
         $metadata->set_CacheFilePath($cacheFilePath);        
         $this->_AddCacheFilePathToList($cacheFilePath);
         
@@ -470,11 +470,11 @@ class PageCache
     //* Optional.  Name of page.  If not given uses name of current page.
     //* </parameter>
     //* </method>
-    function _AddCacheFilePathToList($cacheFilePath, $pageName = false)
+    protected function _AddCacheFilePathToList($cacheFilePath, $pageName = false)
     {
         if (!$pageName)
         {
-            $page =& $this->_page;
+            $page = $this->_page;
             $pageName = $page->get_PageName();
         }
         
@@ -514,7 +514,7 @@ class PageCache
         fputs($fh, "CacheFile:$shortCacheFilePath\r\n");
         fclose($fh);
         
-        //$metadata =& $this->_GetCacheMetaData($pageName);
+        //$metadata = $this->_GetCacheMetaData($pageName);
         //$metadata->set_Expiration($expiration);
         
         return true;
@@ -527,11 +527,11 @@ class PageCache
     //* Optional.  Name of page.  If not given uses name of current page.
     //* </parameter>
     //* </method>
-    function _GetCacheFilePathsForPage($pageName = false)
+    protected function _GetCacheFilePathsForPage($pageName = false)
     {
         if (!$pageName)
         {
-            $page =& $this->_page;
+            $page = $this->_page;
             $pageName = $page->get_PageName();
         }
         $cacheListFilePath = $this->_GetCacheListFilePath($pageName);
@@ -562,17 +562,17 @@ class PageCache
     }
     
     //* <method name="_GetCacheMetaData" modifiers="protected"
-    //* returnType="&amp;PageCacheMetaData">
+    //* returnType="PageCacheMetaData">
     //* Get cache metadata for previously cached page.
     //* <parameter name="$pageName" type="string">
     //* Optional.  Name of page.  If not given uses name of current page.
     //* </parameter>
     //* </method>
-    function &_GetCacheMetaData($pageName = false)
+    protected function _GetCacheMetaData($pageName = false)
     {
         if (!$pageName)
         {
-            $page =& $this->_page;
+            $page = $this->_page;
             $pageName = $page->get_PageName();
         }
         
@@ -581,7 +581,7 @@ class PageCache
             return $this->_metadata[$pageName];
         }
         
-        $metadata =& new PageCacheMetaData();
+        $metadata = new PageCacheMetaData();
         $metadata->set_PageName($pageName);
         
         $cacheListFilePath = $this->_GetCacheListFilePath($pageName);
@@ -699,19 +699,19 @@ class PageCache
             }
         }
         fclose($fh);
-        $this->_metadata[$pageName] =& $metadata;
+        $this->_metadata[$pageName] = $metadata;
         return $metadata;        
     }
     
     //* <method name="_GetCacheMetaDataFromFile" modifiers="protected"
-    //* returnType="&amp;PageCacheMetaData[]">
+    //* returnType="PageCacheMetaData[]">
     //* Get cache metadata for previously cached pages listed
     //* in specified cache list file.
     //* <parameter name="$cacheListFilePath" type="string">
     //* Path of cache list file.
     //* </parameter>
     //* </method>
-    function &_GetCacheMetaDataFromFile($cacheListFilePath)
+    protected function _GetCacheMetaDataFromFile($cacheListFilePath)
     {
         $metadataList = array();
         
@@ -730,7 +730,7 @@ class PageCache
         $cacheFilePath = "";
         $parameters = array();
         $expiration = 0;
-        $metadata =& new PageCacheMetaData();        
+        $metadata = new PageCacheMetaData();        
         while ($line = fgets($fh))
         {
             $line = ltrim(rtrim($line));
@@ -778,7 +778,7 @@ class PageCache
                 // be applicable to the page in the metadata.
                 if ($expiration >= time())
                 {                
-                    $metadataList[] =& $metadata;
+                    $metadataList[] = $metadata;
                 }
                 
                 // reset values
@@ -786,7 +786,7 @@ class PageCache
                 $expiration = 0;
                 $cacheFilePath = "";
                 $pageName = "";
-                $metadata =& new PageCacheMetaData();        
+                $metadata = new PageCacheMetaData();        
             }
         }
         fclose($fh);
@@ -800,9 +800,9 @@ class PageCache
     //* Optional.  Name of page.  If not given uses name of current page.
     //* </parameter>
     //* </method>
-    function _GetCacheFilePath($pageName = false)
+    protected function _GetCacheFilePath($pageName = false)
     {
-        $metadata =& $this->_GetCacheMetaData($pageName);
+        $metadata = $this->_GetCacheMetaData($pageName);
         if (!$metadata)
         {
             return "";
@@ -810,9 +810,9 @@ class PageCache
         return $this->_cacheDirectory.$metadata->get_CacheFilePath();
     }
     
-    function _GetCacheExpiration($pageName = false)
+    protected function _GetCacheExpiration($pageName = false)
     {
-        $metadata =& $this->_GetCacheMetaData($pageName);
+        $metadata = $this->_GetCacheMetaData($pageName);
         if (!$metadata)
         {
             return "";
@@ -827,11 +827,11 @@ class PageCache
     //* Optional.  Name of page.  If not given uses name of current page.
     //* </parameter>
     //* </method>
-    function _GetCacheListFilePath($pageName = false)
+    protected function _GetCacheListFilePath($pageName = false)
     {
         if (!$pageName)
         {
-            $page =& $this->_page;
+            $page = $this->_page;
             $pageName = $page->get_PageName();
         }
         // get page name without leading / or \ and .php extension
@@ -849,7 +849,7 @@ class PageCache
     //* String to encode.
     //* </parameter>
     //* </method>
-    function _FileSystemSafeName($name)
+    protected function _FileSystemSafeName($name)
     {
         $safeName = $name;
         $safeName = str_replace("~", "~0", $safeName);
@@ -875,7 +875,7 @@ class PageCache
     //* String to decode.
     //* </parameter>
     //* </method>
-    function _GetNameFromFileSystemSafeName($safeName)
+    protected function _GetNameFromFileSystemSafeName($safeName)
     {
         $name = $safeName;
         $name = str_replace("~1", "\\", $name);
@@ -900,7 +900,7 @@ class PageCache
     //* String to decode.
     //* </parameter>
     //* </method>
-    function _TidyDirName($dirName)
+    protected function _TidyDirName($dirName)
     {
         $tidyDirName = $dirName;
         $tidyDirName = ereg_replace('[\/]', DIRECTORY_SEPARATOR, $tidyDirName);
@@ -912,32 +912,32 @@ class PageCache
         return $tidyDirName;
     }
     
-    function _RequestParameters()
+    protected function _RequestParameters()
     {
         if ($this->_caseInsensitiveCacheParameterKeys)
         {
             if ($this->_caseInsensitiveCacheParameterValues)
             {
-                $qsParameters =& PageRequest::QueryStringLC();
-                $cookies =& PageRequest::CookiesLC();
+                $qsParameters = PageRequest::QueryStringLC();
+                $cookies = PageRequest::CookiesLC();
             }
             else
             {
-                $qsParameters =& PageRequest::QueryStringLCKeys();
-                $cookies =& PageRequest::CookiesLCKeys();
+                $qsParameters = PageRequest::QueryStringLCKeys();
+                $cookies = PageRequest::CookiesLCKeys();
             }
         }
         else
         {
             if ($this->_caseInsensitiveCacheParameterValues)
             {
-                $qsParameters =& PageRequest::QueryStringLCValues();
-                $cookies =& PageRequest::CookiesLCValues();
+                $qsParameters = PageRequest::QueryStringLCValues();
+                $cookies = PageRequest::CookiesLCValues();
             }
             else
             {
-                $qsParameters =& PageRequest::QueryString();
-                $cookies =& PageRequest::Cookies();
+                $qsParameters = PageRequest::QueryString();
+                $cookies = PageRequest::Cookies();
             }
         }
         $parameters = array_merge($cookies, $qsParameters);

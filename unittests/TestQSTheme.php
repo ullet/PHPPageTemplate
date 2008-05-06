@@ -26,9 +26,9 @@ require_once "../framework/Theme.php";
 
 class TestQSTheme extends Theme
 {
-    function TestQSTheme()
+    public function __construct()
     {
-        parent::Theme("qstheme");
+        parent::__construct("qstheme");
         $this->set_FavIconUrl("/qstheme.ico");
         $this->set_StyleSheetPath("/qstheme.css");
         $this->set_StyleSheetPathIE6("/qsthemeie6.css");

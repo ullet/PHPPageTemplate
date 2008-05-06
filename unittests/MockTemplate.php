@@ -26,7 +26,7 @@ require_once "../framework/PageBase.php";
 
 class MockTemplate extends PageBase
 {
-    function RenderPlaceHolder($name)
+    public function RenderPlaceHolder($name)
     {
         $this->_RenderPlaceHolder($name);
     }

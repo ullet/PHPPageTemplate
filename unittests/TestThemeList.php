@@ -26,41 +26,41 @@ require_once "../framework/ThemeList.php";
 
 class TestThemeList extends ThemeList
 {
-    var $_themeListPath;
+    private $_themeListPath;
     
     // override constructor so can capture themeListPath for testing
-    function TestThemeList($themeListPath, $defaultTheme=false, $pageRequest=false)
+    public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
     {
         $this->_themeListPath = $themeListPath;
-        parent::ThemeList($themeListPath, $defaultTheme, $pageRequest);
+        parent::__construct($themeListPath, $defaultTheme, $pageRequest);
     }
     
-    function get_ThemeListPath_ForTesting()
+    public function get_ThemeListPath_ForTesting()
     {
         return $this->_themeListPath;
     }
     
-    function get_SelectedThemeQS_ForTesting()
+    public function get_SelectedThemeQS_ForTesting()
     {
         return $this->_get_SelectedThemeQS();
     }
     
-    function get_SelectedThemeCookies_ForTesting()
+    public function get_SelectedThemeCookies_ForTesting()
     {
         return $this->_get_SelectedThemeCookies();
     }
     
-    function get_ExplicitlySelectedTheme_ForTesting()
+    public function get_ExplicitlySelectedTheme_ForTesting()
     {
         return $this->_get_ExplicitlySelectedTheme();
     }
     
-    function SelectedThemeFromCollection_ForTesting(&$col)
+    public function SelectedThemeFromCollection_ForTesting(&$col)
     {
         return $this->_SelectedThemeFromCollection($col);
     }
     
-    function ParseThemes_ForTesting($themeListPath)
+    public function ParseThemes_ForTesting($themeListPath)
     {
         // use parent not $this to ensure real
         // method is called not one of the overridden
@@ -68,7 +68,7 @@ class TestThemeList extends ThemeList
         return parent::_ParseThemes($themeListPath);
     }
     
-    function AddTheme_ForTesting($theme)
+    public function AddTheme_ForTesting($theme)
     {
         $this->_AddTheme($theme);
     }

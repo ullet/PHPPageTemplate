@@ -155,12 +155,12 @@ class PageRequest
     }    
     //// end public methods
     
-    protected function set_CookieCollection($cookieCollection)
+    protected function set_CookieCollection(CookieCollection $cookieCollection)
     {
         $this->cookieCollection = $cookieCollection;
     }
     
-    protected function set_QueryStringCollection($queryStringCollection)
+    protected function set_QueryStringCollection(QueryStringCollection $queryStringCollection)
     {
         $this->queryStringCollection = $queryStringCollection;
     }

@@ -30,15 +30,15 @@ require_once dirname(__FILE__)."/PageRequest.php";
 class Theme
 {
     //// private member variables
-    var $_favIconUrl = "";
-    var $_styleSheetPath = "";
-    var $_styleSheetPathIE6 = "";
-    var $_styleSheetPathIE7 = "";
-    var $_name = "";
-    var $_title = "";
-    var $_description = "";
-    var $_thumbnailUrl = "";
-    var $_template = "";
+    private $_favIconUrl = "";
+    private $_styleSheetPath = "";
+    private $_styleSheetPathIE6 = "";
+    private $_styleSheetPathIE7 = "";
+    private $_name = "";
+    private $_title = "";
+    private $_description = "";
+    private $_thumbnailUrl = "";
+    private $_template = "";
     //// end private member variables
     
     //// constructors
@@ -48,94 +48,94 @@ class Theme
     //* Name of theme.
     //* </parameter>
     //* </constructor>
-    function Theme($name)
+    public function __construct($name)
     {
         $this->_name = $name;
     }
     //// end constructors
     
     //// public accessor methods
-    function get_Name()
+    public function get_Name()
     {
         return $this->_name;
     }
     
-    function set_FavIconUrl($value)
+    public function set_FavIconUrl($value)
     {
         $this->_favIconUrl = $value;
     }
     
-    function get_FavIconUrl()
+    public function get_FavIconUrl()
     {
         return $this->_favIconUrl;
     }
     
-    function set_StyleSheetPath($value)
+    public function set_StyleSheetPath($value)
     {
         $this->_styleSheetPath = $value;
     }
     
-    function get_StyleSheetPath()
+    public function get_StyleSheetPath()
     {
         return $this->_styleSheetPath;
     }
     
-    function set_StyleSheetPathIE6($value)
+    public function set_StyleSheetPathIE6($value)
     {
         $this->_styleSheetPathIE6 = $value;
     }
     
-    function get_StyleSheetPathIE6()
+    public function get_StyleSheetPathIE6()
     {
         return $this->_styleSheetPathIE6;
     }
     
-    function set_StyleSheetPathIE7($value)
+    public function set_StyleSheetPathIE7($value)
     {
         $this->_styleSheetPathIE7 = $value;
     }
     
-    function get_StyleSheetPathIE7()
+    public function get_StyleSheetPathIE7()
     {
         return $this->_styleSheetPathIE7;
     }    
     
-    function set_Title($value) 
+    public function set_Title($value) 
     {
         $this->_title = $value;
     }
     
-    function get_Title()
+    public function get_Title()
     {
         return $this->_title;
     }    
     
-    function set_Description($value) 
+    public function set_Description($value) 
     {
         $this->_description = $value;
     }
     
-    function get_Description()
+    public function get_Description()
     {
         return $this->_description;
     }    
     
-    function set_ThumbnailUrl($value) 
+    public function set_ThumbnailUrl($value) 
     {
         $this->_thumbnailUrl = $value;
     }
     
-    function get_ThumbnailUrl()
+    public function get_ThumbnailUrl()
     {
         return $this->_thumbnailUrl;
     }
     
-    function set_Template($value)
+    public function set_Template(PageBase $value)
     {
         $this->_template = $value;
     }
     
-    function get_Template()
+    public function get_Template()
     {
         return $this->_template;
     }

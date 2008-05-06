@@ -47,15 +47,15 @@ class ListIterator
     //* List of items
     //* </parameter>
     //* </method>    
-    public function set_List(&$list)
+    public function set_List(array $list)
     {
-        $this->_list =& $list;
+        $this->_list = $list;
     }
     
     //* <method name="get_List" modifiers="public" returnType="string">
     //* Get list on which iterator operates
     //* </method>    
-    public function &get_List()
+    public function get_List()
     {
         return $this->_list;
     }
@@ -88,7 +88,7 @@ class ListIterator
     
     //* <method name="CurrentItem" modifiers="public" returnType="object">
     //* Get current item or property of current item in list
-    //* <parameter name="$object" type="&amp;object">
+    //* <parameter name="$object" type="object">
     //* Object against which $evalFunction is evaluated
     //* </parameter>
     //* <parameter name="$item" type="string">
@@ -102,7 +102,7 @@ class ListIterator
     //* processing on the current item/value of current item $property
     //* </parameter>
     //* </method>
-    public function CurrentItem(&$object, $item, $property, $evalFunction = false)
+    public function CurrentItem($object, $item, $property, $evalFunction = false)
     {
         if (!$evalFunction && !$property)
         {
@@ -171,7 +171,7 @@ class ListIterator
     
     //* <method name="CurrentListItem" modifiers="public" returnType="object">
     //* Get current item or property of current item in list
-    //* <parameter name="$object" type="&amp;object">
+    //* <parameter name="$object" type="object">
     //* Object against which $evalFunction is evaluated
     //* </parameter>
     //* <parameter name="$property" type="string">
@@ -182,7 +182,7 @@ class ListIterator
     //* processing on the current item/value of current item $property
     //* </parameter>
     //* </method>
-    public function CurrentListItem(&$object = false, $property = false, $evalFunction = false)
+    public function CurrentListItem($object = false, $property = false, $evalFunction = false)
     {
         return $this->CurrentItem($object, "_currentItem", $property, $evalFunction);
     }

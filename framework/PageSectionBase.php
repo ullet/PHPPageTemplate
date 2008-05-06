@@ -25,13 +25,13 @@
 //* <class name="PageSectionBase" modifiers="public, abstract">
 //* Base class for a web page section
 //* </class>
-class PageSectionBase
+abstract class PageSectionBase
 {    
     //// private member variables
     //* <property name="_page" modifiers="private" type="&amp;PageBase">
     //* Parent page
     //* </property>
-    var $_page;
+    private $_page;
     //// end private member variables
     
     //// protected accessors
@@ -41,15 +41,15 @@ class PageSectionBase
     //* Parent page object
     //* </parameter>
     //* </method>
-    function set_Page(&$page)
+    public function set_Page(PageBase $page)
     {
-        $this->_page =& $page;
+        $this->_page = $page;
     }
     
     //* <method name="get_Page" modifiers="protected" returnType="&amp;PageBase">
     //* Gets the parent page object 
     //* </method>
-    function &get_Page()
+    public function get_Page()
     {
         return $this->_page;
     }
@@ -59,7 +59,7 @@ class PageSectionBase
     //* <method name="Render" modifiers="public" returnType="void">
     //* Render page section
     //* </method>
-    function Render()
+    public function Render()
     {
     }
     
@@ -72,9 +72,7 @@ class PageSectionBase
     //* Value of property
     //* </parameter>
     //* </method>
-    function SetProperty($name, $value) // abstract
-    {
-    }
+    public abstract function SetProperty($name, $value);
     //// end public methods
     
     //// protected methods
@@ -84,7 +82,7 @@ class PageSectionBase
     //* Value to convert
     //* </parameter>
     //* </method>
-    function _ConvertStringToBool($value)
+    protected function _ConvertStringToBool($value)
     {
         return ($value=="true" || $value=="on" || $value=="yes" || $value=="1");
     }
@@ -93,7 +91,7 @@ class PageSectionBase
     //* <method name="RenderPageSection" modifiers="public" returnType="void">
     //* Render a child page section
     //* </method>
-    function RenderPageSection($pageSectionName)
+    protected function RenderPageSection($pageSectionName)
     {
         // delegate rendering to parent page.
         $args = func_get_args();
