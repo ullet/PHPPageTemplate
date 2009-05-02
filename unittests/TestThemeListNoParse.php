@@ -31,9 +31,9 @@ class TestThemeListNoParse extends TestThemeList
         parent::__construct($themeListPath, $defaultTheme, $pageRequest);
     }
     
-    // Override _ParseThemes method to do nothing in order to be able
+    // Override ParseThemes method to do nothing in order to be able
     // to test methods that don't need parsing without wasting time parsing.
-    protected function _ParseThemes($themeListPath)
+    protected function ParseThemes($themeListPath)
     {
         // do nothing
     }

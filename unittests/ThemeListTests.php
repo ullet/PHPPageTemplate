@@ -38,7 +38,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     //// Begin: The Tests
     public function test_Create()
     {
-        $themeList =& $this->_CreateThemeListNoParse();
+        $themeList =& $this->CreateThemeListNoParse();
         $this->assertNotNull($themeList, "Expected ThemeList object");
         $this->assertEquals("/notadir/notafile.xml", $themeList->get_ThemeListPath_ForTesting());
         $this->assertEquals("test1", $themeList->get_DefaultThemeName());
@@ -46,7 +46,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_Set_CookieDuration()
     {
-        $themeList =& $this->_CreateThemeListNoParse();
+        $themeList =& $this->CreateThemeListNoParse();
         // check default is 30 days
         $this->assertEquals("2592000", $themeList->get_CookieDuration());
         
@@ -56,7 +56,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_Set_DefaultThemeName()
     {
-        $themeList =& $this->_CreateThemeListNoParse();
+        $themeList =& $this->CreateThemeListNoParse();
         // check value set in constructor
         $this->assertEquals("test1", $themeList->get_DefaultThemeName());
         
@@ -66,7 +66,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_PageRequest()
     {
-        $themeList =& $this->_CreateThemeListNoParse();
+        $themeList =& $this->CreateThemeListNoParse();
         // default PageRequest should be of type PageRequest and not a sub-class
         $this->assertTrue($themeList->get_PageRequest() instanceof PageRequest);
         $this->assertFalse(is_subclass_of($themeList->get_PageRequest(), PageRequest));
@@ -74,7 +74,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Set_PageRequest()
     {
-        $themeList =& $this->_CreateThemeListNoParse();
+        $themeList =& $this->CreateThemeListNoParse();
         $pageRequest =& new TestPageRequest();
         $themeList->set_PageRequest($pageRequest);
         $this->assertSame($pageRequest, $themeList->get_PageRequest());
@@ -82,27 +82,27 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_SelectedThemeName_Default()
     {
-        $themeList =& $this->_CreateThemeListNoParse();
+        $themeList =& $this->CreateThemeListNoParse();
         $this->assertEquals("test1", $themeList->get_SelectedThemeName());
     }
     
     public function test_Get_SelectedThemeName_FromQueryString()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithQS();
+        $themeList =& $this->CreateThemeListMockParseWithQS();
         
         $this->assertEquals("qstheme", $themeList->get_SelectedThemeName());
     }
     
     public function test_Get_SelectedThemeName_FromCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithCookie();
+        $themeList =& $this->CreateThemeListMockParseWithCookie();
         
         $this->assertEquals("cookietheme", $themeList->get_SelectedThemeName());
     }
     
     public function test_Get_SelectedTheme_FromQueryString()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithQS();
+        $themeList =& $this->CreateThemeListMockParseWithQS();
         
         $theme = $themeList->get_SelectedTheme();
         $this->assertEquals("qstheme", $theme->get_Name());
@@ -117,7 +117,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_SelectedTheme_FromCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithCookie();
+        $themeList =& $this->CreateThemeListMockParseWithCookie();
         
         $theme = $themeList->get_SelectedTheme();        
         $this->assertEquals("cookietheme", $theme->get_Name());
@@ -132,30 +132,30 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_ThemeExplicitlySelected_Default()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
+        $themeList =& $this->CreateThemeListMockParse();
         
         $this->assertFalse($themeList->get_ThemeExplicitlySelected());
     }
     
     public function test_Get_ThemeExplicitlySelected_FromQueryString()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithQS();
+        $themeList =& $this->CreateThemeListMockParseWithQS();
         
         $this->assertTrue($themeList->get_ThemeExplicitlySelected());
     }
     
     public function test_Get_ThemeExplicitlySelected_FromCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithCookie();
+        $themeList =& $this->CreateThemeListMockParseWithCookie();
         
         $this->assertTrue($themeList->get_ThemeExplicitlySelected());
     }
     
     public function test_Get_ThemeInQS_Default()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
+        $themeList =& $this->CreateThemeListMockParse();
         
-        // need to call method that will set private field fist
+        // need to call method that will set private field first
         $themeList->get_ThemeExplicitlySelected();
         
         $this->assertFalse($themeList->get_ThemeInQS());
@@ -163,9 +163,9 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_ThemeInQS_FromQuerystring()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithQS();
+        $themeList =& $this->CreateThemeListMockParseWithQS();
         
-        // need to call method that will set private field fist
+        // need to call method that will set private field first
         $themeList->get_ThemeExplicitlySelected();
         
         $this->assertTrue($themeList->get_ThemeInQS());
@@ -173,9 +173,9 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_ThemeInQS_FromCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithCookie();
+        $themeList =& $this->CreateThemeListMockParseWithCookie();
         
-        // need to call method that will set private field fist
+        // need to call method that will set private field first
         $themeList->get_ThemeExplicitlySelected();
         
         $this->assertFalse($themeList->get_ThemeInQS());
@@ -183,9 +183,9 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_ThemeInCookie_Default()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
+        $themeList =& $this->CreateThemeListMockParse();
         
-        // need to call method that will set private field fist
+        // need to call method that will set private field first
         $themeList->get_ThemeExplicitlySelected();
         
         $this->assertFalse($themeList->get_ThemeInCookie());
@@ -193,9 +193,9 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_ThemeInCookie_FromQuerystring()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithQS();
+        $themeList =& $this->CreateThemeListMockParseWithQS();
         
-        // need to call method that will set private field fist
+        // need to call method that will set private field first
         $themeList->get_ThemeExplicitlySelected();
         
         $this->assertFalse($themeList->get_ThemeInCookie());
@@ -203,9 +203,9 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_ThemeInCookie_FromCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithCookie();
+        $themeList =& $this->CreateThemeListMockParseWithCookie();
         
-        // need to call method that will set private field fist
+        // need to call method that will set private field first
         $themeList->get_ThemeExplicitlySelected();
         
         $this->assertTrue($themeList->get_ThemeInCookie());
@@ -213,7 +213,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_Iterator()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
+        $themeList =& $this->CreateThemeListMockParse();
         
         $iterator =& $themeList->get_Iterator();
         
@@ -230,7 +230,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_SelectedThemeQS_Default()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
+        $themeList =& $this->CreateThemeListMockParse();
         
         $selectedTheme = $themeList->get_SelectedThemeQS_ForTesting();
         
@@ -239,7 +239,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_SelectedThemeQS_FromQueryString()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithQS();
+        $themeList =& $this->CreateThemeListMockParseWithQS();
         
         $selectedTheme = $themeList->get_SelectedThemeQS_ForTesting();
         
@@ -248,7 +248,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_SelectedThemeQS_FromCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithCookie();
+        $themeList =& $this->CreateThemeListMockParseWithCookie();
         
         $selectedTheme = $themeList->get_SelectedThemeQS_ForTesting();
         
@@ -257,7 +257,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_SelectedThemeCookies_Default()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
+        $themeList =& $this->CreateThemeListMockParse();
         
         $selectedTheme = $themeList->get_SelectedThemeCookies_ForTesting();
         
@@ -266,7 +266,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_SelectedThemeCookies_FromQueryString()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithQS();
+        $themeList =& $this->CreateThemeListMockParseWithQS();
         
         $selectedTheme = $themeList->get_SelectedThemeCookies_ForTesting();
         
@@ -275,7 +275,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_SelectedThemeCookies_FromCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithCookie();
+        $themeList =& $this->CreateThemeListMockParseWithCookie();
         
         $selectedTheme = $themeList->get_SelectedThemeCookies_ForTesting();
         
@@ -284,7 +284,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_ExplicitlySelectedTheme_Default()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
+        $themeList =& $this->CreateThemeListMockParse();
         
         $selectedTheme = $themeList->get_ExplicitlySelectedTheme_ForTesting();
         
@@ -293,7 +293,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_ExplicitlySelectedTheme_FromQueryString()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithQS();
+        $themeList =& $this->CreateThemeListMockParseWithQS();
         
         $selectedTheme = $themeList->get_ExplicitlySelectedTheme_ForTesting();
         
@@ -302,7 +302,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_ExplicitlySelectedTheme_FromCookie()
     {
-        $themeList =& $this->_CreateThemeListMockParseWithCookie();
+        $themeList =& $this->CreateThemeListMockParseWithCookie();
         
         $selectedTheme = $themeList->get_ExplicitlySelectedTheme_ForTesting();
         
@@ -311,7 +311,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_SelectedThemeFromCollection()
     {
-        $themeList =& $this->_CreateThemeListMockParse();
+        $themeList =& $this->CreateThemeListMockParse();
         
         $col = array();
         $col["param1"]="value1";
@@ -324,7 +324,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_AddTheme()
     {
-        $themeList =& $this->_CreateThemeListNoParse();
+        $themeList =& $this->CreateThemeListNoParse();
         
         $theme1 =& new TestQSTheme();
         $theme2 =& new TestCookieTheme();
@@ -357,7 +357,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_ParseThemes()
     {
-        $themeList =& $this->_CreateThemeListNoParse();
+        $themeList =& $this->CreateThemeListNoParse();
         
         $this->assertFileExists("testthemeconfig.xml");
         $themeList->ParseThemes_ForTesting("testthemeconfig.xml");
@@ -402,7 +402,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     
     public function test_ThemeExists()
     {
-        $themeList = $this->_CreateThemeListMockParse();
+        $themeList = $this->CreateThemeListMockParse();
         
         $this->assertTrue($themeList->ThemeExists("qstheme"));
         $this->assertTrue($themeList->ThemeExists("cookietheme"));
@@ -413,7 +413,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     {
         // need theme selected in QS else cookie won't be set (as
         // will be determined nothing to set).
-        $themeList = $this->_CreateThemeListMockParseWithQS();
+        $themeList = $this->CreateThemeListMockParseWithQS();
         $pageRequest = $themeList->get_PageRequest();
         
         // verify start with no cookies
@@ -432,7 +432,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     public function test_SetSelectedThemeCookie_NoThemeSelected()
     {
         // no selected theme so should not set cookie
-        $themeList = $this->_CreateThemeListMockParse();
+        $themeList = $this->CreateThemeListMockParse();
         $pageRequest = $themeList->get_PageRequest();
         
         // verify start with no cookies
@@ -447,7 +447,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     public function test_SetSelectedThemeCookie_ThemeAlreadyInCookie()
     {
         // no selected theme so should not set cookie
-        $themeList = $this->_CreateThemeListMockParseWithCookie();
+        $themeList = $this->CreateThemeListMockParseWithCookie();
         $pageRequest = $themeList->get_PageRequest();
         
         // verify start with expected theme cookie
@@ -497,32 +497,32 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     //// End: The Tests
     
     //// Begin: Utility methods
-    protected function _CreateThemeList()
+    protected function CreateThemeList()
     {
         return new TestThemeList("testthemeconfig.xml", "test1");        
     }
     
-    protected function _CreateThemeListNoParse()
+    protected function CreateThemeListNoParse()
     {
         // Create a non-parsing theme list so to avoid unnecessary parsing of 
         // config for tests that don't need it.
         return new TestThemeListNoParse("/notadir/notafile.xml", "test1");
     }
     
-    protected function _CreateThemeListMockParse()
+    protected function CreateThemeListMockParse()
     {
         // Create a theme list with mock config data
         return new TestThemeListMockParse("/notadir/notafile.xml", "test1");
     }
     
-    protected function _CreateThemeListMockParseWithQS()
+    protected function CreateThemeListMockParseWithQS()
     {
         $pageRequest = new TestPageRequest();
         $pageRequest->AddTestQueryStringParameter("theme", "qstheme");
         return new TestThemeListMockParse("/notadir/notafile.xml", "test1", $pageRequest);
     }
     
-    protected function _CreateThemeListMockParseWithCookie()
+    protected function CreateThemeListMockParseWithCookie()
     {
         $pageRequest = new TestPageRequest();
         $pageRequest->AddTestCookie("theme", "cookietheme");

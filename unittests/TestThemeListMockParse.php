@@ -33,12 +33,12 @@ class TestThemeListMockParse extends TestThemeList
         parent::__construct($themeListPath, $defaultTheme, $pageRequest);
     }
     
-    // Override _ParseThemes method to set test values in order to be able
+    // Override ParseThemes method to set test values in order to be able
     // to test methods that need config data (but don't need to parse a file).
-    protected function _ParseThemes($themeListPath)
+    protected function ParseThemes($themeListPath)
     {
-        $this->_AddTheme(new TestQSTheme());
-        $this->_AddTheme(new TestCookieTheme());
+        $this->AddTheme(new TestQSTheme());
+        $this->AddTheme(new TestCookieTheme());
     }
 }
 ?>

@@ -32,52 +32,52 @@ require_once dirname(__FILE__)."/CookieCollection.php";
 //* </class>
 class ThemeList
 {
-    private $_themeList = false;
-    private $_orderedThemeList = false;
-    private $_currentTheme = false;
-    private $_currentElement = false;
+    private $themeList = false;
+    private $orderedThemeList = false;
+    private $currentTheme = false;
+    private $currentElement = false;
     //* <property name="_defaultTheme" modifiers="private" type="string">
     //* Default theme.
     //* </property>    
-    private $_defaultTheme = false;
+    private $defaultTheme = false;
     //* <property name="_themeInCookie" modifiers="private" type="boolean">
     //* Flag if theme is set in cookie.
     //* </property>    
-    private $_themeInCookie = false;
+    private $themeInCookie = false;
     //* <property name="_themeInQS" modifiers="private" type="boolean">
     //* Flag if theme is set in querystring.
     //* </property>    
-    private $_themeInQS = false;
+    private $themeInQS = false;
     //* <property name="_cookieDuration" modifiers="private" type="int">
     //* Length of time in seconds from current time at which cookie saving
     //* theme should expire.
     //* </property>
-    private $_cookieDuration = 2592000; // default to 30 days
-    private $_iterator = NULL;
-    private $_pageRequest = NULL;
+    private $cookieDuration = 2592000; // default to 30 days
+    private $iterator = NULL;
+    private $pageRequest = NULL;
     
     //// constructors               
     public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
     {
         $this->set_DefaultThemeName($defaultTheme);
         $this->set_PageRequest($pageRequest);
-        $this->_ParseThemes($themeListPath);
+        $this->ParseThemes($themeListPath);
     }
     //// end constructors
     
     //// public accessor methods
     public function set_PageRequest($pageRequest)
     {
-        $this->_pageRequest = $pageRequest;
+        $this->pageRequest = $pageRequest;
     }
     
     public function get_PageRequest()
     {
-        if (!$this->_pageRequest)
+        if (!$this->pageRequest)
         {
-            $this->_pageRequest = new PageRequest();
+            $this->pageRequest = new PageRequest();
         }
-        return $this->_pageRequest;
+        return $this->pageRequest;
     }
     
     protected function get_CookieCollection()
@@ -87,45 +87,45 @@ class ThemeList
     
     public function set_CookieDuration($duration)
     {
-        $this->_cookieDuration = $duration;
+        $this->cookieDuration = $duration;
     }
     
     public function get_CookieDuration()
     {
-        return $this->_cookieDuration;
+        return $this->cookieDuration;
     }
     
     public function set_DefaultThemeName($theme)
     {
         // aside: incorrectly setting type hint of 'Theme' caused
         // a segmentation fault! (Not the 'Fatal Error' would have expected)
-        $this->_defaultTheme = $theme;
+        $this->defaultTheme = $theme;
     }
     
     public function get_DefaultThemeName()
     {
-        return $this->_defaultTheme;
+        return $this->defaultTheme;
     }
     
     public function get_SelectedTheme()
     {
         $selectedThemeName = $this->get_SelectedThemeName();
         if ("" == $selectedThemeName ||
-            !array_key_exists($selectedThemeName, $this->_themeList))
+            !array_key_exists($selectedThemeName, $this->themeList))
         {
             return false;
         }
-        return $this->_themeList[$selectedThemeName];
+        return $this->themeList[$selectedThemeName];
     }
     
     public function get_SelectedThemeName()
     {
-        $selectedTheme = $this->_get_ExplicitlySelectedTheme();
+        $selectedTheme = $this->get_ExplicitlySelectedTheme();
         if ("" == $selectedTheme)
         {
-            if ($this->_defaultTheme)
+            if ($this->defaultTheme)
             {
-                $selectedTheme = $this->_defaultTheme;
+                $selectedTheme = $this->defaultTheme;
             }
         }
         return $selectedTheme;
@@ -133,46 +133,46 @@ class ThemeList
     
     public function get_ThemeExplicitlySelected()
     {
-        return "" != $this->_get_ExplicitlySelectedTheme();
+        return "" != $this->get_ExplicitlySelectedTheme();
     }
     
     public function get_ThemeInCookie()
     {
-        return $this->_themeInCookie;
+        return $this->themeInCookie;
     }
     
     public function get_ThemeInQS()
     {
-        return $this->_themeInQS;
+        return $this->themeInQS;
     }
     
     public function get_Iterator()
     {
-        if (!$this->_iterator)
+        if (!$this->iterator)
         {
-            $this->_iterator =& new ListIterator();
-            $this->_iterator->set_List(array_values($this->_orderedThemeList));
+            $this->iterator =& new ListIterator();
+            $this->iterator->set_List(array_values($this->orderedThemeList));
         }
-        return $this->_iterator;
+        return $this->iterator;
     }
     //// end public accessor methods
     
     //// protected accessor methods
-    protected function _get_SelectedThemeQS()
+    protected function get_SelectedThemeQS()
     {
         $pageRequest =& $this->get_PageRequest();
         $qs =& $pageRequest->QueryStringLC();
-        $selectedTheme = $this->_SelectedThemeFromCollection($qs);
-        $this->_themeInQS = ("" != $selectedTheme);
+        $selectedTheme = $this->SelectedThemeFromCollection($qs);
+        $this->themeInQS = ("" != $selectedTheme);
         return $selectedTheme;
     }
           
-    protected function _get_SelectedThemeCookies()
+    protected function get_SelectedThemeCookies()
     {
         $pageRequest =& $this->get_PageRequest();
         $cookies =& $pageRequest->CookiesLC();
-        $selectedTheme = $this->_SelectedThemeFromCollection($cookies);
-        $this->_themeInCookie = ("" != $selectedTheme);
+        $selectedTheme = $this->SelectedThemeFromCollection($cookies);
+        $this->themeInCookie = ("" != $selectedTheme);
         return $selectedTheme;
     }       
     
@@ -180,17 +180,17 @@ class ThemeList
     //* Gets the explicitly selected theme, i.e. set externally in some way
     //* e.g. from the cookie or querystring
     //* </method>
-    protected function _get_ExplicitlySelectedTheme()
+    protected function get_ExplicitlySelectedTheme()
     {
-        $selectedThemeQS = $this->_get_SelectedThemeQS();
-        $selectedThemeCookies = $this->_get_SelectedThemeCookies();
+        $selectedThemeQS = $this->get_SelectedThemeQS();
+        $selectedThemeCookies = $this->get_SelectedThemeCookies();
         
         if ("" != $selectedThemeQS)
         {
             if ($selectedThemeCookies != $selectedThemeQS)
             {
                 $selectedThemeCookies = "";
-                $this->_themeInCookie = false;
+                $this->themeInCookie = false;
             }    
             return $selectedThemeQS;
         }
@@ -201,11 +201,11 @@ class ThemeList
     //// public methods
     public function ThemeExists($themeName)
     {
-        if (!$this->_themeList)
+        if (!$this->themeList)
         {
             return false;
         }
-        return array_key_exists($themeName, $this->_themeList);
+        return array_key_exists($themeName, $this->themeList);
     }
     
     public function SetSelectedThemeCookie()
@@ -225,7 +225,7 @@ class ThemeList
     //// end public methods
     
     //// protected methods    
-    protected function _SelectedThemeFromCollection(array $col)
+    protected function SelectedThemeFromCollection(array $col)
     {
         if (array_key_exists('theme', $col))
         {
@@ -238,7 +238,7 @@ class ThemeList
         return "";
     }  
     
-    protected function _ParseThemes($themeListPath)
+    protected function ParseThemes($themeListPath)
     {
         if (!file_exists($themeListPath))
         {
@@ -260,8 +260,8 @@ class ThemeList
         $parser = xml_parser_create();
         xml_set_object($parser, $this);
         xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, false);
-        xml_set_element_handler($parser, '_StartElement', '_EndElement');
-        xml_set_character_data_handler($parser, '_CharacterData');
+        xml_set_element_handler($parser, 'StartElement', 'EndElement');
+        xml_set_character_data_handler($parser, 'CharacterData');
                                             
         if (!xml_parse($parser, $themesXml))
         {
@@ -269,7 +269,7 @@ class ThemeList
         }
     }
     
-    protected function _StartElement($parser, $elementName, &$attributes)
+    protected function StartElement($parser, $elementName, &$attributes)
     {
         if ($elementName == "theme")
         {
@@ -277,45 +277,45 @@ class ThemeList
             if (array_key_exists("name", $attributes))
             {
                 $theme =& new Theme(strtolower($attributes["name"]));
-                $this->_currentTheme =& $theme;
+                $this->currentTheme =& $theme;
             }
             else
             {
-                $this->_currentTheme = false;
+                $this->currentTheme = false;
             }
         }
         else 
         {
-            $this->_currentElement = $elementName;
+            $this->currentElement = $elementName;
         }
     }
     
-    protected function _CharacterData($parser, $cdata)
+    protected function CharacterData($parser, $cdata)
     {
-        if ($this->_currentElement && $this->_currentTheme)
+        if ($this->currentElement && $this->currentTheme)
         {
-            $theme =& $this->_currentTheme;
-            if ($this->_currentElement == "favIconUrl")
+            $theme =& $this->currentTheme;
+            if ($this->currentElement == "favIconUrl")
             {
                 $theme->set_FavIconUrl(trim($cdata));
             }
-            else if ($this->_currentElement == "styleSheetPath")
+            else if ($this->currentElement == "styleSheetPath")
             {
                 $theme->set_StyleSheetPath(trim($cdata));
             }
-            else if ($this->_currentElement == "styleSheetPathIE6")
+            else if ($this->currentElement == "styleSheetPathIE6")
             {
                 $theme->set_StyleSheetPathIE6(trim($cdata));
             }
-            else if ($this->_currentElement == "styleSheetPathIE7")
+            else if ($this->currentElement == "styleSheetPathIE7")
             {
                 $theme->set_StyleSheetPathIE7(trim($cdata));
             }
-            else if ($this->_currentElement == "title")
+            else if ($this->currentElement == "title")
             {
                 $theme->set_Title(trim($cdata));
             }
-            else if ($this->_currentElement == "description")
+            else if ($this->currentElement == "description")
             {
                 $text = $theme->get_Description();
                 if ($text != "")
@@ -325,42 +325,42 @@ class ThemeList
                 $text .= trim($cdata);                
                 $theme->set_Description($text);
             }
-            else if ($this->_currentElement == "thumbnailUrl")
+            else if ($this->currentElement == "thumbnailUrl")
             {
                 $theme->set_ThumbnailUrl(trim($cdata));
             }
-            else if ($this->_currentElement == "template")
+            else if ($this->currentElement == "template")
             {
                 $theme->set_Template(trim($cdata));
             }
         }
     }
     
-    protected function _EndElement($parser, $elementName)
+    protected function EndElement($parser, $elementName)
     {
         if ($elementName == "theme")
         {
             // end of current theme
-            if ($this->_currentTheme)
+            if ($this->currentTheme)
             {
-                $this->_AddTheme($this->_currentTheme);
+                $this->AddTheme($this->currentTheme);
             }
-            $this->_currentTheme = false;
+            $this->currentTheme = false;
         }
-        $this->_currentElement = false;
+        $this->currentElement = false;
     } 
     
-    protected function _AddTheme(Theme $theme)
+    protected function AddTheme(Theme $theme)
     {
         if ($theme)
         {
-            if (!$this->_themeList || !$this->_orderedThemeList)
+            if (!$this->themeList || !$this->orderedThemeList)
             {
-                $this->_themeList = array();
-                $this->_orderedThemeList = array();
+                $this->themeList = array();
+                $this->orderedThemeList = array();
             }
-            $this->_themeList[$theme->get_Name()] = $theme;
-            $this->_orderedThemeList[] = $theme;
+            $this->themeList[$theme->get_Name()] = $theme;
+            $this->orderedThemeList[] = $theme;
         }
     }
     //// end protected methods

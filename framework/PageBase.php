@@ -135,7 +135,10 @@ abstract class PageBase
     }
     
     //* <method name="get_Page" modifiers="public" returnType="&amp;PageBase">
-    //* Gets page using template 
+    //* Gets page using template.
+    //* <remarks>
+    //* Template needs to know the page using it so that can call place-holder methods defined on
+    //* the page, place-holders being one of the key benefits of a template.
     //* </method>
     public function get_Page()
     {
@@ -143,10 +146,14 @@ abstract class PageBase
     }
     
     //* <method name="set_Page" modifiers="public" returnType="void">
-    //* Sets page using template
+    //* Sets page or template using template.
     //* <parameter name="$page" type="&amp;PageBase">
-    //* Page using template
+    //* Page or template using template.
     //* </parameter>
+    //* <remarks>
+    //* Templates can be nested to reuse common functionality/layout. The 'parent' template is
+    //* set, a little unintuitively, using set_Page.
+    //* </remarks>
     //* </method>
     public function set_Page(PageBase $page)
     {
@@ -349,10 +356,13 @@ abstract class PageBase
         
     //// public methods
     //* <method name="RenderPageSection" modifiers="public" returnType="void">
-    //* Render specified page section
+    //* Render specified page section.
     //* <parameter name="$pageSectionName" type="string">
-    //* Name of page section to render
+    //* Name of page section to render.
     //* </parameter>
+    //* <remarks>
+    //* Page Sections are re-usable parameterisable code modules.
+    //* </remarks>
     //* </method>
     public function RenderPageSection($pageSectionName)
     {
@@ -414,7 +424,25 @@ abstract class PageBase
     }
     
     //* <method name="Render" modifiers="public" returnType="void">
-    //* Render page
+    //* Render the page.
+    //* <remarks>
+    //* Rendering is broken down into four steps, each of which can be controlled via overridden
+    //* methods in the derived class.
+    //*     PreRender           - Executed first and always executed.
+    //*     RenderContent       - Main page rendering, will not be executed if page is already 
+    //*                           cached. RenderContent methods of all parent templates will be
+    //*                           called before the page method, starting with the 'oldest' 
+    //*                           ancestor.
+    //*     DoPostProcessOutput - Executed after DoRender or after page retreived from cache.
+    //*                           Always executed providing page buffering is enable (default).
+    //*                           Can be useful, for example, for "post cache substitution", i.e.
+    //*                           replace place holder tokens with 'personal' information that
+    //*                           shouldn't be cached.
+    //*     PostRender          - Executed last and always executed.
+    //* The above are the recommended methods to override in derived classes but other methods can
+    //* be overridden to give more control albeit at risk of breaking the rendering model (e.g. can
+    //* override DoRender to prevent template RenderContent methods being executed.)
+    //* </remarks>
     //* </method>
     public function Render()
     {
@@ -462,6 +490,8 @@ abstract class PageBase
         if ($this->get_EnablePageBuffering())
         {
             $output = $this->DoPostProcessOutput(ob_get_contents());
+            // if $output false then no need to do anything as content already in buffer,
+            // if not false then need to clear buffer and output new content.
             if ($output)
             {
                 ob_clean();
@@ -474,8 +504,9 @@ abstract class PageBase
     //* returnType="[string,boolean]">
     //* Post-process output before final output is rendered to browser
     //* <remarks>
-    //* If no processing performed should return false, otherwise should
-    //* return processed string.
+    //* If no processing performed should return false, otherwise should return processed string. 
+    //* Returning original content instead of false will still render correct content but will
+    //* hinder performance as buffer will be cleared just to re-output exactly the same content.
     //* </remarks>
     //* </method>
     public function DoPostProcessOutput($output)
@@ -546,7 +577,7 @@ abstract class PageBase
     }
     
     //* <method name="DoRender" modifiers="public" returnType="void">
-    //* Do rendering of page
+    //* Do rendering of page. Calls DoRender() on all templates first, starting from the 'top'.
     //* </method>
     public function DoRender()
     {
@@ -580,7 +611,7 @@ abstract class PageBase
     }
     
     //* <method name="RenderContent" modifiers="public" returnType="void">
-    //* Render templated content
+    //* Render templated content. Should be overridden in the derived class to render page content.
     //* </method>
     public function RenderContent()
     {
@@ -620,8 +651,12 @@ abstract class PageBase
     }
     
     //* <method name="_get_CacheDirectory" modifiers="protected" returnType="string">
-    //* Get cache directory
+    //* Get cache directory.
     //* </method>
+    //* <remarks>
+    //* Default of empty string will cause current directory to be used as cache directory, which
+    //* probably will work but not very tidy.
+    //* </remarks>
     protected function _get_CacheDirectory()
     {
         return "";
@@ -637,14 +672,15 @@ abstract class PageBase
     }
     
     //* <method name="PostRender" modifiers="protected" returnType="void">
-    //* Execute code required after Render().  Will always be called even if page is cached.
+    //* Execute code required after Render(). Will always be called even if page is cached.
     //* </method>
     protected function PostRender()
     {
     }
     
     //* <method name="PreRenderPageSection" modifiers="protected" returnType="void">
-    //* Execute code required before RenderPageSection().  Will always be called even if page is cached.
+    //* Execute code required before RenderPageSection(). Will always be called even if page is 
+    //* cached.
     //* </method>
     protected function PreRenderPageSection($pageSectionName)
     {

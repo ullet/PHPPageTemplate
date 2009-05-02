@@ -26,38 +26,38 @@ require_once "../framework/ThemeList.php";
 
 class TestThemeList extends ThemeList
 {
-    private $_themeListPath;
+    private $themeListPath;
     
     // override constructor so can capture themeListPath for testing
     public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
     {
-        $this->_themeListPath = $themeListPath;
+        $this->themeListPath = $themeListPath;
         parent::__construct($themeListPath, $defaultTheme, $pageRequest);
     }
     
     public function get_ThemeListPath_ForTesting()
     {
-        return $this->_themeListPath;
+        return $this->themeListPath;
     }
     
     public function get_SelectedThemeQS_ForTesting()
     {
-        return $this->_get_SelectedThemeQS();
+        return $this->get_SelectedThemeQS();
     }
     
     public function get_SelectedThemeCookies_ForTesting()
     {
-        return $this->_get_SelectedThemeCookies();
+        return $this->get_SelectedThemeCookies();
     }
     
     public function get_ExplicitlySelectedTheme_ForTesting()
     {
-        return $this->_get_ExplicitlySelectedTheme();
+        return $this->get_ExplicitlySelectedTheme();
     }
     
     public function SelectedThemeFromCollection_ForTesting(&$col)
     {
-        return $this->_SelectedThemeFromCollection($col);
+        return $this->SelectedThemeFromCollection($col);
     }
     
     public function ParseThemes_ForTesting($themeListPath)
@@ -65,12 +65,12 @@ class TestThemeList extends ThemeList
         // use parent not $this to ensure real
         // method is called not one of the overridden
         // test methods.
-        return parent::_ParseThemes($themeListPath);
+        return parent::ParseThemes($themeListPath);
     }
     
     public function AddTheme_ForTesting($theme)
     {
-        $this->_AddTheme($theme);
+        $this->AddTheme($theme);
     }
 }
 ?>
