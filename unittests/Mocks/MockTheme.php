@@ -22,20 +22,21 @@
  *************************************************************************
  */
  
-require_once "../framework/Theme.php";
-
-class TestQSTheme extends Theme
-{
-    public function __construct()
-    {
-        parent::__construct("qstheme");
-        $this->set_FavIconUrl("/qstheme.ico");
-        $this->set_StyleSheetPath("/qstheme.css");
-        $this->set_StyleSheetPathIE6("/qsthemeie6.css");
-        $this->set_StyleSheetPathIE7("/qsthemeie7.css");
-        $this->set_Title("QS Theme");
-        $this->set_Description("The QS theme");
-        $this->set_ThumbnailUrl("/qsthemethumb.jpg");
-    }
-}
-?>
+ require_once "../framework/Theme.php";
+ 
+ class MockTheme implements Theme
+ {
+     private $name;
+     
+     public function __construct($name)
+     {
+         $this->name = $name;
+     }
+     
+     public function get_Name()
+     {
+         return $this->name;
+     }
+ }
+ 
+ ?>

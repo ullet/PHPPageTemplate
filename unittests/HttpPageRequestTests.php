@@ -23,16 +23,16 @@
  */
  
 require_once "PHPUnit/Framework.php";
-require_once "TestPageRequest.php";
+require_once "Mocks.php";
 
-// NB. The class actually instantiated in the tests below is TestPageRequest
-// not PageRequest.  The tests are still valid as all PageRequest methods in 
-// test cases below are not overridden in TestPageRequest.  It is necessary
-// to sub-class PageRequest as special arrays $_GET and $_COOKIE have no
-// special meaning outside of a web context.  The only methods of PageRequest
+// NB. The class actually instantiated in the tests below is PageRequestExposedForTest
+// not HttpPageRequest.  The tests are still valid as all HttpPageRequest methods in 
+// test cases below are not overridden in PageRequestExposedForTest.  It is necessary
+// to sub-class HttpPageRequest as special arrays $_GET and $_COOKIE have no
+// special meaning outside of a web context.  The only methods of HttpPageRequest
 // not tested are QueryString() and Cookies().  This is not a problem as these
-// two methods are trivial simply returning $_GET and $_COOKIE respectively.
-class PageRequestTests extends PHPUnit_Framework_TestCase
+// two methods are trivial, simply returning $_GET and $_COOKIE respectively.
+class HttpPageRequestTests extends PHPUnit_Framework_TestCase
 {    
     //// Begin: Test code tests
     // Test the utility methods in TestPageRequest
@@ -244,7 +244,7 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_CookieCollection_RealDefault()
     {
-        $pageRequest = new PageRequest();
+        $pageRequest = new HttpPageRequest();
         
         // verify default is CookieCollection and not a subtype
         $this->assertTrue($pageRequest->get_CookieCollection() instanceof CookieCollection);
@@ -253,7 +253,7 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     
     public function test_Get_QueryStringCollection_RealDefault()
     {
-        $pageRequest = new PageRequest();
+        $pageRequest = new HttpPageRequest();
         
         // verify default is QueryStringCollection and not a subtype
         $this->assertTrue($pageRequest->get_QueryStringCollection() instanceof QueryStringCollection);
@@ -296,7 +296,7 @@ class PageRequestTests extends PHPUnit_Framework_TestCase
     //// Begin: Utility methods
     protected function CreatePageRequest()
     {
-        $pageRequest = new TestPageRequest();
+        $pageRequest = new HttpPageRequestExposedForTest();
         $pageRequest->ClearTestContext();
         $pageRequest->AddTestQueryStringParameter("a", "123");
         $pageRequest->AddTestQueryStringParameter("B", "xyz");

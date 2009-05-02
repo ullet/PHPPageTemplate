@@ -22,19 +22,11 @@
  *************************************************************************
  */
  
-require_once "TestThemeList.php";
-
-class TestThemeListNoParse extends TestThemeList
+interface ThemeFactory
 {
-    public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
-    {
-        parent::__construct($themeListPath, $defaultTheme, $pageRequest);
-    }
-    
-    // Override ParseThemes method to do nothing in order to be able
-    // to test methods that don't need parsing without wasting time parsing.
-    protected function ParseThemes($themeListPath)
-    {
-        // do nothing
-    }
+    //* <method name="CreateTheme" returnType="Theme">
+    //* Create instance of theme identified by given name.
+    //* </method>
+    function CreateTheme($themeName);
 }
+?>

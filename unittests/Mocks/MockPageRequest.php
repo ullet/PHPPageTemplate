@@ -22,15 +22,13 @@
  *************************************************************************
  */
  
+ require_once "../framework/HttpPageRequest.php";
  require_once "MockCookieCollection.php";
  require_once "MockQueryStringCollection.php";
 
-// Override certain methods to allow testing.  Due to overriding the
-// QueryString and Cookies methods are not testable, but these two methods
-// are trivial, simply returning the arrays $_GET and $_COOKIE respectively.
-class TestPageRequest extends PageRequest
+class MockPageRequest extends HttpPageRequest
 {
-    public function TestPageRequest()
+    public function __construct()
     {
         // set test CookieCollection and test QueryStringCollection as 
         // $_COOKIE and $_GET do not special meaning outside of a web 
@@ -64,16 +62,6 @@ class TestPageRequest extends PageRequest
     public function AddTestCookie($key, $value)
     {
         $this->get_CookieCollection()->AddTestCookie($key, $value);
-    }
-    
-    public function set_CookieCollection_ForTesting($cookieCollection)
-    {
-        parent::set_CookieCollection($cookieCollection);
-    }
-    
-    public function set_QueryStringCollection_ForTesting($queryStringCollection)
-    {
-        parent::set_QueryStringCollection($queryStringCollection);
     }
 }
 ?>

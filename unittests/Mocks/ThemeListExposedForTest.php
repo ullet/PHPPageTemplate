@@ -22,23 +22,50 @@
  *************************************************************************
  */
  
-require_once "TestThemeList.php";
-require_once "TestQSTheme.php";
-require_once "TestCookieTheme.php";
+require_once "../framework/ThemeList.php";
 
-class TestThemeListMockParse extends TestThemeList
+class ThemeListExposedForTest extends ThemeList
 {
-    public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
+    // override constructor so can capture themeListPath for testing
+    public function __construct(
+        ThemeFactory $themeFactory,
+        $defaultTheme=false, 
+        $pageRequest=NULL)
     {
-        parent::__construct($themeListPath, $defaultTheme, $pageRequest);
+        $this->themeListPath = $themeListPath;
+        parent::__construct(
+            $themeFactory, 
+            $defaultTheme, 
+            $pageRequest);
     }
     
-    // Override ParseThemes method to set test values in order to be able
-    // to test methods that need config data (but don't need to parse a file).
-    protected function ParseThemes($themeListPath)
+    public function get_SelectedThemeQueryString_ForTesting()
     {
-        $this->AddTheme(new TestQSTheme());
-        $this->AddTheme(new TestCookieTheme());
+        return parent::get_SelectedThemeQueryString();
+    }
+    
+    public function get_SelectedThemeCookies_ForTesting()
+    {
+        return parent::get_SelectedThemeCookies();
+    }
+    
+    public function get_ExplicitlySelectedTheme_ForTesting()
+    {
+        return parent::get_ExplicitlySelectedTheme();
+    }
+    
+    public function SelectedThemeFromCollection_ForTesting(&$col)
+    {
+        return parent::SelectedThemeFromCollection($col);
+    }
+    
+    public function get_PageRequest_ForTesting()
+    {
+        return parent::get_PageRequest();
+    }
+    
+    public function set_PageRequest_ForTesting(PageRequest $pageRequest)
+    {
+        return parent::set_PageRequest($pageRequest);
     }
 }
-?>

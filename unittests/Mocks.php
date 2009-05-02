@@ -22,55 +22,13 @@
  *************************************************************************
  */
  
-require_once "../framework/ThemeList.php";
-
-class TestThemeList extends ThemeList
-{
-    private $themeListPath;
-    
-    // override constructor so can capture themeListPath for testing
-    public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
-    {
-        $this->themeListPath = $themeListPath;
-        parent::__construct($themeListPath, $defaultTheme, $pageRequest);
-    }
-    
-    public function get_ThemeListPath_ForTesting()
-    {
-        return $this->themeListPath;
-    }
-    
-    public function get_SelectedThemeQS_ForTesting()
-    {
-        return $this->get_SelectedThemeQS();
-    }
-    
-    public function get_SelectedThemeCookies_ForTesting()
-    {
-        return $this->get_SelectedThemeCookies();
-    }
-    
-    public function get_ExplicitlySelectedTheme_ForTesting()
-    {
-        return $this->get_ExplicitlySelectedTheme();
-    }
-    
-    public function SelectedThemeFromCollection_ForTesting(&$col)
-    {
-        return $this->SelectedThemeFromCollection($col);
-    }
-    
-    public function ParseThemes_ForTesting($themeListPath)
-    {
-        // use parent not $this to ensure real
-        // method is called not one of the overridden
-        // test methods.
-        return parent::ParseThemes($themeListPath);
-    }
-    
-    public function AddTheme_ForTesting($theme)
-    {
-        $this->AddTheme($theme);
-    }
-}
+require_once "Mocks/MockCookieCollection.php";
+require_once "Mocks/MockPage.php";
+require_once "Mocks/MockPageRequest.php";
+require_once "Mocks/MockQueryStringCollection.php";
+require_once "Mocks/MockTemplate.php";
+require_once "Mocks/MockTheme.php";
+require_once "Mocks/MockThemeFactory.php";
+require_once "Mocks/HttpPageRequestExposedForTest.php";
+require_once "Mocks/ThemeListExposedForTest.php";
 ?>

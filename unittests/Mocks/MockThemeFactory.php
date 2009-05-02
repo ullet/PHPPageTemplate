@@ -22,20 +22,14 @@
  *************************************************************************
  */
  
-require_once "../framework/Theme.php";
-
-class TestCookieTheme extends Theme
-{
-    public function __construct()
-    {
-        parent::__construct("cookietheme");
-        $this->set_FavIconUrl("/cookietheme.ico");
-        $this->set_StyleSheetPath("/cookietheme.css");
-        $this->set_StyleSheetPathIE6("/cookiethemeie6.css");
-        $this->set_StyleSheetPathIE7("/cookiethemeie7.css");
-        $this->set_Title("Cookie Theme");
-        $this->set_Description("The Cookie theme");
-        $this->set_ThumbnailUrl("/cookiethemethumb.jpg");
-    }
-}
-?>
+ require_once "../framework/ThemeFactory.php";
+ require_once "MockTheme.php";
+ 
+ class MockThemeFactory implements ThemeFactory
+ {
+     public function CreateTheme($name)
+     {
+         return new MockTheme($name);
+     }
+ }
+ ?>

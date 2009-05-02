@@ -23,8 +23,7 @@
  */
  
 require_once "PHPUnit/Framework.php";
-require_once "MockPage.php";
-require_once "MockTemplate.php";
+require_once "Mocks.php";
 
 //* <class name="PageBaseTests" modifiers="public">
 //* A selection of unit tests for PageBase

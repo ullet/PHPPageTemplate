@@ -23,8 +23,8 @@
  */
  
 require_once "PHPUnit/Framework.php";
-require_once "../framework/Theme.php";
-require_once "MockTemplate.php";
+require_once "../framework/CrudeTheme.php";
+require_once "Mocks.php";
 
 //* <class name="ThemeTests" modifiers="public">
 //* A selection of unit tests for Theme
@@ -101,7 +101,7 @@ class ThemeTests extends PHPUnit_Framework_TestCase
     
     protected function _CreateTheme()
     {
-        return new Theme("test");
+        return new CrudeTheme("test");
     }
     
     protected function _CreateTemplate()

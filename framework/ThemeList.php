@@ -23,8 +23,9 @@
  */
  
 require_once dirname(__FILE__)."/Theme.php";
+require_once dirname(__FILE__)."/ThemeFactory.php";
 require_once dirname(__FILE__)."/ListIterator.php";
-require_once dirname(__FILE__)."/PageRequest.php";
+require_once dirname(__FILE__)."/HttpPageRequest.php";
 require_once dirname(__FILE__)."/CookieCollection.php";
 
 //* <class name="ThemeList" modifiers="public">
@@ -32,8 +33,6 @@ require_once dirname(__FILE__)."/CookieCollection.php";
 //* </class>
 class ThemeList
 {
-    private $themeList = false;
-    private $orderedThemeList = false;
     private $currentTheme = false;
     private $currentElement = false;
     //* <property name="_defaultTheme" modifiers="private" type="string">
@@ -47,7 +46,7 @@ class ThemeList
     //* <property name="_themeInQS" modifiers="private" type="boolean">
     //* Flag if theme is set in querystring.
     //* </property>    
-    private $themeInQS = false;
+    private $themeInQueryString = false;
     //* <property name="_cookieDuration" modifiers="private" type="int">
     //* Length of time in seconds from current time at which cookie saving
     //* theme should expire.
@@ -55,27 +54,39 @@ class ThemeList
     private $cookieDuration = 2592000; // default to 30 days
     private $iterator = NULL;
     private $pageRequest = NULL;
+    private $themeFactory = NULL;
     
     //// constructors               
-    public function __construct($themeListPath, $defaultTheme=false, PageRequest $pageRequest=NULL)
+    public function __construct(
+        ThemeFactory $themeFactory,
+        $defaultTheme=false, 
+        $pageRequest=NULL) // can't use type hint if want default of NULL
     {
         $this->set_DefaultThemeName($defaultTheme);
-        $this->set_PageRequest($pageRequest);
-        $this->ParseThemes($themeListPath);
+        if ($pageRequest != NULL)
+        {
+            $this->set_PageRequest($pageRequest);
+        }
+        $this->set_ThemeFactory($themeFactory);
     }
     //// end constructors
     
+    protected function set_ThemeFactory(ThemeFactory $themeFactory)
+    {
+        $this->themeFactory = $themeFactory;
+    }
+        
     //// public accessor methods
-    public function set_PageRequest($pageRequest)
+    protected function set_PageRequest(PageRequest $pageRequest)
     {
         $this->pageRequest = $pageRequest;
     }
     
-    public function get_PageRequest()
+    protected function get_PageRequest()
     {
         if (!$this->pageRequest)
         {
-            $this->pageRequest = new PageRequest();
+            $this->pageRequest = new HttpPageRequest();
         }
         return $this->pageRequest;
     }
@@ -110,12 +121,12 @@ class ThemeList
     public function get_SelectedTheme()
     {
         $selectedThemeName = $this->get_SelectedThemeName();
-        if ("" == $selectedThemeName ||
-            !array_key_exists($selectedThemeName, $this->themeList))
+        $selectedTheme = false;
+        if ("" != $selectedThemeName)
         {
-            return false;
+            $selectedTheme = $this->themeFactory->CreateTheme($selectedThemeName);
         }
-        return $this->themeList[$selectedThemeName];
+        return $selectedTheme;
     }
     
     public function get_SelectedThemeName()
@@ -141,36 +152,26 @@ class ThemeList
         return $this->themeInCookie;
     }
     
-    public function get_ThemeInQS()
+    public function get_ThemeInQueryString()
     {
-        return $this->themeInQS;
-    }
-    
-    public function get_Iterator()
-    {
-        if (!$this->iterator)
-        {
-            $this->iterator =& new ListIterator();
-            $this->iterator->set_List(array_values($this->orderedThemeList));
-        }
-        return $this->iterator;
+        return $this->themeInQueryString;
     }
     //// end public accessor methods
     
     //// protected accessor methods
-    protected function get_SelectedThemeQS()
+    protected function get_SelectedThemeQueryString()
     {
         $pageRequest =& $this->get_PageRequest();
-        $qs =& $pageRequest->QueryStringLC();
-        $selectedTheme = $this->SelectedThemeFromCollection($qs);
-        $this->themeInQS = ("" != $selectedTheme);
+        $queryString = $pageRequest->QueryString();
+        $selectedTheme = $this->SelectedThemeFromCollection($queryString);
+        $this->themeInQueryString = ("" != $selectedTheme);
         return $selectedTheme;
     }
           
     protected function get_SelectedThemeCookies()
     {
         $pageRequest =& $this->get_PageRequest();
-        $cookies =& $pageRequest->CookiesLC();
+        $cookies =& $pageRequest->Cookies();
         $selectedTheme = $this->SelectedThemeFromCollection($cookies);
         $this->themeInCookie = ("" != $selectedTheme);
         return $selectedTheme;
@@ -182,32 +183,23 @@ class ThemeList
     //* </method>
     protected function get_ExplicitlySelectedTheme()
     {
-        $selectedThemeQS = $this->get_SelectedThemeQS();
+        $selectedThemeQueryString = $this->get_SelectedThemeQueryString();
         $selectedThemeCookies = $this->get_SelectedThemeCookies();
         
-        if ("" != $selectedThemeQS)
+        if ("" != $selectedThemeQueryString)
         {
-            if ($selectedThemeCookies != $selectedThemeQS)
+            if ($selectedThemeCookies != $selectedThemeQueryString)
             {
                 $selectedThemeCookies = "";
                 $this->themeInCookie = false;
             }    
-            return $selectedThemeQS;
+            return $selectedThemeQueryString;
         }
         return $selectedThemeCookies;
     }
     //// end protected accessor methods       
     
-    //// public methods
-    public function ThemeExists($themeName)
-    {
-        if (!$this->themeList)
-        {
-            return false;
-        }
-        return array_key_exists($themeName, $this->themeList);
-    }
-    
+    //// public methods    
     public function SetSelectedThemeCookie()
     {
         if (!$this->get_ThemeExplicitlySelected())
@@ -227,141 +219,12 @@ class ThemeList
     //// protected methods    
     protected function SelectedThemeFromCollection(array $col)
     {
+        $selectedTheme = "";
         if (array_key_exists('theme', $col))
         {
             $selectedTheme = trim($col['theme']);
-            if ($this->ThemeExists($selectedTheme))
-            {
-                return $selectedTheme;
-            }
         }
-        return "";
-    }  
-    
-    protected function ParseThemes($themeListPath)
-    {
-        if (!file_exists($themeListPath))
-        {
-            return;            
-        }
-        $fp = fopen($themeListPath, "r");
-        if (!$fp)
-        {
-            return;
-        }
-        
-        $themesXml = "";
-        while ($data = fread($fp, 102400))
-        {
-            $themesXml .= $data;
-        }
-        fclose($fp);
-        
-        $parser = xml_parser_create();
-        xml_set_object($parser, $this);
-        xml_parser_set_option($parser, XML_OPTION_CASE_FOLDING, false);
-        xml_set_element_handler($parser, 'StartElement', 'EndElement');
-        xml_set_character_data_handler($parser, 'CharacterData');
-                                            
-        if (!xml_parse($parser, $themesXml))
-        {
-            // do some error handling
-        }
-    }
-    
-    protected function StartElement($parser, $elementName, &$attributes)
-    {
-        if ($elementName == "theme")
-        {
-            // start new theme
-            if (array_key_exists("name", $attributes))
-            {
-                $theme =& new Theme(strtolower($attributes["name"]));
-                $this->currentTheme =& $theme;
-            }
-            else
-            {
-                $this->currentTheme = false;
-            }
-        }
-        else 
-        {
-            $this->currentElement = $elementName;
-        }
-    }
-    
-    protected function CharacterData($parser, $cdata)
-    {
-        if ($this->currentElement && $this->currentTheme)
-        {
-            $theme =& $this->currentTheme;
-            if ($this->currentElement == "favIconUrl")
-            {
-                $theme->set_FavIconUrl(trim($cdata));
-            }
-            else if ($this->currentElement == "styleSheetPath")
-            {
-                $theme->set_StyleSheetPath(trim($cdata));
-            }
-            else if ($this->currentElement == "styleSheetPathIE6")
-            {
-                $theme->set_StyleSheetPathIE6(trim($cdata));
-            }
-            else if ($this->currentElement == "styleSheetPathIE7")
-            {
-                $theme->set_StyleSheetPathIE7(trim($cdata));
-            }
-            else if ($this->currentElement == "title")
-            {
-                $theme->set_Title(trim($cdata));
-            }
-            else if ($this->currentElement == "description")
-            {
-                $text = $theme->get_Description();
-                if ($text != "")
-                {
-                    $text .= " ";
-                }
-                $text .= trim($cdata);                
-                $theme->set_Description($text);
-            }
-            else if ($this->currentElement == "thumbnailUrl")
-            {
-                $theme->set_ThumbnailUrl(trim($cdata));
-            }
-            else if ($this->currentElement == "template")
-            {
-                $theme->set_Template(trim($cdata));
-            }
-        }
-    }
-    
-    protected function EndElement($parser, $elementName)
-    {
-        if ($elementName == "theme")
-        {
-            // end of current theme
-            if ($this->currentTheme)
-            {
-                $this->AddTheme($this->currentTheme);
-            }
-            $this->currentTheme = false;
-        }
-        $this->currentElement = false;
-    } 
-    
-    protected function AddTheme(Theme $theme)
-    {
-        if ($theme)
-        {
-            if (!$this->themeList || !$this->orderedThemeList)
-            {
-                $this->themeList = array();
-                $this->orderedThemeList = array();
-            }
-            $this->themeList[$theme->get_Name()] = $theme;
-            $this->orderedThemeList[] = $theme;
-        }
+        return $selectedTheme;
     }
     //// end protected methods
 }

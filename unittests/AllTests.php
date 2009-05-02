@@ -27,7 +27,7 @@ require_once 'PHPUnit/TextUI/TestRunner.php';
 require_once 'PageBaseTests.php';
 require_once 'ThemeTests.php';
 require_once 'ThemeListTests.php';
-require_once 'PageRequestTests.php';
+require_once 'HttpPageRequestTests.php';
  
 class AllTests
 {
@@ -43,7 +43,7 @@ class AllTests
         $suite->addTestSuite('PageBaseTests');
         $suite->addTestSuite('ThemeTests');
         $suite->addTestSuite('ThemeListTests');
-        $suite->addTestSuite('PageRequestTests');
+        $suite->addTestSuite('HttpPageRequestTests');
  
         return $suite;
     }
