@@ -22,28 +22,10 @@
  *************************************************************************
  */
  
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/TextUI/TestRunner.php';
-require_once 'PageBaseTests.php';
-require_once 'ThemeListTests.php';
- 
-class AllTests
-{
-    public static function main()
-    {
-        PHPUnit_TextUI_TestRunner::run(self::suite());
-    }
- 
-    public static function suite()
-    {
-        $suite = new PHPUnit_Framework_TestSuite('PHPPageTemplate');
- 
-        $suite->addTestSuite('PageBaseTests');
-        $suite->addTestSuite('ThemeListTests');
- 
-        return $suite;
-    }
-}
+require_once "interfaces/CookieCollection.php";
+require_once "interfaces/PageRequest.php";
+require_once "interfaces/QueryStringCollection.php";
+require_once "interfaces/Theme.php";
+require_once "interfaces/ThemeFactory.php";
 
-AllTests::main();
 ?>

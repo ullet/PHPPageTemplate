@@ -21,12 +21,7 @@
  * USA                                                                   *
  *************************************************************************
  */
- 
-interface ThemeFactory
-{
-    //* <method name="CreateTheme" returnType="Theme">
-    //* Create instance of theme identified by given name.
-    //* </method>
-    function CreateTheme($themeName);
-}
+
+require_once "../framework/AllTypes.php";
+
 ?>

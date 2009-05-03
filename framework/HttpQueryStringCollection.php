@@ -25,8 +25,12 @@
 //* <class name="QueryStringCollection" modifiers="public">
 //* QueryStringCollection class
 //* </class>
-class QueryStringCollection
+class HttpQueryStringCollection
 {
+    public function __construct()
+    {
+    }
+    
     //* <method name="QueryString" modifiers="public" 
     //* returnType="[string=>string]">
     //* Gets querystring parameters as an associative array

@@ -21,11 +21,16 @@
  * USA                                                                   *
  *************************************************************************
  */
- 
- //* <class name="CrudeTheme" modifiers="public">
-//* Crude page theme
-//* </class>
-interface Theme
+
+/**
+ * Common interface for collections of cookies.
+ */
+interface CookieCollection
 {
-	function get_Name();
+    public function SetCookie($name, $value, $duration, $path="", $domain="", $secure=0);
+        
+    /** 
+     * Gets cookies as an associative array
+     */
+    public function Cookies();
 }

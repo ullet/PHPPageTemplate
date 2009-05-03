@@ -21,29 +21,15 @@
  * USA                                                                   *
  *************************************************************************
  */
- 
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/TextUI/TestRunner.php';
-require_once 'PageBaseTests.php';
-require_once 'ThemeListTests.php';
- 
-class AllTests
-{
-    public static function main()
-    {
-        PHPUnit_TextUI_TestRunner::run(self::suite());
-    }
- 
-    public static function suite()
-    {
-        $suite = new PHPUnit_Framework_TestSuite('PHPPageTemplate');
- 
-        $suite->addTestSuite('PageBaseTests');
-        $suite->addTestSuite('ThemeListTests');
- 
-        return $suite;
-    }
-}
 
-AllTests::main();
+/** 
+ * Common interface for collections of query string parameters.
+ */
+interface QueryStringCollection
+{
+    /** 
+     * Gets querystring parameters as an associative array
+     */
+    public function QueryString();
+}
 ?>

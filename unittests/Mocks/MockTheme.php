@@ -22,21 +22,23 @@
  *************************************************************************
  */
  
- require_once "../framework/Theme.php";
+ require_once "Framework.php";
  
  class MockTheme implements Theme
  {
-     private $name;
+     private $id;
      
-     public function __construct($name)
+     public function __construct($id)
      {
-         $this->name = $name;
+         $this->id = $id;
      }
      
-     public function get_Name()
+     /// Theme interface members
+     public function ID()
      {
-         return $this->name;
+         return $this->id;
      }
+     /// End Theme interface members
  }
  
  ?>

@@ -22,17 +22,15 @@
  *************************************************************************
  */
 
-//* <interface name="PageRequest" modifiers="public">
-//* Page request class
-//* </interface>
-interface PageRequest
-{
-    function get_CookieCollection();
-    
-    function get_QueryStringCollection();
-    
-    function QueryString();
-    
-    function Cookies();
-}
+require_once "Interfaces.php";
+require_once "HttpCookieCollection.php";
+require_once "HttpPageRequest.php";
+require_once "HttpQueryStringCollection.php";
+require_once "PageBase.php";
+require_once "PageCache.php";
+require_once "PageCacheMetaData.php";
+require_once "PageSectionBase.php";
+require_once "SimpleTheme.php";
+require_once "ThemeList.php";
+
 ?>

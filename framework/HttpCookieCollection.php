@@ -25,7 +25,7 @@
 //* <class name="CookieCollection" modifiers="public">
 //* CookieCollection class
 //* </class>
-class CookieCollection
+class HttpCookieCollection
 {
     public function SetCookie($name, $value, $duration, $path="", $domain="", $secure=0)
     {
@@ -40,75 +40,6 @@ class CookieCollection
     {
         return $_COOKIE;
     }
-    
-    //* <method name="CookiesLC" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets cookies as an associative array with all keys and
-    //* values in lower case
-    //* </method>
-    public function CookiesLC()
-    {
-        $cookies = $this->Cookies();
-        $clc = array();
-        foreach (array_keys($cookies) as $key)
-        {
-            $clc[strtolower($key)] = strtolower($cookies[$key]);
-        }
-        return $clc;
-    }
-    
-    //* <method name="CookiesLCKeys" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets cookies as an associative array with all keys in 
-    //* lower case
-    //* </method>
-    public function CookiesLCKeys()
-    {
-        $cookies = $this->Cookies();
-        $clc = array();
-        foreach (array_keys($cookies) as $key)
-        {
-            $clc[strtolower($key)] = $cookies[$key];
-        }
-        return $clc;
-    }
-    
-    //* <method name="CookiesLCValues" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets cookies as an associative array with all values in 
-    //* lower case
-    //* </method>
-    public function CookiesLCValues()
-    {
-        $cookies = $this->Cookies();
-        $clc = array();
-        foreach (array_keys($cookies) as $key)
-        {
-            $clc[$key] = strtolower($cookies[$key]);
-        }
-        return $clc;
-    }
-    
-    //* <method name="CookiesHash" modifiers="public" 
-    //* returnType="[string=>[string=>string]]">
-    //* Gets cookies as an associative array with all keys in
-    //* lower case.  Array value is an associative array containing original
-    //* key (actualKey), value of parameter (value) and 
-    //* lower case value (valueLC).
-    //* </method>
-    public function CookiesHash()
-    {
-        $cookies = $this->Cookies();
-        $cookiesHash = array();
-        foreach (array_keys($cookies) as $key)
-        {
-            $cookiesHash[strtolower($key)] = array(
-                "actualKey" => $key,
-                "value" => $cookies[$key],
-                "valueLC" => strtolower($cookies[$key]));
-        }
-        return $cookiesHash;
-    } 
     
     protected function CurrentTime()
     {

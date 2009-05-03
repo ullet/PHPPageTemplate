@@ -22,28 +22,13 @@
  *************************************************************************
  */
  
-require_once 'PHPUnit/Framework.php';
-require_once 'PHPUnit/TextUI/TestRunner.php';
-require_once 'PageBaseTests.php';
-require_once 'ThemeListTests.php';
- 
-class AllTests
+/** 
+ * Common interface for theme types. 
+ */
+interface Theme
 {
-    public static function main()
-    {
-        PHPUnit_TextUI_TestRunner::run(self::suite());
-    }
- 
-    public static function suite()
-    {
-        $suite = new PHPUnit_Framework_TestSuite('PHPPageTemplate');
- 
-        $suite->addTestSuite('PageBaseTests');
-        $suite->addTestSuite('ThemeListTests');
- 
-        return $suite;
-    }
+    /**
+     * Unique identifier for the theme.
+     */
+	function ID();
 }
-
-AllTests::main();
-?>

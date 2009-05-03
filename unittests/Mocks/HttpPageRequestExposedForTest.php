@@ -26,29 +26,40 @@
  require_once "MockCookieCollection.php";
  require_once "MockQueryStringCollection.php";
 
-// Override certain methods to allow testing.  Due to overriding the
-// QueryString and Cookies methods are not testable, but these two methods
-// are trivial, simply returning the arrays $_GET and $_COOKIE respectively.
+// Override CookieCollection and QueryStringCollection to use collections that
+// are not dependent on being run in a HTTP context.
 class HttpPageRequestExposedForTest extends HttpPageRequest
 {
+    private $cookieCollection;
+    private $queryStringCollection;
+    
     public function __construct()
     {
-        // set test CookieCollection and test QueryStringCollection as 
-        // $_COOKIE and $_GET do not special meaning outside of a web 
-        // context
-        $this->set_CookieCollection(new MockCookieCollection());
-        $this->set_QueryStringCollection(new MockQueryStringCollection());
+        $this->cookieCollection = new MockCookieCollection();
+        $this->queryStringCollection = new MockQueryStringCollection();
     }
+    
+    //// Overidden HttpPageRequest members
+    public function CookieCollection()
+    {
+        return $this->cookieCollection;
+    }
+    
+    public function QueryStringCollection()
+    {
+        return $this->queryStringCollection;
+    }
+    //// End overidden HttpPageRequest members
     
     // methods to allow setting and getting test querystring and cookies
     public function ClearTestQueryString()
     {
-        $this->get_QueryStringCollection()->ClearTestQueryString();
+        $this->queryStringCollection->ClearTestQueryString();
     }
     
     public function ClearTestCookies()
     {
-        $this->get_CookieCollection()->ClearTestCookies();
+        $this->cookieCollection->ClearTestCookies();
     }
     
     public function ClearTestContext()
@@ -59,22 +70,12 @@ class HttpPageRequestExposedForTest extends HttpPageRequest
     
     public function AddTestQueryStringParameter($key, $value)
     {
-        $this->get_QueryStringCollection()->AddTestQueryStringParameter($key, $value);
+        $this->queryStringCollection->AddTestQueryStringParameter($key, $value);
     }
     
     public function AddTestCookie($key, $value)
     {
-        $this->get_CookieCollection()->AddTestCookie($key, $value);
-    }
-    
-    public function set_CookieCollection_ForTesting($cookieCollection)
-    {
-        parent::set_CookieCollection($cookieCollection);
-    }
-    
-    public function set_QueryStringCollection_ForTesting($queryStringCollection)
-    {
-        parent::set_QueryStringCollection($queryStringCollection);
+        $this->cookieCollection->AddTestCookie($key, $value);
     }
 }
 ?>

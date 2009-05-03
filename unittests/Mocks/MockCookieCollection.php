@@ -21,15 +21,16 @@
  * USA                                                                   *
  *************************************************************************
  */
-require_once "../framework/CookieCollection.php";
+require_once "Framework.php";
  
 //* <class name="Cookie" modifiers="public">
 //* MockCookieCollection class
 //* </class>
-class MockCookieCollection extends CookieCollection
+class MockCookieCollection implements CookieCollection
 {
     private $cookies = array();
     
+    //// CookieCollection interface members
     public function SetCookie($name, $value, $duration, $path="", $domain="", $secure=0)
     {
         $this->cookies[] = array(
@@ -50,6 +51,7 @@ class MockCookieCollection extends CookieCollection
         }
         return $cookieArray;
     }
+    //// End CookieCollection interface members
     
     protected function CurrentTime()
     {

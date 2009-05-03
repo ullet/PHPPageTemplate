@@ -22,11 +22,7 @@
  *************************************************************************
  */
  
-require_once dirname(__FILE__)."/Theme.php";
-require_once dirname(__FILE__)."/ThemeFactory.php";
-require_once dirname(__FILE__)."/ListIterator.php";
-require_once dirname(__FILE__)."/HttpPageRequest.php";
-require_once dirname(__FILE__)."/CookieCollection.php";
+require_once "Interfaces.php";
 
 //* <class name="ThemeList" modifiers="public">
 //* List of page themes
@@ -210,9 +206,11 @@ class ThemeList
         {
             return;
         }
-        $this->get_CookieCollection()->SetCookie(
-            "theme", $this->get_SelectedThemeName(), 
-            $this->get_CookieDuration(), '/');
+        $this->pageRequest->SetCookie(
+            "theme", 
+            $this->get_SelectedThemeName(), 
+            $this->get_CookieDuration(), 
+            '/');
     }
     //// end public methods
     

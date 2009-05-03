@@ -22,8 +22,8 @@
  *************************************************************************
  */
 
+require_once "Interfaces.php";
 require_once dirname(__FILE__)."/PageCache.php";
-require_once dirname(__FILE__)."/Theme.php";
 
 //* <class name="PageBase" modifiers="public, abstract">
 //* Base class for a web page based on a template and a template page

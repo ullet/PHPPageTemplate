@@ -23,8 +23,7 @@
  */
  
 require_once "PHPUnit/Framework.php";
-require_once "../framework/ThemeList.php";
-require_once "../framework/CrudeThemeFactory.php";
+require_once "Framework.php";
 require_once "Mocks.php";
 
 //* <class name="ThemeListTests" modifiers="public">
@@ -114,7 +113,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
         
         $theme = $themeList->get_SelectedTheme();
         
-        $this->assertEquals("qstheme", $theme->get_Name());
+        $this->assertEquals("qstheme", $theme->ID());
     }
     
     public function test_Get_SelectedTheme_FromCookie()
@@ -122,7 +121,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
         $themeList =& $this->CreateThemeListWithCookie();
         
         $theme = $themeList->get_SelectedTheme();        
-        $this->assertEquals("cookietheme", $theme->get_Name());
+        $this->assertEquals("cookietheme", $theme->ID());
     }
     
     public function test_Get_ThemeExplicitlySelected_Default()
@@ -470,7 +469,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
         $pageRequest->AddTestQueryStringParameter("theme", "qstheme");
         $pageRequest->AddTestCookie("theme", "cookietheme");
         $themeList = new ThemeListExposedForTest(
-            new CrudeThemeFactory("/notadir/notafile.xml"),
+            new MockThemeFactory(),
             "test1", 
             $pageRequest);
         

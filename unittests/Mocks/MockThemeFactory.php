@@ -22,7 +22,7 @@
  *************************************************************************
  */
  
- require_once "../framework/ThemeFactory.php";
+ require_once "Framework.php";
  require_once "MockTheme.php";
  
  class MockThemeFactory implements ThemeFactory

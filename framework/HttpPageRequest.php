@@ -22,32 +22,32 @@
  *************************************************************************
  */
 
-require_once dirname(__FILE__)."/CookieCollection.php";
-require_once dirname(__FILE__)."/QueryStringCollection.php";
+require_once dirname(__FILE__)."/HttpCookieCollection.php";
+require_once dirname(__FILE__)."/HttpQueryStringCollection.php";
  
 //* <class name="PageRequest" modifiers="public">
 //* Page request class
 //* </class>
 class HttpPageRequest implements PageRequest
 {
-    private $cookieCollection = false;
-    private $queryStringCollection = false;
+    private $cookieCollection;
+    private $queryStringCollection;
     
     //// public methods
-    public function get_CookieCollection()
+    protected function CookieCollection()
     {
-        if (!$this->cookieCollection)
+        if (is_null($this->cookieCollection))
         {
-            $this->cookieCollection = new CookieCollection();
+            $this->cookieCollection = new HttpCookieCollection();
         }
         return $this->cookieCollection;
     }    
     
-    public function get_QueryStringCollection()
+    protected function QueryStringCollection()
     {
-        if (!$this->queryStringCollection)
+        if (is_null($this->queryStringCollection))
         {
-            $this->queryStringCollection = new QueryStringCollection();
+            $this->queryStringCollection = new HttpQueryStringCollection();            
         }
         return $this->queryStringCollection;
     }
@@ -58,49 +58,7 @@ class HttpPageRequest implements PageRequest
     //* </method>
     public function QueryString()
     {
-        return $this->get_QueryStringCollection()->QueryString();
-    }
-    
-    //* <method name="QueryStringLC" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets querystring parameters as an associative array with all keys and
-    //* values in lower case
-    //* </method>
-    public function QueryStringLC()
-    {
-        return $this->get_QueryStringCollection()->QueryStringLC();
-    }
-    
-    //* <method name="QueryStringLCKeys" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets querystring parameters as an associative array with all keys in 
-    //* lower case
-    //* </method>
-    public function QueryStringLCKeys()
-    {
-        return $this->get_QueryStringCollection()->QueryStringLCKeys();
-    }
-    
-    //* <method name="QueryStringLCValues" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets querystring parameters as an associative array with all values in 
-    //* lower case
-    //* </method>
-    public function QueryStringLCValues()
-    {
-        return $this->get_QueryStringCollection()->QueryStringLCValues();
-    }
-    
-    //* <method name="QueryStringHash" modifiers="public" 
-    //* returnType="[string=>[string=>string]]">
-    //* Gets querystring parameters as an associative array with all keys in
-    //* lower case.  Array value is an associative array containing original
-    //* key (actualKey), value of parameter (value) and 
-    //* lower case value (valueLC).
-    //* </method>
-    public function QueryStringHash()
-    {
-        return $this->get_QueryStringCollection()->QueryStringHash();
+        return $this->QueryStringCollection()->QueryString();
     }
     
     //* <method name="Cookies" modifiers="public" 
@@ -109,60 +67,13 @@ class HttpPageRequest implements PageRequest
     //* </method>
     public function Cookies()
     {
-        return $this->get_CookieCollection()->Cookies();
+        return $this->CookieCollection()->Cookies();
     }
     
-    //* <method name="CookiesLC" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets cookies as an associative array with all keys and
-    //* values in lower case
-    //* </method>
-    public function CookiesLC()
+    public function SetCookie($name, $value, $duration, $path="", $domain="", $secure=0)
     {
-        return $this->get_CookieCollection()->CookiesLC();
+        $this->CookieCollection()->SetCookie($name, $value, $duration, $path, $domain, $secure);
     }
-    
-    //* <method name="CookiesLCKeys" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets cookies as an associative array with all keys in 
-    //* lower case
-    //* </method>
-    public function CookiesLCKeys()
-    {
-        return $this->get_CookieCollection()->CookiesLCKeys();
-    }
-    
-    //* <method name="CookiesLCValues" modifiers="public" 
-    //* returnType="[string=>string]">
-    //* Gets cookies as an associative array with all values in 
-    //* lower case
-    //* </method>
-    public function CookiesLCValues()
-    {
-        return $this->get_CookieCollection()->CookiesLCValues();
-    }
-    
-    //* <method name="CookiesHash" modifiers="public" 
-    //* returnType="[string=>[string=>string]]">
-    //* Gets cookies as an associative array with all keys in
-    //* lower case.  Array value is an associative array containing original
-    //* key (actualKey), value of parameter (value) and 
-    //* lower case value (valueLC).
-    //* </method>
-    public function CookiesHash()
-    {
-        return $this->get_CookieCollection()->CookiesHash();
-    }    
     //// end public methods
-    
-    protected function set_CookieCollection(CookieCollection $cookieCollection)
-    {
-        $this->cookieCollection = $cookieCollection;
-    }
-    
-    protected function set_QueryStringCollection(QueryStringCollection $queryStringCollection)
-    {
-        $this->queryStringCollection = $queryStringCollection;
-    }
 }
 ?>

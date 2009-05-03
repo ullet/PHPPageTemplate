@@ -21,9 +21,9 @@
  * USA                                                                   *
  *************************************************************************
  */
-require_once "../framework/QueryStringCollection.php";
+require_once "Framework.php";
  
-class MockQueryStringCollection extends QueryStringCollection
+class MockQueryStringCollection implements QueryStringCollection
 {
     private $queryString = array();
     

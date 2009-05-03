@@ -22,8 +22,8 @@
  *************************************************************************
  */
 
+require_once "Interfaces.php";
 require_once "PageCacheMetaData.php";
-require_once "PageRequest.php";
 
 //* <class name="PageCache" modifiers="public">
 //* Page output caching class
