@@ -21,6 +21,8 @@
  */
 
 require_once "FilterDataByType.php";
+require_once "FilterDataByAttributes.php";
+require_once "CompositeFilter.php";
 
 /**
  * XML parser to parse simple XML documents with up to two levels of elements below root.  
@@ -87,6 +89,19 @@ class SimpleParser
     {
         return $this->GetFilteredData(new FilterDataByType($type));
     }  
+    
+    public function GetDataWithAttributes(array $attributeSpec)
+    {
+        return $this->GetFilteredData(new FilterDataByAttributes($attributeSpec));
+    }
+    
+    public function GetDataOfTypeWithAttributes($type, array $attributeSpec)
+    {
+        return $this->GetFilteredData(
+            new CompositeFilter(
+                new FilterDataByType($type),
+                new FilterDataByAttributes($attributeSpec)));
+    }
     
     /**
      * Gets filtered parsed data in a nested array structure.

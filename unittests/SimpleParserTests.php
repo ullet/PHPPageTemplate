@@ -28,124 +28,116 @@ class SimpleParserTests extends PHPUnit_Framework_TestCase
     public function test_GetAllDataSingleLineValues()
     {
         $parser = new SimpleParser("testsimpleparserdata.xml");
-        $data = $parser->GetAllData();
         
-        $this->assertEquals(3, count($data), "Wrong number of top level items");
-        $this->assertTrue(
-            is_array($data[0]) && is_array($data[1]) && is_array($data[2]), 
-            "Top level item must be an array"); 
-        $this->assertEquals("theme", $data[0]["type"], "Wrong type for item 1");
-        $this->assertEquals("stuff", $data[1]["type"], "Wrong type for item 2");
-        $this->assertEquals("theme", $data[2]["type"], "Wrong type for item 3");
-        $this->assertTrue(
-            is_array($data[0]["attributes"]) && 
-            is_array($data[1]["attributes"]) && 
-            is_array($data[2]["attributes"]), 
-            "attributes must be an array");
         $this->assertEquals(
-            "theme1", 
-            $data[0]["attributes"]["id"], 
-            "Wrong value for id attribute for item 1");
-        $this->assertEquals(
-            "monkeysuit", 
-            $data[1]["attributes"]["StuffID"], 
-            "Wrong value for StuffID attribute for item 2");
-        $this->assertEquals(
-            "theme2", 
-            $data[2]["attributes"]["id"], 
-            "Wrong value for id attribute for item 3");
-        $this->assertTrue(
-            is_array($data[0]["properties"]) && 
-            is_array($data[1]["properties"]) &&
-            is_array($data[2]["properties"]),
-            "properties must be an array");
-        $this->assertEquals(
-            "Theme 1", 
-            $data[0]["properties"]["name"], 
-            "Wrong value for name property for item 1");
-        $this->assertEquals(
-            "The first theme", 
-            $data[0]["properties"]["description"], 
-            "Wrong value for description property for item 1");
-        $this->assertEquals(
-            "Monkey Suit", 
-            $data[1]["properties"]["StuffName"], 
-            "Wrong value for StuffName property for item 2");
-        $this->assertEquals(
-            "Gorilla costume, probably shouldn't be called a Monkey Suit.", 
-            $data[1]["properties"]["Description"], 
-            "Wrong value for Description property for item 2");
-        $this->assertEquals(
-            "Theme 2", 
-            $data[2]["properties"]["name"], 
-            "Wrong value for name property for item 3");
-        $this->assertEquals(
-            "The second theme", 
-            $data[2]["properties"]["description"], 
-            "Wrong value for description property for item 3");
+            array(
+                $this->Theme1Array(),
+                $this->StuffArray(),
+                $this->Theme2Array(),
+                $this->Theme3Array(),
+                $this->Theme4Array()),
+            $parser->GetAllData());
     }
     
     public function test_GetDataOfTypeSingleLineValues()
     {
         $parser = new SimpleParser("testsimpleparserdata.xml");
-        $themeData = $parser->GetDataOfType("theme");
-        
-        $this->assertEquals(2, count($themeData), "Wrong number of top level items");
-        $this->assertTrue(
-            is_array($themeData[0]) && is_array($themeData[1]), 
-            "Top level item must be an array"); 
-        $this->assertEquals("theme", $themeData[0]["type"], "Wrong type for item 1");
-        $this->assertEquals("theme", $themeData[1]["type"], "Wrong type for item 2");
-        $this->assertTrue(
-            is_array($themeData[0]["attributes"]) && is_array($themeData[1]["attributes"]), 
-            "attributes must be an array");
-        $this->assertEquals(
-            "theme1", 
-            $themeData[0]["attributes"]["id"], 
-            "Wrong value for id attribute for item 1");
-        $this->assertEquals(
-            "theme2", 
-            $themeData[1]["attributes"]["id"], 
-            "Wrong value for id attribute for item 2");
-        $this->assertTrue(
-            is_array($themeData[0]["properties"]) && is_array($themeData[1]["properties"]), 
-            "properties must be an array");
-        $this->assertEquals(
-            "Theme 1", 
-            $themeData[0]["properties"]["name"], 
-            "Wrong value for name property for item 1");
-        $this->assertEquals(
-            "The first theme", 
-            $themeData[0]["properties"]["description"], 
-            "Wrong value for description property for item 1");
-        $this->assertEquals(
-            "Theme 2", 
-            $themeData[1]["properties"]["name"], 
-            "Wrong value for name property for item 2");
-        $this->assertEquals(
-            "The second theme", 
-            $themeData[1]["properties"]["description"], 
-            "Wrong value for description property for item 2");
             
-        $stuffData = $parser->GetDataOfType("stuff");
+        $this->assertEquals(
+            array(
+                $this->Theme1Array(),
+                $this->Theme2Array(),
+                $this->Theme3Array(),
+                $this->Theme4Array()),
+            $parser->GetDataOfType("theme"),
+            "Incorrect filtered data for type 'theme'");
+            
+        $this->assertEquals(
+            array($this->StuffArray()),
+            $parser->GetDataOfType("stuff"),
+            "Incorrect filtered data for type 'stuff'");
+    }
+    
+    public function test_GetDataWithAttributesSingleAttributeExists()
+    {
+        $parser = new SimpleParser("testsimpleparserdata.xml");
+            
+        $this->assertEquals(
+            array(
+                $this->Theme1Array(),
+                $this->Theme2Array(),
+                $this->Theme3Array(),
+                $this->Theme4Array()),
+            $parser->GetDataWithAttributes(array("id"=>NULL)));     
+    }    
+    
+    public function test_GetDataWithAttributesSingleAttributeHasValue()
+    {
+        $parser = new SimpleParser("testsimpleparserdata.xml");
+            
+        $this->assertEquals(
+            array($this->Theme1Array()),
+            $parser->GetDataWithAttributes(array("id"=>"theme1")));
+    }  
+    
+    public function test_GetDataWithAttributesMultipleAttributesExist()
+    {
+        $parser = new SimpleParser("testsimpleparserdata.xml");
+            
+        $this->assertEquals(
+            array(
+                $this->Theme1Array(),
+                $this->Theme2Array(),
+                $this->Theme3Array()),
+            $parser->GetDataWithAttributes(array("id"=>NULL, "tagged"=>NULL)));     
+    }   
+    
+    public function test_GetDataWithAttributesMultipleAttributesHaveOneValue()
+    {
+        $parser = new SimpleParser("testsimpleparserdata.xml");
+            
+        $this->assertEquals(
+            array(
+                $this->Theme1Array(),
+                $this->Theme3Array()),
+            $parser->GetDataWithAttributes(array("id"=>NULL, "tagged"=>"true")));     
+    }    
+    
+    public function test_GetDataWithAttributesMultipleAttributesHaveAllValue()
+    {
+        $parser = new SimpleParser("testsimpleparserdata.xml");
+            
+        $this->assertEquals(
+            array(
+                $this->Theme3Array()),
+            $parser->GetDataWithAttributes(array("id"=>"theme3", "tagged"=>"true")));     
+    } 
+    
+    public function test_GetDataOfTypeWithAttributes()
+    {
+        $parser = new SimpleParser("testsimpleparserdata.xml");
         
-        $this->assertEquals(1, count($stuffData), "Wrong number of top level items");
-        $this->assertTrue(is_array($stuffData[0]), "Top level item must be an array"); 
-        $this->assertEquals("stuff", $stuffData[0]["type"], "Wrong type for item 1");
-        $this->assertTrue(is_array($stuffData[0]["attributes"]), "attributes must be an array");
         $this->assertEquals(
-            "monkeysuit", 
-            $stuffData[0]["attributes"]["StuffID"], 
-            "Wrong value for StuffID attribute for item 1");
-        $this->assertTrue(is_array($stuffData[0]["properties"]), "properties must be an array");
+            array(
+                $this->Theme1Array(),
+                $this->Theme2Array(),
+                $this->Theme3Array()),
+            $parser->GetDataOfTypeWithAttributes("theme", array("tagged"=>NULL)),
+            "Wrong data for type=theme & tagged attribute exists");
+            
         $this->assertEquals(
-            "Monkey Suit", 
-            $stuffData[0]["properties"]["StuffName"], 
-            "Wrong value for StuffName property for item 1");
+            array($this->StuffArray()),
+            $parser->GetDataOfTypeWithAttributes("stuff", array("tagged"=>NULL)),
+            "Wrong data for type=Stuff & tagged attribute exists");
+    }
+    
+    public function test_GetDataWithAttributesMultipleAttributesHaveAllValueNoMatch()
+    {
+        $parser = new SimpleParser("testsimpleparserdata.xml");
+            
         $this->assertEquals(
-            "Gorilla costume, probably shouldn't be called a Monkey Suit.", 
-            $stuffData[0]["properties"]["Description"], 
-            "Wrong value for Description property for item 1");
+            array(),
+            $parser->GetDataWithAttributes(array("id"=>"theme2", "tagged"=>"true")));     
     }
     
     public function test_GetAllDataOnlyTriggersSingleParseForLifeOfObject()
@@ -182,39 +174,23 @@ class SimpleParserTests extends PHPUnit_Framework_TestCase
         $this->assertEquals(1, $parser->ParseCount, "Data should only have been parsed once after 3 calls");
     } 
     
-    public function test_GetDataMethodsTriggerSingleParseForLifeOfObjectForCallsInAnyOrder()
+    public function test_GetDataWithAttributesTriggerSingleParseForLifeOfObjectForCallsInAnyOrder()
     {
-        $parserA = new SimpleParserWithSensing("testsimpleparserdata.xml");
+        $parser = new SimpleParserWithSensing("testsimpleparserdata.xml");
         
-        $this->assertEquals(0, $parserA->ParseCount, "Data should not be parsed on initialisation (A)");
+        $this->assertEquals(0, $parser->ParseCount, "Data should not be parsed on initialisation");
         
-        $data = $parserA->GetAllData();
+        $data = $parser->GetDataWithAttributes(array("id"=>NULL));
         
-        $this->assertEquals(1, $parserA->ParseCount, "Data should have been parsed once (A)");
+        $this->assertEquals(1, $parser->ParseCount, "Data should have been parsed once");
         
-        $data = $parserA->GetDataOfType("theme");
+        $data = $parser->GetDataWithAttributes(array("id"=>"theme3"));
         
-        $this->assertEquals(1, $parserA->ParseCount, "Data should only have been parsed once after 2 calls (A)");
+        $this->assertEquals(1, $parser->ParseCount, "Data should only have been parsed once after 2 calls");
         
-        $data = $parserA->GetDataOfType("stuff");
+        $data = $parser->GetDataWithAttributes(array("StuffID"=>"monkeysuit"));
         
-        $this->assertEquals(1, $parserA->ParseCount, "Data should only have been parsed once after 3 calls (A)");
-        
-        $parserB = new SimpleParserWithSensing("testsimpleparserdata.xml");
-        
-        $this->assertEquals(0, $parserB->ParseCount, "Data should not be parsed on initialisation (A)");
-        
-        $data = $parserB->GetDataOfType("stuff");     
-           
-        $this->assertEquals(1, $parserB->ParseCount, "Data should have been parsed once (B)");
-        
-        $data = $parserB->GetAllData();
-        
-        $this->assertEquals(1, $parserB->ParseCount, "Data should only have been parsed once after 2 calls (B)");
-        
-        $data = $parserB->GetDataOfType("theme");
-        
-        $this->assertEquals(1, $parserB->ParseCount, "Data should only have been parsed once after 3 calls (B)");
+        $this->assertEquals(1, $parser->ParseCount, "Data should only have been parsed once after 3 calls");
     }      
     
     public function test_CannotModifyObjectsCopyOfData()
@@ -270,6 +246,66 @@ class SimpleParserTests extends PHPUnit_Framework_TestCase
             "The second theme", 
             $dataCopy1[2]["properties"]["description"], 
             "Wrong value for description property for item 3 in modified copy 1 after copy 2");
+    }
+    
+    private function &Theme1Array()
+    {
+        return array(
+            "type"=>"theme", 
+            "attributes"=>array(
+                "id"=>"theme1",
+                "tagged"=>"true"),
+            "properties"=>array(
+                "name"=>"Theme 1",
+                "description"=>"The first theme"));
+    }
+    
+    private function &Theme2Array()
+    {
+        return array(
+            "type"=>"theme", 
+            "attributes"=>array(
+                "id"=>"theme2",
+                "tagged"=>"false"),
+            "properties"=>array(
+                "name"=>"Theme 2",
+                "description"=>"The second theme"));
+    }
+    
+    private function &Theme3Array()
+    {
+        return array(
+            "type"=>"theme", 
+            "attributes"=>array(
+                "id"=>"theme3",
+                "tagged"=>"true"),
+            "properties"=>array(
+                "name"=>"Theme 3",
+                "description"=>"The third theme"));
+    }
+    
+    private function &Theme4Array()
+    {
+        return array(
+            "type"=>"theme", 
+            "attributes"=>array(
+                "id"=>"theme4"),
+            "properties"=>array(
+                "name"=>"Theme 4",
+                "description"=>"The fourth theme"));
+    }
+    
+    private function &StuffArray()
+    {
+        return array(
+            "type"=>"stuff", 
+            "attributes"=>array(
+                "StuffID"=>"monkeysuit",
+                "tagged"=>"true"),
+            "properties"=>array(
+                "StuffName"=>"Monkey Suit",
+                "Description"=>
+                    "Gorilla costume, probably shouldn't be called a Monkey Suit."));
     }
 }
 

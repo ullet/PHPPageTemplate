@@ -22,10 +22,10 @@
  
 require_once "Interfaces.php";
 
-//* <class name="ThemeList" modifiers="public">
-//* List of page themes
-//* </class>
-class ThemeList
+/**
+ * Manage reading and saving theme preferences.
+ */
+class ThemePreferenceManager
 {
     private $currentTheme = false;
     private $currentElement = false;

@@ -21,32 +21,50 @@
  */
 
 /**
- * Class to filter elements of an array by the elements "type".
+ * Class to filter elements of an array by the elements "attributes".
  *
  * Filters elements of an array of data in format output by SimpleParser GetAllData method
- * by the "type" field of the element.
+ * by the "attributes" field of the element.
  */
-class FilterDataByType implements Filter
+class FilterDataByAttributes implements Filter
 {
-    private $type;
+    private $attributeSpec;
  
     /**
      * Creates an instance of the filter.
      *
-     * Creates an instance of the filter taking a single type parameter which will be used to 
-     * filter the data.
+     * Creates an instance of the filter taking a single $attributeSpec parameter which will be used
+     * to filter the data.  The attribute spec is an associative array specifying attribute names 
+     * and values to look for.  A NULL value is used to indicate match any value.
      */  
-    public function __construct($type)
+    public function __construct($attributeSpec)
     {
-        $this->type = $type;
+        $this->attributeSpec = $attributeSpec;
     }
     
     /**
-     * Filter given value returning true if of required "type", false otherwise.
+     * Filter given value returning true if has required attributes, false otherwise.
      */
     public function Filter($value)
     {
-        return $value["type"] == $this->type;
+        $include = true;
+        foreach (array_keys($this->attributeSpec) as $requiredAttribute)
+        {
+            if (!array_key_exists($requiredAttribute, $value["attributes"]))
+            {
+                $include = false;
+                break;
+            }
+            if (!is_null($this->attributeSpec[$requiredAttribute]) &&
+                $this->attributeSpec[$requiredAttribute] != 
+                    $value["attributes"][$requiredAttribute])
+            {
+                $include = false;
+                break;
+            }
+        }
+        
+        return $include;
     }
 }
 

@@ -20,34 +20,38 @@
  ***************************************************************************************************
  */
 
-/**
- * Class to filter elements of an array by the elements "type".
- *
- * Filters elements of an array of data in format output by SimpleParser GetAllData method
- * by the "type" field of the element.
- */
-class FilterDataByType implements Filter
+require_once "Interfaces.php";
+
+class CompositeFilter implements Filter
 {
-    private $type;
- 
-    /**
-     * Creates an instance of the filter.
-     *
-     * Creates an instance of the filter taking a single type parameter which will be used to 
-     * filter the data.
-     */  
-    public function __construct($type)
+    private $componentFilters = NULL;
+    
+    public function __Construct()
     {
-        $this->type = $type;
+        $this->componentFilters = array_filter(func_get_args(), array($this, "ImplementsFilter"));
     }
     
-    /**
-     * Filter given value returning true if of required "type", false otherwise.
-     */
+    //// Filter interface members
     public function Filter($value)
     {
-        return $value["type"] == $this->type;
+        $result = true;
+        foreach ($this->componentFilters as $componentFilter)
+        {
+            $result &= $componentFilter->Filter($value);
+            if (!$result)
+            {
+                break;
+            }
+        }
+        
+        return $result;
+    }
+    //// End Filter interface members
+    
+    private function ImplementsFilter($potentialFilter)
+    {
+        return ($potentialFilter instanceof Filter);
     }
 }
-
+ 
 ?>

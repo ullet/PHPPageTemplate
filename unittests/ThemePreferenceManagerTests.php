@@ -24,10 +24,10 @@ require_once "PHPUnit/Framework.php";
 require_once "Framework.php";
 require_once "Mocks.php";
 
-//* <class name="ThemeListTests" modifiers="public">
-//* A selection of unit tests for ThemeList
-//* </class>
-class ThemeListTests extends PHPUnit_Framework_TestCase
+/**
+ * A selection of unit tests for ThemePreferenceManager class.
+ */
+class ThemePreferenceManagerTests extends PHPUnit_Framework_TestCase
 {
     //// Begin: The Tests
     public function test_Create()
@@ -203,23 +203,6 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
         $this->assertTrue($themeList->get_ThemeInCookie());
     }
     
-    //public function test_Get_Iterator()
-    //{
-    //    $themeList =& $this->CreateThemeList();
-    //    
-    //    $iterator =& $themeList->get_Iterator();
-    //    
-    //    $this->assertNotNull($iterator);
-    //    $this->assertTrue($iterator instanceof ListIterator);
-    //    
-    //    while ($iterator->NextItem())
-    //    {
-    //        $currentItem =& $iterator->CurrentListItem();
-    //        $this->assertNotNull($currentItem);
-    //        $this->assertContains("theme", $currentItem->get_Name());
-    //    }
-    //}
-    
     public function test_Get_SelectedThemeQueryString_Default()
     {
         $themeList =& $this->CreateThemeList();
@@ -314,93 +297,6 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
         $this->assertEquals("qstheme", $selectedTheme);        
     }
     
-    //public function test_AddTheme()
-    //{
-    //    $themeList =& $this->CreateThemeListNoParse();
-    //    
-    //    $theme1 =& new MockQSTheme();
-    //    $theme2 =& new MockCookieTheme();
-    //    
-    //    $themeList->AddTheme_ForTesting($theme1);
-    //    $themeList->AddTheme_ForTesting($theme2);
-    //    
-    //    $iterator =& $themeList->get_Iterator();
-    //    
-    //    $this->assertNotNull($iterator);
-    //    $this->assertTrue($iterator instanceof ListIterator);
-    //    
-    //    $idx = 0;
-    //    while ($iterator->NextItem())
-    //    {
-    //        $currentItem =& $iterator->CurrentListItem();
-    //        $this->assertNotNull($currentItem);
-    //        if ($idx == 0)
-    //        {
-    //            $this->assertSame($theme1, $currentItem, "Theme 1 not same as current item");
-    //        }
-    //        if ($idx == 1)
-    //        {
-    //            $this->assertSame($theme2, $currentItem, "Theme 2 not same as current item");
-    //        }
-    //        $idx++;
-    //    }
-    //    $this->assertEquals(2, $idx);
-    //}
-    
-    //public function test_ParseThemes()
-    //{
-    //    $themeList =& $this->CreateThemeListNoParse();
-    //    
-    //    $this->assertFileExists("testthemeconfig.xml");
-    //    $themeList->ParseThemes_ForTesting("testthemeconfig.xml");
-    //    
-    //    $iterator =& $themeList->get_Iterator();
-    //    
-    //    $this->assertNotNull($iterator);
-    //    $this->assertTrue($iterator instanceof ListIterator);
-    //    
-    //    $idx = 0;
-    //    while ($iterator->NextItem())
-    //    {
-    //        $currentItem =& $iterator->CurrentListItem();
-    //        $this->assertNotNull($currentItem);
-    //        $this->assertTrue($currentItem instanceof Theme);
-    //        if ($idx == 0)
-    //        {
-    //            $this->assertEquals("xmltheme1", $currentItem->get_Name(), "xmltheme1 name mismatch");
-    //            $this->assertEquals("/xmltheme1.ico", $currentItem->get_FavIconUrl());
-    //            $this->assertEquals("/xmltheme1.css", $currentItem->get_StyleSheetPath());
-    //            $this->assertEquals("/xmltheme1ie6.css", $currentItem->get_StyleSheetPathIE6());
-    //            $this->assertEquals("/xmltheme1ie7.css", $currentItem->get_StyleSheetPathIE7());
-    //            $this->assertEquals("XML Theme 1", $currentItem->get_Title());
-    //            $this->assertEquals("The XML theme 1", $currentItem->get_Description());
-    //            $this->assertEquals("/xmltheme1thumb.jpg", $currentItem->get_ThumbnailUrl());
-    //        }
-    //        if ($idx == 1)
-    //        {
-    //            $this->assertEquals("xmltheme2", $currentItem->get_Name(), "xmltheme2 name mismatch");
-    //            $this->assertEquals("/xmltheme2.ico", $currentItem->get_FavIconUrl());
-    //            $this->assertEquals("/xmltheme2.css", $currentItem->get_StyleSheetPath());
-    //            $this->assertEquals("/xmltheme2ie6.css", $currentItem->get_StyleSheetPathIE6());
-    //            $this->assertEquals("/xmltheme2ie7.css", $currentItem->get_StyleSheetPathIE7());
-    //            $this->assertEquals("XML Theme 2", $currentItem->get_Title());
-    //            $this->assertEquals("The XML theme 2", $currentItem->get_Description());
-    //            $this->assertEquals("/xmltheme2thumb.jpg", $currentItem->get_ThumbnailUrl());
-    //        }
-    //        $idx++;
-    //    }
-    //    $this->assertEquals(2, $idx);
-    //}
-    
-    //public function test_ThemeExists()
-    //{
-    //    $themeList = $this->CreateThemeList();
-    //    
-    //    $this->assertTrue($themeList->ThemeExists("qstheme"));
-    //    $this->assertTrue($themeList->ThemeExists("cookietheme"));
-    //    $this->assertFalse($themeList->ThemeExists("test1"));
-    //}
-    
     public function test_SetSelectedThemeCookie()
     {
         // need theme selected in QS else cookie won't be set (as
@@ -466,7 +362,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
         $pageRequest = new MockPageRequest();
         $pageRequest->AddTestQueryStringParameter("theme", "qstheme");
         $pageRequest->AddTestCookie("theme", "cookietheme");
-        $themeList = new ThemeListExposedForTest(
+        $themeList = new ThemePreferenceManagerExposedForTest(
             new MockThemeFactory(),
             "test1", 
             $pageRequest);
@@ -494,7 +390,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     //// Begin: Utility methods
     protected function CreateThemeList()
     {
-        return new ThemeListExposedForTest(
+        return new ThemePreferenceManagerExposedForTest(
             new MockThemeFactory(),
             "test1");        
     }
@@ -503,7 +399,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     {
         $pageRequest = new MockPageRequest();
         $pageRequest->AddTestQueryStringParameter("theme", "qstheme");
-        return new ThemeListExposedForTest(
+        return new ThemePreferenceManagerExposedForTest(
             new MockThemeFactory(),
             "test1", 
             $pageRequest);
@@ -513,7 +409,7 @@ class ThemeListTests extends PHPUnit_Framework_TestCase
     {
         $pageRequest = new MockPageRequest();
         $pageRequest->AddTestCookie("theme", "cookietheme");
-        return new ThemeListExposedForTest(
+        return new ThemePreferenceManagerExposedForTest(
             new MockThemeFactory(),
             "test1", 
             $pageRequest);

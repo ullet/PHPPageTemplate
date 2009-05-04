@@ -21,6 +21,9 @@
  */
 
 require_once "Interfaces.php";
+require_once "CompositeFilter.php";
+require_once "FilterDataByType.php";
+require_once "FilterDataByAttributes.php";
 require_once "HttpCookieCollection.php";
 require_once "HttpPageRequest.php";
 require_once "HttpQueryStringCollection.php";
@@ -30,6 +33,7 @@ require_once "PageCacheMetaData.php";
 require_once "PageSectionBase.php";
 require_once "SimpleParser.php";
 require_once "SimpleTheme.php";
-require_once "ThemeList.php";
+require_once "SimpleThemeFactory.php";
+require_once "ThemePreferenceManager.php";
 
 ?>

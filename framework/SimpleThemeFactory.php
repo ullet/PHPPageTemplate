@@ -19,35 +19,32 @@
  * If not, see <http://www.gnu.org/licenses/>.                                                     *
  ***************************************************************************************************
  */
-
-/**
- * Class to filter elements of an array by the elements "type".
- *
- * Filters elements of an array of data in format output by SimpleParser GetAllData method
- * by the "type" field of the element.
- */
-class FilterDataByType implements Filter
-{
-    private $type;
  
-    /**
-     * Creates an instance of the filter.
-     *
-     * Creates an instance of the filter taking a single type parameter which will be used to 
-     * filter the data.
-     */  
-    public function __construct($type)
-    {
-        $this->type = $type;
-    }
+require_once "Interfaces.php"; 
+require_once "SimpleParser.php"; 
+ 
+class SimpleThemeFactory implements ThemeFactory
+{
+    private $parser = NULL;
     
-    /**
-     * Filter given value returning true if of required "type", false otherwise.
-     */
-    public function Filter($value)
+    public function __construct($dataPath)
     {
-        return $value["type"] == $this->type;
+        $this->parser = new SimpleParser($dataPath);
+    }            
+        
+    //// ThemeFactory interface members
+    public function CreateTheme($id)
+    {
+        $themeData = $this->parser->GetDataOfTypeWithAttributes(
+            "theme",
+            array("id"=>$id));
+        if (count($themeData) < 1)
+        {
+            return NULL;
+        }
+        return new SimpleTheme($id, $themeData["properties"]);
     }
+    //// End ThemeFactory interface members
 }
 
 ?>

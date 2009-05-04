@@ -23,7 +23,7 @@
 require_once 'PHPUnit/Framework.php';
 require_once 'PHPUnit/TextUI/TestRunner.php';
 require_once 'PageBaseTests.php';
-require_once 'ThemeListTests.php';
+require_once 'ThemePreferenceManagerTests.php';
 require_once 'SimpleParserTests.php';
  
 class AllTests
@@ -38,7 +38,7 @@ class AllTests
         $suite = new PHPUnit_Framework_TestSuite('PHPPageTemplate');
  
         $suite->addTestSuite('PageBaseTests');
-        $suite->addTestSuite('ThemeListTests');
+        $suite->addTestSuite('ThemePreferenceManagerTests');
         $suite->addTestSuite('SimpleParserTests');
  
         return $suite;

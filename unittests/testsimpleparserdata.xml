@@ -20,16 +20,24 @@
  ***************************************************************************************************
  -->
 <data> <!-- root element can be any name -->
-  <theme id="theme1">
+  <theme id="theme1" tagged="true">
     <name>Theme 1</name>
     <description>The first theme</description>
   </theme>
-  <stuff StuffID="monkeysuit">
+  <stuff StuffID="monkeysuit" tagged="true">
     <StuffName>Monkey Suit</StuffName>
     <Description>Gorilla costume, probably shouldn't be called a Monkey Suit.</Description>
   </stuff>
-  <theme id="theme2">
+  <theme id="theme2" tagged="false">
     <name>Theme 2</name>
     <description>The second theme</description>
+  </theme>
+  <theme id="theme3" tagged="true">
+    <name>Theme 3</name>
+    <description>The third theme</description>
+  </theme>
+  <theme id="theme4">
+    <name>Theme 4</name>
+    <description>The fourth theme</description>
   </theme>
 </data>

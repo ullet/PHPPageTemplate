@@ -20,9 +20,9 @@
  ***************************************************************************************************
  */
  
-require_once "../framework/ThemeList.php";
+require_once "../framework/ThemePreferenceManager.php";
 
-class ThemeListExposedForTest extends ThemeList
+class ThemePreferenceManagerExposedForTest extends ThemePreferenceManager
 {
     // override constructor so can capture themeListPath for testing
     public function __construct(
