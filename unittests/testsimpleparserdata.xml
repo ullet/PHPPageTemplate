@@ -1,0 +1,15 @@
+<?xml version="1.0" ?>
+<data> <!-- root element can be any name -->
+  <theme id="theme1">
+    <name>Theme 1</name>
+    <description>The first theme</description>
+  </theme>
+  <stuff StuffID="monkeysuit">
+    <StuffName>Monkey Suit</StuffName>
+    <Description>Gorilla costume, probably shouldn't be called a Monkey Suit.</Description>
+  </stuff>
+  <theme id="theme2">
+    <name>Theme 2</name>
+    <description>The second theme</description>
+  </theme>
+</data>

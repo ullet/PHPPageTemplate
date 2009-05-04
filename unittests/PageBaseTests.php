@@ -23,6 +23,7 @@
  */
  
 require_once "PHPUnit/Framework.php";
+require_once "Framework.php";
 require_once "Mocks.php";
 
 //* <class name="PageBaseTests" modifiers="public">

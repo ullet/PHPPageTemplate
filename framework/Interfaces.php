@@ -23,6 +23,7 @@
  */
  
 require_once "interfaces/CookieCollection.php";
+require_once "interfaces/Filter.php";
 require_once "interfaces/PageRequest.php";
 require_once "interfaces/QueryStringCollection.php";
 require_once "interfaces/Theme.php";

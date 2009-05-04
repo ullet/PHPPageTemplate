@@ -26,6 +26,7 @@ require_once 'PHPUnit/Framework.php';
 require_once 'PHPUnit/TextUI/TestRunner.php';
 require_once 'PageBaseTests.php';
 require_once 'ThemeListTests.php';
+require_once 'SimpleParserTests.php';
  
 class AllTests
 {
@@ -40,6 +41,7 @@ class AllTests
  
         $suite->addTestSuite('PageBaseTests');
         $suite->addTestSuite('ThemeListTests');
+        $suite->addTestSuite('SimpleParserTests');
  
         return $suite;
     }

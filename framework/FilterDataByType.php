@@ -22,16 +22,32 @@
  *************************************************************************
  */
 
-require_once "Interfaces.php";
-require_once "HttpCookieCollection.php";
-require_once "HttpPageRequest.php";
-require_once "HttpQueryStringCollection.php";
-require_once "PageBase.php";
-require_once "PageCache.php";
-require_once "PageCacheMetaData.php";
-require_once "PageSectionBase.php";
-require_once "SimpleParser.php";
-require_once "SimpleTheme.php";
-require_once "ThemeList.php";
-
-?>
+/**
+ * Class to filter elements of any array by the elements "type".
+ *
+ * Filters elements of an array of data in format output by SimpleParser GetAllData method
+ * by the "type" field of the element.
+ */
+class FilterDataByType implements Filter
+{
+    private $type;
+ 
+    /**
+     * Creates an instance of the filter.
+     *
+     * Creates an instance of the filter taking a single type parameter which will be used to 
+     * filter the data.
+     */  
+    public function __construct($type)
+    {
+        $this->type = $type;
+    }
+    
+    /**
+     * Filter given value returning true if of required "type", false otherwise.
+     */
+    public function Filter($value)
+    {
+        return $value["type"] == $this->type;
+    }
+}

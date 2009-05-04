@@ -31,4 +31,5 @@ require_once "Mocks/MockTheme.php";
 require_once "Mocks/MockThemeFactory.php";
 require_once "Mocks/HttpPageRequestExposedForTest.php";
 require_once "Mocks/ThemeListExposedForTest.php";
+require_once "Mocks/SimpleParserWithSensing.php";
 ?>

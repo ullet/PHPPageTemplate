@@ -21,17 +21,29 @@
  * USA                                                                   *
  *************************************************************************
  */
-
-require_once "Interfaces.php";
-require_once "HttpCookieCollection.php";
-require_once "HttpPageRequest.php";
-require_once "HttpQueryStringCollection.php";
-require_once "PageBase.php";
-require_once "PageCache.php";
-require_once "PageCacheMetaData.php";
-require_once "PageSectionBase.php";
-require_once "SimpleParser.php";
-require_once "SimpleTheme.php";
-require_once "ThemeList.php";
+ 
+/**
+ * Common interface for filter classes, particularly for use with array_filter.
+ *
+ * A class implementing the Filter interface can use additional parameters to filter the data in
+ * the array, something which is not possible with a regular callback function.  (Of course could
+ * use a class property of the class defining the callback function which in some cases is fine,
+ * but this helps keep the class 'clean' avoiding creating class scoped properties for variables
+ * that are only needed within a single method.
+ */
+interface Filter
+{
+    /**
+     * Filter given value against rule(s) defined in implementing class.
+     *
+     * Implementing class applies one or more rules to filter the given value.  The value could
+     * be a simple value, e.g. a string, an array, or any type of object.  The return value must
+     * be true if the test value is "in" or false if the test value is "out".  The filter method
+     * can use any other methods or properties on the implementing class to define the filtering
+     * rule or rules, which could include values passed in a constructor (this is the advantage 
+     * of an instance method over a static method).
+     */
+    function Filter($value);
+}
 
 ?>
